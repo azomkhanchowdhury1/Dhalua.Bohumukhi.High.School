@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<!-- START: ACADEMICS_CSS_LINK -->
+<link rel="stylesheet" href="{% static 'css/academics.css' %}">
+<!-- END: ACADEMICS_CSS_LINK -->
+{% endblock %}
+
+{% block content %}
+<!-- START: ACADEMICS_PAGE -->
+
+<!-- START: ACADEMICS_HERO_SECTION -->
+<section class="academics-hero">
+    <div class="container">
+        <div class="hero-content animate-zoom">
+            <h1>Our Academics</h1>
+            <p>Empowering minds through a comprehensive, modern, and engaging educational framework.</p>
+        </div>
+    </div>
+</section>
+<!-- END: ACADEMICS_HERO_SECTION -->
+
+<!-- START: CURRICULUM_SECTION -->
+<section class="curriculum-section glass-container">
+    <div class="container">
+        <h2 class="section-title animate-fade-up">Curriculum & Syllabus</h2>
+        <p class="section-subtitle animate-fade-up">Designed to foster critical thinking and creativity across all grade levels.</p>
+        
+        <div class="curriculum-grid">
+            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="icon-circle"><i class="fas fa-flask"></i></div>
+                <h3>Science</h3>
+                <p>Physics, Chemistry, Biology, and Higher Mathematics focusing on practical and theoretical excellence.</p>
+                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="icon-circle"><i class="fas fa-calculator"></i></div>
+                <h3>Commerce</h3>
+                <p>Accounting, Finance, and Business Entrepreneurship for the next generation of business leaders.</p>
+                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="icon-circle"><i class="fas fa-palette"></i></div>
+                <h3>Humanities</h3>
+                <p>History, Geography, Civics, and Economics to understand society, culture, and human development.</p>
+                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: CURRICULUM_SECTION -->
+
+<!-- START: CLASS_ROUTINE_SECTION -->
+<section class="routine-section">
+    <div class="container">
+        <div class="routine-wrapper glass-panel animate-zoom">
+            <h2 class="section-title">Class Routine</h2>
+            <div class="routine-tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'Class6')">Class 6-8</button>
+                <button class="tab-btn" onclick="openTab(event, 'Class9')">Class 9-10</button>
+            </div>
+            
+            <div id="Class6" class="tab-content" style="display: block;">
+                <div class="table-responsive">
+                    <table class="routine-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>1st Period</th>
+                                <th>2nd Period</th>
+                                <th>Break</th>
+                                <th>3rd Period</th>
+                                <th>4th Period</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sunday</td>
+                                <td>Mathematics</td>
+                                <td>Bengali</td>
+                                <td class="break-cell">Tiffin</td>
+                                <td>English</td>
+                                <td>Science</td>
+                            </tr>
+                            <tr>
+                                <td>Monday</td>
+                                <td>English</td>
+                                <td>Science</td>
+                                <td class="break-cell">Tiffin</td>
+                                <td>Mathematics</td>
+                                <td>Religion</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="Class9" class="tab-content" style="display: none;">
+                <div class="table-responsive">
+                    <table class="routine-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>1st Period</th>
+                                <th>2nd Period</th>
+                                <th>Break</th>
+                                <th>3rd Period</th>
+                                <th>4th Period</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sunday</td>
+                                <td>Physics/Acc</td>
+                                <td>Chemistry/Fin</td>
+                                <td class="break-cell">Tiffin</td>
+                                <td>H.Math/Geo</td>
+                                <td>Biology/Eco</td>
+                            </tr>
+                            <tr>
+                                <td>Monday</td>
+                                <td>English</td>
+                                <td>Bengali</td>
+                                <td class="break-cell">Tiffin</td>
+                                <td>ICT</td>
+                                <td>Mathematics</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="#" class="btn-download"><i class="fas fa-download"></i> Download Full Routine</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: CLASS_ROUTINE_SECTION -->
+
+<!-- START: GRADING_SYSTEM_SECTION -->
+<section class="grading-section glass-container">
+    <div class="container">
+        <h2 class="section-title animate-fade-up">Examination & Grading System</h2>
+        
+        <div class="grading-split">
+            <div class="grading-info animate-slide-right">
+                <h3>Continuous Assessment</h3>
+                <p>Our evaluation process is continuous, involving monthly tests, assignments, practical works, and term-final examinations. This ensures students are consistently learning and improving.</p>
+                <ul class="assessment-list">
+                    <li><i class="fas fa-check-circle"></i> Weekly Class Tests (20%)</li>
+                    <li><i class="fas fa-check-circle"></i> Assignments & Projects (10%)</li>
+                    <li><i class="fas fa-check-circle"></i> Half-Yearly Exam (30%)</li>
+                    <li><i class="fas fa-check-circle"></i> Final Exam (40%)</li>
+                </ul>
+            </div>
+            
+            <div class="grading-table-wrapper glass-panel animate-slide-left">
+                <table class="grading-table">
+                    <thead>
+                        <tr>
+                            <th>Marks Range</th>
+                            <th>Letter Grade</th>
+                            <th>Grade Point</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>80 - 100</td><td>A+</td><td>5.00</td></tr>
+                        <tr><td>70 - 79</td><td>A</td><td>4.00</td></tr>
+                        <tr><td>60 - 69</td><td>A-</td><td>3.50</td></tr>
+                        <tr><td>50 - 59</td><td>B</td><td>3.00</td></tr>
+                        <tr><td>40 - 49</td><td>C</td><td>2.00</td></tr>
+                        <tr><td>33 - 39</td><td>D</td><td>1.00</td></tr>
+                        <tr><td>0 - 32</td><td>F</td><td>0.00</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: GRADING_SYSTEM_SECTION -->
+
+<!-- END: ACADEMICS_PAGE -->
+{% endblock %}
+
+{% block js %}
+<!-- START: ACADEMICS_JS_LINK -->
+<script src="{% static 'javascript/academics.js' %}"></script>
+<!-- END: ACADEMICS_JS_LINK -->
+{% endblock %}

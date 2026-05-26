@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<!-- START: SUPPORT_CSS_LINK -->
+<link rel="stylesheet" href="{% static 'css/support.css' %}">
+<!-- END: SUPPORT_CSS_LINK -->
+{% endblock %}
+
+{% block content %}
+<!-- START: SUPPORT_PAGE -->
+
+<!-- START: SUPPORT_HERO_SECTION -->
+<section class="support-hero">
+    <div class="container">
+        <div class="hero-content animate-zoom">
+            <h1>Help & Support Center</h1>
+            <p>How can we assist you today? Find answers, submit tickets, or chat with our team.</p>
+            <div class="search-help animate-fade-up">
+                <input type="text" placeholder="Search for help articles...">
+                <button><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: SUPPORT_HERO_SECTION -->
+
+<!-- START: HELP_CATEGORIES_SECTION -->
+<section class="help-categories glass-container">
+    <div class="container">
+        <div class="category-grid">
+            <div class="category-card animate-slide-up">
+                <i class="fas fa-user-plus"></i>
+                <h3>Admission Help</h3>
+                <p>Guides on registration, fees, and requirements.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div class="category-card animate-slide-up" style="animation-delay: 0.1s;">
+                <i class="fas fa-book-reader"></i>
+                <h3>Academic Support</h3>
+                <p>Syllabus, exams, and grading information.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div class="category-card animate-slide-up" style="animation-delay: 0.2s;">
+                <i class="fas fa-key"></i>
+                <h3>Account & Security</h3>
+                <p>Password reset and profile management.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div class="category-card animate-slide-up" style="animation-delay: 0.3s;">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Technical Issues</h3>
+                <p>App usage and portal navigation help.</p>
+                <a href="#">Learn More</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: HELP_CATEGORIES_SECTION -->
+
+<!-- START: FAQ_SECTION -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title animate-zoom">Frequently Asked Questions</h2>
+        <div class="faq-accordion animate-fade-up">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I reset my portal password?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Go to the Login page, click on "Forgot Password", and follow the OTP verification steps sent to your email.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What are the school office hours?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>The school office is open from Sunday to Thursday, 9:00 AM to 5:00 PM.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How can I download the class routine?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>You can find and download the class routine in the Academics section under the "Class Routine" tab.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: FAQ_SECTION -->
+
+<!-- START: CONTACT_SUPPORT_SECTION -->
+<section class="contact-support glass-container">
+    <div class="container">
+        <div class="support-options-grid">
+            <div class="support-option animate-slide-left">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>Submit a Ticket</h3>
+                <p>Have a complex issue? Open a support ticket.</p>
+                <button class="btn-support" onclick="openTicketModal()">Create Ticket</button>
+            </div>
+            <div class="support-option animate-zoom">
+                <i class="fas fa-comments"></i>
+                <h3>Live Chat</h3>
+                <p>Chat with our support agents in real-time.</p>
+                <button class="btn-support" onclick="toggleChat()">Start Chat</button>
+            </div>
+            <div class="support-option animate-slide-right">
+                <i class="fas fa-phone-volume"></i>
+                <h3>Direct Call</h3>
+                <p>Call our emergency support hotline.</p>
+                <a href="tel:+880160755120" class="btn-support" style="display: inline-block; text-decoration: none;">+880 1607-55120</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: CONTACT_SUPPORT_SECTION -->
+
+<!-- START: TICKET_MODAL -->
+<div id="ticketModal" class="modal">
+    <div class="modal-content glass-panel animate-zoom">
+        <span class="close-modal" onclick="closeTicketModal()">&times;</span>
+        <h2 class="section-title">Open Support Ticket</h2>
+        <form action="{% url 'support' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="submit_ticket" value="1">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" placeholder="Your name" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="Your email" required>
+                </div>
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" name="subject" placeholder="Ticket subject" required>
+                </div>
+                <div class="input-group">
+                    <label>Priority</label>
+                    <select name="priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group full-width" style="margin-top: 15px;">
+                <label>Detailed Message</label>
+                <textarea name="message" rows="4" placeholder="Describe your issue..." required></textarea>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="btn-primary">Submit Ticket</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: TICKET_MODAL -->
+
+<!-- START: LIVE_CHAT_WIDGET -->
+<div id="chatWidget" class="chat-widget animate-slide-up">
+    <div class="chat-header">
+        <span><i class="fas fa-circle" style="color: #50e3c2; font-size: 10px;"></i> Live Support</span>
+        <i class="fas fa-times" onclick="toggleChat()" style="cursor: pointer;"></i>
+    </div>
+    <div class="chat-body" id="chatBody">
+        <div class="chat-msg bot">
+            <p>Hello! How can I help you today?</p>
+        </div>
+    </div>
+    <div class="chat-footer">
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+<!-- END: LIVE_CHAT_WIDGET -->
+
+<!-- END: SUPPORT_PAGE -->
+{% endblock %}
+
+{% block js %}
+<!-- START: SUPPORT_JS_LINK -->
+<script src="{% static 'javascript/support.js' %}"></script>
+<!-- END: SUPPORT_JS_LINK -->
+{% endblock %}

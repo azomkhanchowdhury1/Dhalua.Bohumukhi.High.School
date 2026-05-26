@@ -1,0 +1,156 @@
+<!-- START: templates/teacher/marks_add.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: MARKS_ADD_CSS */
+    .class-filter-bar {
+        background: rgba(15,23,42,0.6);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .class-filter-bar label { color: #94a3b8; font-size: 0.9rem; white-space:nowrap; }
+    .class-filter-bar select {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px;
+        padding: 11px 18px;
+        color: #fff;
+        font-size: 0.95rem;
+    }
+    .class-filter-bar select option { background: #0f172a; }
+    .marks-table { width: 100%; border-collapse: collapse; }
+    .marks-table th {
+        text-align: left;
+        padding: 14px 18px;
+        color: #94a3b8;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .marks-table td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #e2e8f0; }
+    .mark-input {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        padding: 8px 14px;
+        color: #fff;
+        font-size: 0.95rem;
+        width: 120px;
+        transition: all 0.3s;
+    }
+    .mark-input:focus {
+        border-color: var(--home-primary, #6366f1);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        outline: none;
+    }
+    /* END: MARKS_ADD_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TEACHER_MARKS_ADD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Add / Edit Exam Marks</h1>
+        <p>Select exam, class, and subject, then input marks for each student.</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <form method="GET" class="class-filter-bar">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label>Select Exam:</label>
+            <select name="exam_id" onchange="this.form.submit()" required>
+                <option value="">— Choose an exam —</option>
+                {% for exam in exams %}
+                <option value="{{ exam.id }}" {% if selected_exam == exam.id|stringformat:"s" %}selected{% endif %}>{{ exam.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label>Select Class:</label>
+            <select name="class_id" onchange="this.form.submit()" {% if not selected_exam %}disabled{% endif %}>
+                <option value="">— Choose a class —</option>
+                {% for cls in classes %}
+                <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if selected_class %}
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label>Select Subject:</label>
+            <select name="subject_id" onchange="this.form.submit()">
+                <option value="">— Choose a subject —</option>
+                {% for sub in subjects %}
+                <option value="{{ sub.id }}" {% if selected_subject == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }} ({{ sub.code }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+    </form>
+
+    {% if selected_exam and selected_class and selected_subject %}
+        {% if students %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="exam_id" value="{{ selected_exam }}">
+            <input type="hidden" name="subject_id" value="{{ selected_subject }}">
+            
+            <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
+                <h3 style="color:#fff; margin-bottom:25px;">Students List ({{ students|length }})</h3>
+
+                <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Roll No</th>
+                            <th>Marks Obtained (Out of 100)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td style="color:#64748b;">{{ forloop.counter }}</td>
+                            <td style="font-weight:600;">{{ student.user.get_full_name }}</td>
+                            <td style="color:#94a3b8;">{{ student.roll_number|default:"—" }}</td>
+                            <td>
+                                <input type="number" name="marks_{{ student.id }}" min="0" max="100" class="mark-input" value="{{ student.existing_marks }}" placeholder="0-100" required>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div style="margin-top:25px; display:flex; justify-content:flex-end;">
+                    <button type="submit" class="view-all-btn" style="padding:14px 40px; font-size:1rem; cursor:pointer; background: var(--home-primary, #6366f1); border: none; border-radius: 50px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-save"></i> Save Marks
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
+            <h3 style="color:#64748b;">No students found in this class.</h3>
+        </div>
+        {% endif %}
+    {% else %}
+    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
+        <i class="fas fa-arrow-up" style="font-size:2rem; color:rgba(255,255,255,0.1); margin-bottom:15px; display:block;"></i>
+        <h3 style="color:#64748b;">Please select an exam, a class, and a subject from above to start entering marks.</h3>
+    </div>
+    {% endif %}
+</div>
+<!-- END: TEACHER_MARKS_ADD_SECTION -->
+{% endblock %}
+<!-- END: templates/teacher/marks_add.html -->

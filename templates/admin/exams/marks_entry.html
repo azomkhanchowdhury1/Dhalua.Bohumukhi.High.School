@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: MARKS_ENTRY_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Marks Entry</h1>
+        <p>Record student marks for specific exams and subjects.</p>
+    </div>
+
+    <!-- Filter Form -->
+    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); margin-bottom:30px;">
+        <form method="GET" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; align-items:flex-end;">
+            <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8; font-size:0.85rem;">Select Exam</label>
+                <select name="exam" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <option value="">Choose Exam</option>
+                    {% for ex in exams %}
+                    <option value="{{ ex.id }}" {% if selected_exam == ex.id|stringformat:"s" %}selected{% endif %}>{{ ex.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8; font-size:0.85rem;">Select Class</label>
+                <select name="class" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <option value="">Choose Class</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8; font-size:0.85rem;">Select Subject</label>
+                <select name="subject" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <option value="">Choose Subject</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {% if selected_subject == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }} ({{ sub.school_class.name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="view-all-btn" style="padding:12px;">Fetch Students</button>
+        </form>
+    </div>
+
+    {% if students %}
+    <form method="POST" style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+        {% csrf_token %}
+        <table style="width:100%; border-collapse:collapse; color:#fff;">
+            <thead>
+                <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <th style="padding:15px;">Student ID</th>
+                    <th style="padding:15px;">Student Name</th>
+                    <th style="padding:15px;">Marks Obtained</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:15px;">#{{ student.student_id }}</td>
+                    <td style="padding:15px;">{{ student.user.get_full_name }}</td>
+                    <td style="padding:15px;">
+                        <input type="number" name="marks_{{ student.id }}" min="0" max="100" placeholder="0-100" value="{% if student.existing_mark is not None %}{{ student.existing_mark }}{% endif %}" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:8px; color:#fff; width:100px;">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="view-all-btn" style="width:100%; margin-top:20px;">Save All Marks</button>
+    </form>
+    {% endif %}
+</div>
+<!-- END: MARKS_ENTRY_SECTION -->
+{% endblock %}

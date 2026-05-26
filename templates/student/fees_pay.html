@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: FEES_PAY_CSS */
+    .payment-form-card {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+        max-width: 760px;
+        margin: 0 auto;
+    }
+    .payment-header {
+        padding: 2.5rem;
+        background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.05));
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .payment-header h2 { color: #fff; margin: 0 0 6px; }
+    .payment-header p { color: #94a3b8; margin: 0; font-size: 0.9rem; }
+    .payment-body { padding: 2.5rem; }
+    .form-field { margin-bottom: 22px; }
+    .form-field label { display: block; color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.03em; }
+    .form-field select,
+    .form-field input {
+        width: 100%;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding: 14px 18px;
+        color: #fff;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+    .form-field select:focus,
+    .form-field input:focus { outline: none; border-color: #10b981; }
+    .form-field select option { background: #0f172a; }
+    .fee-info-box {
+        background: rgba(16,185,129,0.08);
+        border: 1px solid rgba(16,185,129,0.2);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 22px;
+        color: #10b981;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    /* END: FEES_PAY_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_FEES_PAY_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Pay Fees Online</h1>
+        <p>Submit your fee payments securely. Keep your Transaction ID safe for records.</p>
+    </div>
+
+    <div class="payment-form-card">
+        <div class="payment-header">
+            <h2><i class="fas fa-shield-alt" style="color:#10b981; margin-right:10px;"></i> Secure Fee Submission</h2>
+            <p>Fill in the details below after completing the payment through your bank or mobile banking.</p>
+        </div>
+        <div class="payment-body">
+            <div class="fee-info-box">
+                <i class="fas fa-info-circle" style="font-size:1.2rem; flex-shrink:0;"></i>
+                First pay via bKash/Nagad/Bank, then fill in the Transaction ID to confirm. Your payment will be recorded instantly.
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label>Select Fee Type *</label>
+                    <select name="fee_type" required>
+                        <option value="" disabled selected>— Choose a fee category —</option>
+                        {% for fee in fee_types %}
+                        <option value="{{ fee.id }}">{{ fee.name }} — ৳{{ fee.amount }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label>Amount Paid (৳) *</label>
+                    <input type="number" name="amount" placeholder="Enter exact amount paid" step="0.01" min="1" required>
+                </div>
+                <div class="form-field">
+                    <label>Transaction ID / Reference Number *</label>
+                    <input type="text" name="transaction_id" placeholder="e.g. BKH20241234567" required>
+                </div>
+                <button type="submit" class="view-all-btn" style="width:100%; text-align:center; font-size:1rem; padding:16px;">
+                    <i class="fas fa-check-circle"></i> Confirm Payment Submission
+                </button>
+            </form>
+
+            <div style="margin-top:25px; text-align:center;">
+                <a href="{% url 'student:fees_history' %}" style="color:#94a3b8; font-size:0.9rem; text-decoration:none;">
+                    <i class="fas fa-history"></i> View my past payments
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: STUDENT_FEES_PAY_SECTION -->
+{% endblock %}

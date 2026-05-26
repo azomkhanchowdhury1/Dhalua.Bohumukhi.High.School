@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ACADEMICS_CLASSES_CSS */
+    .academics-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    .action-card {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+    }
+    .class-list-container {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .section-tag {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+        margin-top: 5px;
+    }
+    /* END: ACADEMICS_CLASSES_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: ACADEMICS_CLASSES_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Classes & Sections</h1>
+        <p>Manage school classes and their respective sections.</p>
+    </div>
+
+    <div class="academics-grid">
+        <div class="forms-column">
+            <!-- Add Class Form -->
+            <div class="action-card">
+                <h3>Add New Class</h3>
+                <form method="POST" style="margin-top:15px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_class" value="1">
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="color:#94a3b8; font-size:0.85rem;">Class Name</label>
+                        <input type="text" name="name" placeholder="e.g. Class 6" required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; color:#fff; margin-top:5px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="color:#94a3b8; font-size:0.85rem;">Class Code</label>
+                        <input type="text" name="code" placeholder="e.g. C6" required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; color:#fff; margin-top:5px;">
+                    </div>
+                    <button type="submit" class="view-all-btn" style="width:100%; margin-top:10px;">Create Class</button>
+                </form>
+            </div>
+
+            <!-- Add Section Form -->
+            <div class="action-card">
+                <h3>Add Section</h3>
+                <form method="POST" style="margin-top:15px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_section" value="1">
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="color:#94a3b8; font-size:0.85rem;">Select Class</label>
+                        <select name="class_id" required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; color:#fff; margin-top:5px;">
+                            {% for cls in classes %}
+                            <option value="{{ cls.id }}">{{ cls.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="color:#94a3b8; font-size:0.85rem;">Section Name</label>
+                        <input type="text" name="name" placeholder="e.g. A" required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; color:#fff; margin-top:5px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="color:#94a3b8; font-size:0.85rem;">Room Number</label>
+                        <input type="text" name="room" placeholder="e.g. 101" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:10px; color:#fff; margin-top:5px;">
+                    </div>
+                    <button type="submit" class="view-all-btn" style="width:100%; margin-top:10px;">Create Section</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="list-column">
+            <div class="class-list-container">
+                <h3>Existing Classes & Sections</h3>
+                <div style="margin-top:20px;">
+                    {% for cls in classes %}
+                    <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:15px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="color:#fff; font-size:1.2rem;">{{ cls.name }} <span style="color:#94a3b8; font-size:0.9rem;">({{ cls.code }})</span></h4>
+                            <div style="display:flex; gap:10px;">
+                                <a href="{% url 'admin_panel:edit_class' cls.id %}" style="color:#94a3b8;" title="Edit Class"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'admin_panel:delete_class' cls.id %}" onclick="return confirm('Are you sure you want to delete this class and all its sections?');" style="color:#ef4444;" title="Delete Class"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="sections-list">
+                            <span style="color:#94a3b8; font-size:0.85rem; display:block; margin-bottom:5px;">Sections:</span>
+                            {% for sec in cls.sections.all %}
+                            <span class="section-tag" style="display: inline-flex; align-items: center; gap: 8px; padding-right: 10px; margin-bottom: 8px;">
+                                {{ sec.name }} (Room: {{ sec.room_number|default:"N/A" }})
+                                <a href="{% url 'admin_panel:edit_section' sec.id %}" style="color:#94a3b8; font-size: 0.8rem; margin-left: 2px;" title="Edit Section"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'admin_panel:delete_section' sec.id %}" onclick="return confirm('Are you sure you want to delete this section?');" style="color:#ef4444; font-size: 0.8rem;" title="Delete Section"><i class="fas fa-trash-alt"></i></a>
+                            </span>
+                            {% empty %}
+                            <span style="color:#64748b; font-size:0.85rem; font-style:italic;">No sections added yet.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="text-align:center; padding:50px; color:#94a3b8;">No classes defined yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: ACADEMICS_CLASSES_SECTION -->
+{% endblock %}

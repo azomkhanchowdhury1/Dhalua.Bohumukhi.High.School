@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: FEE_TYPE_DELETE_CONFIRM_SECTION -->
+<div class="dashboard-wrapper">
+    <div style="max-width:550px; margin:60px auto; text-align:center;">
+        <div style="background:rgba(239,68,68,0.08); padding:3rem; border-radius:24px; border:1px solid rgba(239,68,68,0.3);">
+            <div style="font-size:4rem; margin-bottom:20px;">⚠️</div>
+            <h2 style="color:#ef4444; margin-bottom:14px;">Delete Fee Type?</h2>
+            <p style="color:#94a3b8; margin-bottom:10px;">You are about to permanently delete:</p>
+            <p style="color:#fff; font-size:1.3rem; font-weight:800; margin-bottom:6px;">{{ fee_type.name }}</p>
+            <p style="color:#10b981; font-size:1.1rem; font-weight:700; margin-bottom:20px;">Amount: ${{ fee_type.amount }}</p>
+            <div style="background:rgba(239,68,68,0.12); padding:12px 20px; border-radius:12px; margin-bottom:28px; border:1px solid rgba(239,68,68,0.25);">
+                <p style="color:#ef4444; font-size:0.88rem; margin:0;">⚠️ Warning: All fee payments linked to this fee type will also be deleted!</p>
+            </div>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" id="confirm_fee_type_delete_btn" style="background:rgba(239,68,68,0.85); color:#fff; padding:13px 32px; border-radius:12px; border:none; cursor:pointer; font-size:1rem; font-weight:600;">🗑️ Yes, Delete</button>
+                </form>
+                <a href="{% url 'admin_panel:finance_fees' %}" id="cancel_fee_type_delete" style="background:rgba(255,255,255,0.08); color:#94a3b8; padding:13px 32px; border-radius:12px; text-decoration:none; font-size:1rem; display:flex; align-items:center;">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: FEE_TYPE_DELETE_CONFIRM_SECTION -->
+{% endblock %}

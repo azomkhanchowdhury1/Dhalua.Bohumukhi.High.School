@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP - School Management System{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/otp_verify.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- OTP Verify Section Start -->
+<div class="otp-verify-container">
+    <div class="glass-card">
+        <div class="otp-verify-header">
+            <h2>Verify OTP</h2>
+            <p>Enter the 6-digit OTP sent to <br><strong>{{ email }}</strong></p>
+        </div>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'accounts:otp_verify' %}" class="otp-verify-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="otp_code">One Time Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-key icon"></i>
+                    <input type="text" id="otp_code" name="otp_code" required placeholder="Enter 6-digit OTP" maxlength="6" pattern="\d{6}">
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                <span>Verify OTP</span>
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </form>
+        
+        <div class="otp-verify-footer">
+            <p>Didn't receive the OTP? <a href="{% url 'accounts:forgot_password' %}">Resend</a></p>
+        </div>
+    </div>
+</div>
+<!-- OTP Verify Section End -->
+{% endblock %}

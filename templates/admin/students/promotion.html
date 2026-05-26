@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: PROMOTION_ADMIN_CSS */
+    .promotion-panel {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 3rem;
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .selection-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* END: PROMOTION_ADMIN_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: PROMOTION_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Student Promotion</h1>
+        <p>Bulk promote students to the next academic class.</p>
+    </div>
+
+    <div class="promotion-panel">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="selection-info">
+                <div class="target-class">
+                    <label style="color: #94a3b8; margin-right: 15px;">Promote selected to:</label>
+                    <select name="to_class" required style="background: rgba(255,255,255,0.05); color: #fff; padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                        <option value="Graduated">Graduated</option>
+                    </select>
+                </div>
+                <button type="submit" class="view-all-btn" style="margin-top: 0;">Execute Promotion</button>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <th style="padding: 15px;"><input type="checkbox" id="selectAll"></th>
+                        <th style="padding: 15px;">Student ID</th>
+                        <th style="padding: 15px;">Name</th>
+                        <th style="padding: 15px;">Current Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 15px;"><input type="checkbox" name="student_ids" value="{{ student.id }}" class="student-checkbox"></td>
+                        <td style="padding: 15px;">#{{ student.student_id }}</td>
+                        <td style="padding: 15px;">{{ student.user.get_full_name }}</td>
+                        <td style="padding: 15px;">Class {{ student.current_class }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.student-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+</script>
+<!-- END: PROMOTION_SECTION -->
+{% endblock %}

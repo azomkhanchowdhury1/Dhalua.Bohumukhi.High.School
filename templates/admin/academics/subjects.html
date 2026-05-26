@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: SUBJECTS_ADMIN_CSS */
+    .subject-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 18px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        transition: all 0.3s ease;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    .subject-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .subject-card.remembered {
+        border-color: rgba(16, 185, 129, 0.4);
+        background: rgba(16, 185, 129, 0.05);
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
+    }
+    .subject-card.remembered::before {
+        content: '\f02e';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: -7px;
+        right: 14px;
+        color: #10b981;
+        font-size: 1.1rem;
+    }
+    .subject-class-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--home-primary, #6366f1);
+        margin-bottom: 2px;
+    }
+    .subject-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+    }
+    .subject-code {
+        font-size: 0.82rem;
+        color: #94a3b8;
+    }
+    .subject-reminder-note {
+        background: rgba(16, 185, 129, 0.08);
+        color: #10b981;
+        font-size: 0.78rem;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        word-break: break-word;
+    }
+    .subject-actions {
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 10px;
+        margin-top: 6px;
+    }
+    .subject-actions a {
+        color: #64748b;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .subject-actions a:hover { transform: scale(1.1); }
+    .subject-actions a.edit-btn:hover  { color: #6366f1; }
+    .subject-actions a.delete-btn:hover { color: #ef4444; }
+    .subject-actions a.remember-btn:hover { color: #10b981; }
+    .subject-actions a.remembered-active { color: #10b981; }
+
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .filter-bar select {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+        padding: 9px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+    .filter-bar button {
+        padding: 9px 18px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(99,102,241,0.2);
+        color: #a5b4fc;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .filter-bar button:hover { background: rgba(99,102,241,0.4); color: #fff; }
+    .filter-bar a.clear-btn {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .filter-bar a.clear-btn:hover { color: #ef4444; }
+
+    .reminder-item {
+        background: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 14px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    /* END: SUBJECTS_ADMIN_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: ACADEMICS_SUBJECTS_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Subjects Management</h1>
+        <p>Assign and manage subjects for each class.</p>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:20px;">
+        {% for message in messages %}
+        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px;
+            background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %};
+            color:{% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %};
+            border:1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.3){% else %}rgba(16,185,129,0.3){% endif %};">
+            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px; align-items:start;">
+
+        <!-- LEFT: Add Subject Form -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
+            <h3 style="color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-plus-circle" style="color:#6366f1;"></i> Add New Subject
+            </h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label style="color:#94a3b8; font-size:0.82rem;">Select Class</label>
+                        <select name="class_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                            {% for cls in classes %}
+                            <option value="{{ cls.id }}">{{ cls.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label style="color:#94a3b8; font-size:0.82rem;">Subject Name</label>
+                        <input type="text" name="name" placeholder="e.g. Mathematics" required
+                            style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label style="color:#94a3b8; font-size:0.82rem;">Subject Code</label>
+                        <input type="text" name="code" placeholder="e.g. MATH101" required
+                            style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <button type="submit" class="view-all-btn" style="width:100%; margin-top:6px;">
+                        <i class="fas fa-save"></i> Save Subject
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- RIGHT: Subjects List -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                <h3 style="color:#fff; display:flex; align-items:center; gap:10px; margin:0;">
+                    <i class="fas fa-book" style="color:#6366f1;"></i>
+                    All Subjects
+                    <span style="background:rgba(99,102,241,0.15); color:#a5b4fc; font-size:0.75rem; padding:3px 10px; border-radius:20px; font-weight:600;">
+                        {{ subjects|length }}
+                    </span>
+                </h3>
+                <!-- Filter by Class -->
+                <form method="GET" class="filter-bar" style="margin:0;">
+                    <select name="filter_class">
+                        <option value="">All Classes</option>
+                        {% for cls in classes %}
+                        <option value="{{ cls.id }}" {% if filter_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+                    {% if filter_class %}
+                    <a href="{% url 'admin_panel:academics_subjects' %}" class="clear-btn"><i class="fas fa-times"></i> Clear</a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:15px;">
+                {% for sub in subjects %}
+                <div class="subject-card {% if sub.is_remembered %}remembered{% endif %}">
+                    <span class="subject-class-badge">{{ sub.school_class.name }}</span>
+                    <h4 class="subject-name">{{ sub.name }}</h4>
+                    <span class="subject-code"><i class="fas fa-tag" style="font-size:0.72rem;"></i> {{ sub.code }}</span>
+
+                    {% if sub.is_remembered and sub.reminder_note %}
+                    <div class="subject-reminder-note">
+                        <i class="fas fa-info-circle"></i>
+                        {{ sub.reminder_note|truncatechars:50 }}
+                    </div>
+                    {% endif %}
+
+                    <div class="subject-actions">
+                        <a href="{% url 'admin_panel:subject_edit' sub.id %}" class="edit-btn" title="Edit Subject">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'admin_panel:subject_delete' sub.id %}" class="delete-btn" title="Delete Subject">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                        <a href="{% url 'admin_panel:subject_toggle_remember' sub.id %}"
+                           class="remember-btn {% if sub.is_remembered %}remembered-active{% endif %}"
+                           title="{% if sub.is_remembered %}Remove Reminder{% else %}Add Reminder{% endif %}">
+                            <i class="fas fa-bookmark"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column:1/-1; text-align:center; padding:50px; color:#94a3b8;">
+                    <i class="fas fa-book-open" style="font-size:2.5rem; margin-bottom:12px; opacity:0.3;"></i>
+                    <p>No subjects found{% if filter_class %} for the selected class{% endif %}.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Reminders Panel -->
+    {% with remembered=subjects %}
+    {% if subjects %}
+    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(16,185,129,0.2); margin-top:30px;" id="reminders-wrapper">
+        <h3 style="color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-bell" style="color:#10b981;"></i> Active Subject Reminders
+        </h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:15px;" id="reminders-list">
+            {% for sub in subjects %}
+                {% if sub.is_remembered %}
+                <div class="reminder-item">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+                        <strong style="color:#fff; font-size:0.92rem;">{{ sub.name }}</strong>
+                        <span style="font-size:0.7rem; background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:20px; font-weight:600;">{{ sub.school_class.name }}</span>
+                    </div>
+                    <div style="color:#94a3b8; font-size:0.78rem; margin-bottom:8px;">
+                        <i class="fas fa-tag" style="font-size:0.68rem;"></i> {{ sub.code }}
+                    </div>
+                    {% if sub.reminder_note %}
+                    <div style="color:#cbd5e1; font-size:0.82rem; background:rgba(0,0,0,0.2); padding:8px 10px; border-radius:8px; border-left:3px solid #10b981; word-break:break-word;">
+                        {{ sub.reminder_note }}
+                    </div>
+                    {% else %}
+                    <div style="color:#94a3b8; font-size:0.78rem; font-style:italic;">No message attached.</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div id="no-reminders-msg" style="color:#94a3b8; font-size:0.88rem; text-align:center; padding:20px; display:none;">
+                No active subject reminders.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+
+<script>
+    // START: SUBJECTS_REMINDERS_JS
+    document.addEventListener("DOMContentLoaded", function () {
+        const list = document.getElementById('reminders-list');
+        const noMsg = document.getElementById('no-reminders-msg');
+        const wrapper = document.getElementById('reminders-wrapper');
+        if (list && noMsg && wrapper) {
+            const items = list.querySelectorAll('.reminder-item');
+            if (items.length === 0) {
+                noMsg.style.display = 'block';
+            }
+        }
+    });
+    // END: SUBJECTS_REMINDERS_JS
+</script>
+<!-- END: ACADEMICS_SUBJECTS_SECTION -->
+{% endblock %}

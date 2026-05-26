@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<!-- START: CONTACT_CSS_LINK -->
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+<!-- END: CONTACT_CSS_LINK -->
+{% endblock %}
+
+{% block content %}
+<!-- START: CONTACT_PAGE -->
+
+<!-- START: CONTACT_HERO_SECTION -->
+<section class="contact-hero">
+    <div class="container">
+        <div class="hero-content animate-zoom">
+            <h1>Get in Touch</h1>
+            <p>Have questions? We're here to help. Reach out to us for any inquiries about admissions, curriculum, or school events.</p>
+        </div>
+    </div>
+</section>
+<!-- END: CONTACT_HERO_SECTION -->
+
+<!-- START: CONTACT_INFO_SECTION -->
+<section class="contact-info-section glass-container">
+    <div class="container">
+        <div class="info-grid">
+            <div class="info-card animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>Our Location</h3>
+                <p>Dhula, Nangulkot,<br>Cumilla, Bangladesh</p>
+            </div>
+            
+            <div class="info-card animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="icon-circle"><i class="fas fa-phone-alt"></i></div>
+                <h3>Call Us</h3>
+                <p>+880 1607-55120</p>
+                <p>+880 1814-994033</p>
+            </div>
+            
+            <div class="info-card animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                <h3>Email Us</h3>
+                <p>Azomkhanchowdhury1@gmail.com</p>
+                <p>info@dhulahighschool.edu.bd</p>
+            </div>
+            
+            <div class="info-card animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="icon-circle"><i class="fas fa-clock"></i></div>
+                <h3>Office Hours</h3>
+                <p>Sunday - Thursday</p>
+                <p>9:00 AM - 5:00 PM</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: CONTACT_INFO_SECTION -->
+
+<!-- START: CONTACT_FORM_AND_MAP_SECTION -->
+<section class="form-map-section">
+    <div class="container">
+        <div class="form-map-grid">
+            
+            <!-- Map Side -->
+            <div class="map-wrapper glass-panel animate-slide-right">
+                <h3 class="section-title" style="text-align: left; font-size: 2rem;">Find Us Here</h3>
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14652.551609109723!2d91.1398863!3d23.3468508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37549c71c4c3b6d5%3A0x6b6c2266b7c4f4b4!2sNangalkot%2C%20Bangladesh!5e0!3m2!1sen!2sbd!4v1683908354890!5m2!1sen!2sbd" 
+                        width="100%" 
+                        height="400" 
+                        style="border:0; border-radius: 10px;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+            
+            <!-- Form Side -->
+            <div class="contact-form-wrapper glass-panel animate-slide-left">
+                <h3 class="section-title" style="text-align: left; font-size: 2rem;">Send a Message</h3>
+                <p class="form-subtitle">Fill out the form below, and we will get back to you as soon as possible.</p>
+                
+                <form action="{% url 'contact' %}" method="POST" id="contactForm">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" name="name" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Your Email</label>
+                        <input type="email" name="email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Subject</label>
+                        <input type="text" name="subject" placeholder="What is this regarding?" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="5" placeholder="Write your message here..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</section>
+<!-- END: CONTACT_FORM_AND_MAP_SECTION -->
+
+<!-- END: CONTACT_PAGE -->
+{% endblock %}
+
+{% block js %}
+<!-- START: CONTACT_JS_LINK -->
+<script src="{% static 'javascript/contact.js' %}"></script>
+<!-- END: CONTACT_JS_LINK -->
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* Responsive grid styles for Exam Schedule page */
+    .schedule-container {
+        display: grid;
+        grid-template-columns: 1.2fr 2fr 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+    .schedule-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .schedule-row.remembered {
+        background: rgba(16, 185, 129, 0.02);
+    }
+    .action-btn {
+        transition: 0.2s;
+        text-decoration: none;
+    }
+    .edit-action { color: #6366f1; }
+    .delete-action { color: #ef4444; }
+    .remember-action { color: #64748b; }
+    .remember-action.active { color: #10b981; }
+    
+    @media (max-width: 1200px) {
+        .schedule-container {
+            grid-template-columns: 1fr 1.5fr;
+        }
+        .reminders-panel {
+            grid-column: span 2;
+        }
+    }
+    @media (max-width: 768px) {
+        .schedule-container {
+            grid-template-columns: 1fr;
+        }
+        .reminders-panel {
+            grid-column: span 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: EXAM_SCHEDULE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Examination Schedule</h1>
+        <p>Plan and manage exam dates for all subjects.</p>
+    </div>
+
+    <div class="schedule-container">
+        <!-- Add Schedule Form -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+            <h3>Add Exam Schedule</h3>
+            <form method="POST" style="margin-top:20px;">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Select Exam</label>
+                    <select name="exam_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                        {% for ex in exams %}
+                        <option value="{{ ex.id }}">{{ ex.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Select Class</label>
+                    <select name="class_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                        {% for cls in classes %}
+                        <option value="{{ cls.id }}">{{ cls.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Subject</label>
+                    <select name="subject_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                        {% for sub in subjects %}
+                        <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="color:#94a3b8;">Date</label>
+                        <input type="date" name="date" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="color:#94a3b8;">Start Time</label>
+                        <input type="time" name="start_time" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Room</label>
+                    <input type="text" name="room" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+                <button type="submit" class="view-all-btn" style="width:100%; margin-top:20px;">Save Schedule</button>
+            </form>
+        </div>
+
+        <!-- Schedule List -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+            <h3>Published Schedules</h3>
+            <div style="margin-top:20px; overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; color:#fff;">
+                    <thead>
+                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                            <th style="padding:15px;">Date & Time</th>
+                            <th style="padding:15px;">Exam & Class</th>
+                            <th style="padding:15px;">Subject</th>
+                            <th style="padding:15px;">Room</th>
+                            <th style="padding:15px; text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sch in schedules %}
+                        <tr class="schedule-row {% if sch.is_remembered %}remembered{% endif %}">
+                            <td style="padding:15px;">
+                                <strong>{{ sch.date|date:"d M, Y" }}</strong><br>
+                                <span style="font-size:0.85rem; color:#a5b4fc;"><i class="far fa-clock"></i> {{ sch.start_time|time:"H:i" }}</span>
+                            </td>
+                            <td style="padding:15px;">
+                                <strong>{{ sch.exam.name }}</strong><br>
+                                <span style="font-size:0.85rem; color:#94a3b8;">{{ sch.school_class.name }}</span>
+                            </td>
+                            <td style="padding:15px;">
+                                <strong>{{ sch.subject.name }}</strong>
+                                {% if sch.is_remembered and sch.reminder_note %}
+                                <br>
+                                <div style="background:rgba(16, 185, 129, 0.1); color:#10b981; font-size:0.75rem; padding:4px 8px; border-radius:6px; margin-top:5px; border:1px solid rgba(16, 185, 129, 0.2); display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="fas fa-info-circle"></i> {{ sch.reminder_note }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td style="padding:15px;">{{ sch.room_number }}</td>
+                            <td style="padding:15px; text-align:center;">
+                                <div style="display:flex; gap:10px; justify-content:center;">
+                                    <a href="{% url 'admin_panel:exam_schedule_edit' sch.id %}" class="action-btn edit-action" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="{% url 'admin_panel:exam_schedule_delete' sch.id %}" class="action-btn delete-action" title="Delete"><i class="fas fa-trash"></i></a>
+                                    <a href="{% url 'admin_panel:exam_schedule_toggle_remember' sch.id %}" class="action-btn remember-action {% if sch.is_remembered %}active{% endif %}" title="Toggle Reminder"><i class="fas fa-bookmark"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No schedules found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Active Reminders Sidebar -->
+        <div class="reminders-panel" style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+            <h3 style="color:#ffffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.15rem;">
+                <i class="fas fa-bell" style="color: #10b981;"></i> Active Reminders
+            </h3>
+            <div id="reminders-list" style="display: flex; flex-direction: column; gap: 15px;">
+                {% for sch in schedules %}
+                    {% if sch.is_remembered %}
+                    <div class="reminder-item" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 12px; transition: all 0.3s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                            <strong style="color: #ffffff; font-size: 0.9rem;">{{ sch.subject.name }}</strong>
+                            <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: 600;">{{ sch.room_number }}</span>
+                        </div>
+                        <div style="color: #a5b4fc; font-size: 0.75rem; margin-bottom: 8px;">
+                            {{ sch.date|date:"d M, Y" }} | {{ sch.start_time|time:"H:i" }} | {{ sch.school_class.name }}
+                        </div>
+                        {% if sch.reminder_note %}
+                        <div style="color: #cbd5e1; font-size: 0.8rem; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; border-left: 3px solid #10b981; word-break: break-word;">
+                            {{ sch.reminder_note }}
+                        </div>
+                        {% else %}
+                        <div style="color: #94a3b8; font-size: 0.75rem; font-style: italic;">
+                            No message attached.
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <div id="no-reminders-message" style="color: #94a3b8; font-size: 0.85rem; text-align: center; padding: 20px; display: none;">
+                    No active reminders.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const items = document.querySelectorAll('#reminders-list .reminder-item');
+        const message = document.getElementById('no-reminders-message');
+        if (items.length === 0 && message) {
+            message.style.display = 'block';
+        }
+    });
+</script>
+<!-- END: EXAM_SCHEDULE_SECTION -->
+{% endblock %}

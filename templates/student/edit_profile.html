@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_EDIT_PROFILE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Edit Profile</h1>
+        <p>Update your personal information and contact details.</p>
+    </div>
+
+    <div style="max-width:800px; margin:0 auto; background:rgba(15,23,42,0.6); padding:3rem; border-radius:30px; border:1px solid rgba(255,255,255,0.1);">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div class="form-group" style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">First Name</label>
+                    <input type="text" name="first_name" value="{{ student.user.first_name }}" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+                <div class="form-group" style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Last Name</label>
+                    <input type="text" name="last_name" value="{{ student.user.last_name }}" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8;">Phone Number</label>
+                <input type="text" name="phone" value="{{ student.phone_number|default:'' }}" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8;">Permanent Address</label>
+                <textarea name="address" rows="3" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); resize:none;">{{ student.address|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8;">Blood Group</label>
+                <select name="blood_group" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <option value="" {% if not student.blood_group %}selected{% endif %}>Select Blood Group</option>
+                    <option value="A+" {% if student.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                    <option value="A-" {% if student.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                    <option value="B+" {% if student.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                    <option value="B-" {% if student.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                    <option value="O+" {% if student.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                    <option value="O-" {% if student.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                    <option value="AB+" {% if student.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                    <option value="AB-" {% if student.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom:30px; display:flex; flex-direction:column; gap:8px;">
+                <label style="color:#94a3b8;">Profile Picture</label>
+                <input type="file" name="profile_image" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+            </div>
+
+            <div style="display:flex; gap:15px;">
+                <button type="submit" class="view-all-btn" style="flex:2;">Update Profile</button>
+                <a href="{% url 'student:profile' %}" class="view-all-btn" style="flex:1; background:rgba(239, 68, 68, 0.1); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); text-align:center;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: STUDENT_EDIT_PROFILE_SECTION -->
+{% endblock %}

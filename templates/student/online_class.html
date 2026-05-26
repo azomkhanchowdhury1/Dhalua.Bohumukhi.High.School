@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ONLINE_CLASS_CSS */
+    .class-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 30px;
+    }
+    .class-card {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.08);
+        overflow: hidden;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .class-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .class-thumb {
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        position: relative;
+    }
+    .live-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #ef4444;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .live-badge::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        background: #fff;
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .class-body { padding: 1.5rem; }
+    .class-body h3 { color: #fff; margin-bottom: 6px; }
+    .class-body p { color: #94a3b8; font-size: 0.88rem; margin-bottom: 15px; }
+    .class-meta {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .class-meta span {
+        background: rgba(255,255,255,0.05);
+        color: #94a3b8;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    /* END: ONLINE_CLASS_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_ONLINE_CLASS_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Online Classes</h1>
+        <p>Join live sessions and access recorded class materials anytime.</p>
+    </div>
+
+    <div class="class-grid">
+        <!-- Live Class Card -->
+        <div class="class-card">
+            <div class="class-thumb" style="background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3));">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <div class="live-badge">LIVE</div>
+            </div>
+            <div class="class-body">
+                <h3>Mathematics — Chapter 5</h3>
+                <p>Quadratic Equations and their real-world applications discussed live.</p>
+                <div class="class-meta">
+                    <span><i class="fas fa-user-tie"></i> Mr. Karim</span>
+                    <span><i class="fas fa-clock"></i> 10:00 AM</span>
+                    <span><i class="fas fa-users"></i> 24 Students</span>
+                </div>
+                <a href="#" class="view-all-btn" style="width:100%; text-align:center; display:block; background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <i class="fas fa-video"></i> Join Live Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Scheduled Card 1 -->
+        <div class="class-card">
+            <div class="class-thumb" style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.2));">
+                <i class="fas fa-atom"></i>
+            </div>
+            <div class="class-body">
+                <h3>Physics — Electricity</h3>
+                <p>Understanding circuits, resistance, and Ohm's Law through interactive demos.</p>
+                <div class="class-meta">
+                    <span><i class="fas fa-user-tie"></i> Ms. Rahim</span>
+                    <span><i class="fas fa-clock"></i> Tomorrow 11:00 AM</span>
+                </div>
+                <a href="#" class="view-all-btn" style="width:100%; text-align:center; display:block;">
+                    <i class="fas fa-bell"></i> Set Reminder
+                </a>
+            </div>
+        </div>
+
+        <!-- Recorded Card -->
+        <div class="class-card">
+            <div class="class-thumb" style="background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.2));">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="class-body">
+                <h3>English — Essay Writing</h3>
+                <p>Recorded session covering structure, argumentation and language tips.</p>
+                <div class="class-meta">
+                    <span><i class="fas fa-user-tie"></i> Mr. Ali</span>
+                    <span><i class="fas fa-film"></i> Recorded</span>
+                    <span><i class="fas fa-clock"></i> 45 mins</span>
+                </div>
+                <a href="#" class="view-all-btn" style="width:100%; text-align:center; display:block;">
+                    <i class="fas fa-play"></i> Watch Recording
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="class-card" style="border:1px dashed rgba(255,255,255,0.1); background:transparent; display:flex; align-items:center; justify-content:center; min-height:280px;">
+            <div style="text-align:center; padding:2rem;">
+                <i class="fas fa-calendar-plus" style="font-size:3rem; color:rgba(255,255,255,0.1); margin-bottom:15px; display:block;"></i>
+                <h3 style="color:#64748b;">More classes scheduled</h3>
+                <p style="color:#475569; font-size:0.9rem; margin-top:8px;">Check back before each session starts. Your teachers will share the joining link via Notice Board.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: STUDENT_ONLINE_CLASS_SECTION -->
+{% endblock %}

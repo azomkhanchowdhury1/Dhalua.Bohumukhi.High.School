@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: STUDENT_DASHBOARD_SPECIFIC */
+    .stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .stat-icon.courses { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .stat-icon.homework { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .stat-icon.results { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    
+    .module-header.profile { color: #6366f1; }
+    .module-header.academics { color: #0ea5e9; }
+    .module-header.exams { color: #f59e0b; }
+    .module-header.finance { color: #10b981; }
+    .module-header.learning { color: #8b5cf6; }
+    .module-header.notices { color: #ec4899; }
+    /* END: STUDENT_DASHBOARD_SPECIFIC */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_DASHBOARD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Student Dashboard</h1>
+            <p>Welcome back, {{ user.first_name }}! Ready to learn today?</p>
+        </div>
+        <div class="date-display" id="currentDate">
+            <i class="far fa-calendar-alt"></i>
+            <span id="dateText"></span>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon attendance">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>92%</h3>
+                <p>Attendance Rate</p>
+            </div>
+            <div class="stat-trend positive">
+                <i class="fas fa-check-circle"></i> Good
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon courses">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <h3>6</h3>
+                <p>Active Subjects</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon homework">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stat-info">
+                <h3>3</h3>
+                <p>Pending Homework</p>
+            </div>
+            <div class="stat-trend negative">
+                Due Soon
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon results">
+                <i class="fas fa-award"></i>
+            </div>
+            <div class="stat-info">
+                <h3>3.85</h3>
+                <p>Last GPA</p>
+            </div>
+            <div class="stat-trend positive">
+                <i class="fas fa-arrow-up"></i> Improved
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Modules -->
+    <h2 class="section-title">Academic Modules</h2>
+    <div class="modules-grid">
+        <!-- My Profile -->
+        <div class="module-card">
+            <div class="module-header profile">
+                <i class="fas fa-user-circle"></i>
+                <h3>My Profile</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'student:profile' %}"><i class="fas fa-id-card"></i> My Profile & ID</a></li>
+                <li><a href="{% url 'student:edit_profile' %}"><i class="fas fa-edit"></i> Edit Details</a></li>
+                <li><a href="{% url 'student:activity_log' %}"><i class="fas fa-history"></i> Activity Log</a></li>
+            </ul>
+        </div>
+
+        <!-- Academic Module -->
+        <div class="module-card">
+            <div class="module-header academics">
+                <i class="fas fa-school"></i>
+                <h3>Academic</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'student:academic_timetable' %}"><i class="fas fa-table"></i> Class Timetable</a></li>
+                <li><a href="{% url 'student:academic_syllabus' %}"><i class="fas fa-book"></i> Subject Syllabus</a></li>
+                <li><a href="{% url 'student:academic_teachers' %}"><i class="fas fa-user-tie"></i> My Teachers</a></li>
+                <li><a href="{% url 'student:academic_calendar' %}"><i class="fas fa-calendar-alt"></i> School Calendar</a></li>
+            </ul>
+        </div>
+
+        <!-- Exam & Result -->
+        <div class="module-card">
+            <div class="module-header exams">
+                <i class="fas fa-file-alt"></i>
+                <h3>Exams & Results</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'student:exam_routine' %}"><i class="fas fa-calendar-check"></i> Exam Routine</a></li>
+                <li><a href="{% url 'student:exam_results' %}"><i class="fas fa-poll"></i> View Results</a></li>
+                <li><a href="{% url 'student:exam_analytics' %}"><i class="fas fa-chart-line"></i> Performance Analytics</a></li>
+                <li><a href="{% url 'student:exam_admit_card' %}"><i class="fas fa-id-badge"></i> Admit Card</a></li>
+            </ul>
+        </div>
+
+        <!-- Learning Resources -->
+        <div class="module-card">
+            <div class="module-header learning">
+                <i class="fas fa-book-reader"></i>
+                <h3>Learning Tools</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'student:learning_homework' %}"><i class="fas fa-file-upload"></i> Upload Homework</a></li>
+                <li><a href="{% url 'student:learning_study_material' %}"><i class="fas fa-download"></i> Study Material</a></li>
+                <li><a href="{% url 'student:learning_library' %}"><i class="fas fa-university"></i> Library Status</a></li>
+                <li><a href="{% url 'student:learning_online_class' %}"><i class="fas fa-laptop-code"></i> Online Class</a></li>
+            </ul>
+        </div>
+
+        <!-- Fees & Payments -->
+        <div class="module-card">
+            <div class="module-header finance">
+                <i class="fas fa-receipt"></i>
+                <h3>Fees & Dues</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'student:fees_pay' %}"><i class="fas fa-credit-card"></i> Pay Fees Online</a></li>
+                <li><a href="{% url 'student:fees_history' %}"><i class="fas fa-history"></i> Payment History</a></li>
+                <li><a href="{% url 'student:fees_structure' %}"><i class="fas fa-file-invoice"></i> Fee Structure</a></li>
+            </ul>
+        </div>
+
+        <!-- Notices -->
+        <div class="module-card">
+            <div class="module-header notices">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Announcements</h3>
+            </div>
+            <ul class="module-links">
+                {% for notice in notices %}
+                <li>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-envelope-open-text"></i> {{ notice.title|truncatechars:20 }}</a>
+                    {% if notice.attachment %}
+                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
+                {% endfor %}
+                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END: STUDENT_DASHBOARD_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: DASHBOARD_SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set current date
+        const dateSpan = document.getElementById('dateText');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Animation for cards
+        const cards = document.querySelectorAll('.stat-card, .module-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    // END: DASHBOARD_SCRIPT
+</script>
+{% endblock %}

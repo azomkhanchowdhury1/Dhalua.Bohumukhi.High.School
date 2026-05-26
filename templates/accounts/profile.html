@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: SEPARATE_PROFILE_STYLE */
+    .profile-page-wrapper {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 24px;
+        animation: fadeIn 0.8s ease;
+    }
+
+    .profile-header-card {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .profile-pic-box {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        padding: 5px;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        position: relative;
+    }
+
+    .profile-pic-box img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #0f172a;
+    }
+
+    .header-info h1 {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        background: linear-gradient(to right, #fff, #a5b4fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .role-badge {
+        background: rgba(99, 102, 241, 0.2);
+        color: #a5b4fc;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+    }
+
+    .info-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 30px;
+        transition: 0.3s;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .info-card h3 {
+        color: #6366f1;
+        font-size: 18px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .data-row span:first-child {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    .data-row span:last-child {
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .edit-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 10px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .edit-btn:hover {
+        background: #6366f1;
+        border-color: #6366f1;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* END: SEPARATE_PROFILE_STYLE */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page-wrapper">
+    <!-- Header Card -->
+    <div class="profile-header-card">
+        <div class="profile-pic-box">
+            {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="Profile">
+            {% else %}
+                <img src="{% static 'image/default-avatar.png' %}" alt="Default Profile">
+            {% endif %}
+        </div>
+        <div class="header-info">
+            <span class="role-badge">{{ role }}</span>
+            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+            <p style="color: #94a3b8; font-size: 15px; margin-bottom: 15px;">
+                <i class="fas fa-map-marker-alt"></i> {{ profile.address|default:"Location not set" }}
+            </p>
+            <a href="{% url 'accounts:settings' %}" class="edit-btn">
+                <i class="fas fa-user-edit"></i> Edit Profile & Information
+            </a>
+        </div>
+    </div>
+
+    <!-- Data Grid -->
+    <div class="profile-grid">
+        <!-- Personal Info -->
+        <div class="info-card">
+            <h3><i class="fas fa-user"></i> Personal Information</h3>
+            <div class="data-row"><span>Full Name</span><span>{{ user.first_name }} {{ user.last_name }}</span></div>
+            <div class="data-row"><span>Date of Birth</span><span>{{ profile.date_of_birth|default:"Not Set" }}</span></div>
+            <div class="data-row"><span>Gender</span><span>{{ profile.gender|default:"Not Set" }}</span></div>
+            <div class="data-row"><span>Blood Group</span><span>{{ profile.blood_group|default:"Not Set" }}</span></div>
+            <div class="data-row"><span>Username</span><span>{{ user.username }}</span></div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="info-card">
+            <h3><i class="fas fa-address-book"></i> Contact Details</h3>
+            <div class="data-row"><span>Mobile Number</span><span>{{ profile.phone_number|default:"Not Set" }}</span></div>
+            <div class="data-row"><span>Email Address</span><span>{{ user.email }}</span></div>
+            <div class="data-row"><span>Address</span><span>{{ profile.address|default:"Not Set" }}</span></div>
+            <div class="data-row"><span>Account Status</span><span style="color: #10b981;">Active</span></div>
+        </div>
+
+        <!-- Academic/Professional Info -->
+        <div class="info-card">
+            {% if role == 'Student' %}
+            <h3><i class="fas fa-graduation-cap"></i> Academic Details</h3>
+            <div class="data-row"><span>Student ID</span><span>{{ profile.student_id }}</span></div>
+            <div class="data-row"><span>Class</span><span>{{ profile.current_class }}</span></div>
+            <div class="data-row"><span>Roll Number</span><span>{{ profile.roll_number }}</span></div>
+            <div class="data-row"><span>Section</span><span>{{ profile.section }}</span></div>
+            {% elif role == 'Teacher' %}
+            <h3><i class="fas fa-chalkboard-teacher"></i> Professional Details</h3>
+            <div class="data-row"><span>Department</span><span>{{ profile.department }}</span></div>
+            <div class="data-row"><span>Expertise</span><span>{{ profile.subject }}</span></div>
+            <div class="data-row"><span>Qualification</span><span>{{ profile.qualification }}</span></div>
+            {% else %}
+            <h3><i class="fas fa-briefcase"></i> Work Details</h3>
+            <div class="data-row"><span>Role</span><span>{{ role }}</span></div>
+            <div class="data-row"><span>Access Level</span><span>Authorized</span></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

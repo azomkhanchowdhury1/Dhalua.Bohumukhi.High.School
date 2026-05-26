@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<!-- START: ABOUT_US_CSS -->
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+<!-- END: ABOUT_US_CSS -->
+{% endblock %}
+
+{% block content %}
+<!-- START: ABOUT_HERO_SECTION -->
+<section class="about-hero">
+    <div class="about-hero-overlay"></div>
+    <div class="container relative">
+        <h1 class="animate-title">About Dhula High School</h1>
+        <p class="animate-subtitle">A Legacy of Excellence, A Future of Promise.</p>
+    </div>
+</section>
+<!-- END: ABOUT_HERO_SECTION -->
+
+<!-- START: OUR_HISTORY_SECTION -->
+<section class="history-section">
+    <div class="container two-column">
+        <div class="history-content animate-slide-right hidden">
+            <h2 class="section-title left-align">Our History</h2>
+            <p>Founded in 1985, Dhula High School began with a simple mission: to provide accessible, high-quality education to the community. Over the decades, we have grown from a modest single-building setup into a sprawling campus equipped with modern facilities.</p>
+            <p>Our journey is marked by countless success stories of students who have gone on to excel in various fields globally. We remain committed to our founding principles while adapting to the educational needs of the 21st century.</p>
+            <ul class="history-timeline">
+                <li><strong>1985</strong> - Foundation of the school.</li>
+                <li><strong>1998</strong> - Introduction of the Science faculty.</li>
+                <li><strong>2010</strong> - Digital Campus initiative launched.</li>
+                <li><strong>2023</strong> - National Excellence in Education Award.</li>
+            </ul>
+        </div>
+        <div class="history-image animate-slide-left hidden">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1920&auto=format&fit=crop" alt="School History">
+                <div class="image-badge">
+                    <span>35+</span> Years of Excellence
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: OUR_HISTORY_SECTION -->
+
+<!-- START: MISSION_VISION_SECTION -->
+<section class="mission-vision-section">
+    <div class="container grid-2">
+        <div class="glass-card mission-card animate-zoom hidden">
+            <div class="card-icon"><i class="fas fa-bullseye"></i></div>
+            <h3>Our Mission</h3>
+            <p>To foster a stimulating learning environment that encourages critical thinking, creativity, and lifelong learning, preparing our students to be responsible global citizens.</p>
+        </div>
+        <div class="glass-card vision-card animate-zoom hidden" style="transition-delay: 0.2s;">
+            <div class="card-icon"><i class="fas fa-eye"></i></div>
+            <h3>Our Vision</h3>
+            <p>To be the premier educational institution recognized for excellence in academics, sports, and character development, shaping the leaders of tomorrow.</p>
+        </div>
+    </div>
+</section>
+<!-- END: MISSION_VISION_SECTION -->
+
+<!-- START: PRINCIPAL_MESSAGE_SECTION -->
+<section class="principal-message-section">
+    <div class="container">
+        <div class="message-wrapper glass-panel animate-fade-up hidden">
+            <div class="quote-mark"><i class="fas fa-quote-left"></i></div>
+            <div class="message-content">
+                <h2 class="section-title">Principal's Message</h2>
+                <p>"Education is not just about academics; it is about character building, resilience, and compassion. At Dhula High School, we strive every day to ignite the spark of curiosity in every child. We are proud of our modern facilities, but more importantly, we are proud of the safe, inclusive, and nurturing environment we provide. I welcome you to join our family and witness the transformation of your child."</p>
+                
+                <div class="principal-info">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=200&auto=format&fit=crop" alt="Principal">
+                    <div>
+                        <h4>Dr. A. K. M. Rahman</h4>
+                        <span>Principal, Dhula High School</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: PRINCIPAL_MESSAGE_SECTION -->
+
+<!-- START: CORE_VALUES_SECTION -->
+<section class="core-values-section">
+    <div class="container">
+        <h2 class="section-title center-align animate-fade-up hidden">Our Core Values</h2>
+        <div class="values-grid">
+            <div class="value-item animate-slide-up hidden">
+                <div class="icon"><i class="fas fa-book-reader"></i></div>
+                <h4>Integrity</h4>
+                <p>We act with honesty, transparency, and ethical conduct in all our endeavors.</p>
+            </div>
+            <div class="value-item animate-slide-up hidden" style="transition-delay: 0.1s;">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <h4>Inclusivity</h4>
+                <p>We celebrate diversity and create a welcoming environment for all students.</p>
+            </div>
+            <div class="value-item animate-slide-up hidden" style="transition-delay: 0.2s;">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <h4>Innovation</h4>
+                <p>We embrace modern methodologies and technologies to enhance learning.</p>
+            </div>
+            <div class="value-item animate-slide-up hidden" style="transition-delay: 0.3s;">
+                <div class="icon"><i class="fas fa-hands-helping"></i></div>
+                <h4>Compassion</h4>
+                <p>We teach empathy and encourage our students to serve the community.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: CORE_VALUES_SECTION -->
+
+{% endblock %}
+
+{% block js %}
+<!-- START: ABOUT_US_JS -->
+<script src="{% static 'javascript/about.js' %}"></script>
+<!-- END: ABOUT_US_JS -->
+{% endblock %}

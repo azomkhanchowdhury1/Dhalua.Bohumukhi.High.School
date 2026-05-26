@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: PARENT_DASHBOARD_SPECIFIC */
+    .stat-icon.child { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .stat-icon.results { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    .stat-icon.fees { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    
+    .module-header.progress { color: #6366f1; }
+    .module-header.attendance { color: #10b981; }
+    .module-header.finance { color: #f59e0b; }
+    .module-header.exams { color: #8b5cf6; }
+    .module-header.schedule { color: #0ea5e9; }
+    .module-header.communication { color: #ec4899; }
+    /* END: PARENT_DASHBOARD_SPECIFIC */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: PARENT_DASHBOARD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Parent Dashboard</h1>
+            <p>Welcome back, {{ user.first_name }}! Here's an overview of your child's progress.</p>
+        </div>
+        <div class="date-display" id="currentDate">
+            <i class="far fa-calendar-alt"></i>
+            <span id="dateText"></span>
+        </div>
+    </div>
+
+    <!-- Child Summary Stats -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon child">
+                <i class="fas fa-child"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Active</h3>
+                <p>Child Status</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon attendance">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>94%</h3>
+                <p>Attendance</p>
+            </div>
+            <div class="stat-trend positive">
+                Above Average
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon results">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>A-</h3>
+                <p>Latest Grade</p>
+            </div>
+            <div class="stat-trend positive">
+                <i class="fas fa-arrow-up"></i> Improved
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon fees">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-info">
+                <h3>$150</h3>
+                <p>Pending Fees</p>
+            </div>
+            <div class="stat-trend negative">
+                Due in 5 days
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent Modules -->
+    <h2 class="section-title">Child Monitoring & Services</h2>
+    <div class="modules-grid">
+        <!-- Academic Progress -->
+        <div class="module-card">
+            <div class="module-header progress">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Academic Progress</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-poll"></i> View Report Cards</a></li>
+                <li><a href="#"><i class="fas fa-chart-pie"></i> Performance Analytics</a></li>
+                <li><a href="#"><i class="fas fa-book-open"></i> Subject Syllabus</a></li>
+            </ul>
+        </div>
+
+        <!-- Attendance Monitoring -->
+        <div class="module-card">
+            <div class="module-header attendance">
+                <i class="fas fa-user-check"></i>
+                <h3>Attendance</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-calendar-day"></i> Monthly Summary</a></li>
+                <li><a href="#"><i class="fas fa-history"></i> Detailed Absence Log</a></li>
+                <li><a href="#"><i class="fas fa-envelope-open-text"></i> Leave Notification</a></li>
+            </ul>
+        </div>
+
+        <!-- Finance & Fees -->
+        <div class="module-card">
+            <div class="module-header finance">
+                <i class="fas fa-receipt"></i>
+                <h3>Fees & Payments</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-credit-card"></i> Pay Online Now</a></li>
+                <li><a href="#"><i class="fas fa-file-invoice"></i> Payment Receipts</a></li>
+                <li><a href="#"><i class="fas fa-list-alt"></i> Fee Structure</a></li>
+            </ul>
+        </div>
+
+        <!-- Exams & Routine -->
+        <div class="module-card">
+            <div class="module-header exams">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Exams & Routine</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-calendar-day"></i> Exam Schedule</a></li>
+                <li><a href="#"><i class="fas fa-table"></i> Class Timetable</a></li>
+                <li><a href="#"><i class="fas fa-id-badge"></i> Download Admit Card</a></li>
+            </ul>
+        </div>
+
+        <!-- School Information -->
+        <div class="module-card">
+            <div class="module-header schedule">
+                <i class="fas fa-info-circle"></i>
+                <h3>School Info</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-calendar-star"></i> Academic Calendar</a></li>
+                <li><a href="#"><i class="fas fa-bus"></i> Transport Status</a></li>
+                <li><a href="#"><i class="fas fa-utensils"></i> Canteen Menu</a></li>
+            </ul>
+        </div>
+
+        <!-- Communication -->
+        <div class="module-card">
+            <div class="module-header communication">
+                <i class="fas fa-comments"></i>
+                <h3>Communication</h3>
+            </div>
+            <ul class="module-links">
+                {% for notice in notices %}
+                <li>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{ notice.title|truncatechars:20 }}</a>
+                    {% if notice.attachment %}
+                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
+                {% endfor %}
+                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END: PARENT_DASHBOARD_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: DASHBOARD_SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set current date
+        const dateSpan = document.getElementById('dateText');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Animation for cards
+        const cards = document.querySelectorAll('.stat-card, .module-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    // END: DASHBOARD_SCRIPT
+</script>
+{% endblock %}

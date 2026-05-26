@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: STUDENT_LIST_CSS */
+    .management-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .search-bar {
+        display: flex;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .search-bar input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        outline: none;
+        width: 250px;
+    }
+    .student-table-container {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 2rem;
+        overflow-x: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #fff;
+    }
+    th {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    td {
+        padding: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .status-pill {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .action-btns {
+        display: flex;
+        gap: 10px;
+    }
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        transition: all 0.3s;
+    }
+    .btn-icon:hover { background: var(--home-primary); }
+    /* END: STUDENT_LIST_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_LIST_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="management-header">
+        <div class="welcome-text">
+            <h1>Student Management</h1>
+            <p>View and manage all enrolled students.</p>
+        </div>
+        <div class="header-actions">
+            <form class="search-bar" method="GET">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search by name or ID..." value="{{ query }}">
+                <button type="submit" style="display:none"></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="student-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Roll</th>
+                    <th>Gender</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td><strong>#{{ student.student_id }}</strong></td>
+                    <td>{{ student.user.first_name }} {{ student.user.last_name }}</td>
+                    <td>Class {{ student.current_class }}</td>
+                    <td>{{ student.roll_number|default:"-" }}</td>
+                    <td>{{ student.gender }}</td>
+                    <td><span class="status-pill status-active">Active</span></td>
+                    <td class="action-btns">
+                        <a href="#" class="btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a href="#" class="btn-icon" title="Delete" style="color: #ef4444;"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 50px;">No students found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: STUDENT_LIST_SECTION -->
+{% endblock %}

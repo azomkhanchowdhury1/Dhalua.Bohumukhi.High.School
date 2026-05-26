@@ -1,0 +1,239 @@
+<!-- START: templates/admin/teachers/teacher_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: TEACHER_LIST_CSS */
+    .management-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .header-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .teacher-table-container {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 2rem;
+        overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; color: #fff; }
+    th {
+        text-align: left;
+        padding: 15px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    td { padding: 15px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    tbody tr { transition: background 0.2s ease; }
+    tbody tr:hover { background: rgba(99, 102, 241, 0.04); }
+    .profile-info { display: flex; align-items: center; gap: 12px; }
+    .profile-avatar {
+        width: 42px; height: 42px; border-radius: 50%;
+        object-fit: cover; flex-shrink: 0;
+    }
+    .profile-avatar-placeholder {
+        width: 42px; height: 42px; border-radius: 50%;
+        background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3));
+        display: flex; align-items: center; justify-content: center;
+        color: #a5b4fc; font-size: 1rem; flex-shrink: 0;
+    }
+    .teacher-name { font-weight: 600; color: #f1f5f9; font-size: 0.95rem; }
+    .teacher-email { font-size: 0.82rem; color: #64748b; margin-top: 2px; }
+    .dept-badge {
+        padding: 5px 12px;
+        background: rgba(99, 102, 241, 0.12);
+        color: #a5b4fc;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        white-space: nowrap;
+    }
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .status-active { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.25); }
+    .status-inactive { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-action {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 7px 14px; border-radius: 10px; font-size: 0.8rem;
+        font-weight: 600; text-decoration: none; border: none;
+        cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-view { background: rgba(14,165,233,0.15); color: #38bdf8; border: 1px solid rgba(14,165,233,0.2); }
+    .btn-view:hover { background: rgba(14,165,233,0.3); }
+    .btn-edit { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+    .btn-edit:hover { background: rgba(245,158,11,0.3); }
+    .btn-delete { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .btn-delete:hover { background: rgba(239,68,68,0.25); }
+    .btn-toggle-on { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .btn-toggle-on:hover { background: rgba(239,68,68,0.25); }
+    .btn-toggle-off { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .btn-toggle-off:hover { background: rgba(16,185,129,0.25); }
+    .btn-primary-add {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 11px 22px; border-radius: 12px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+    }
+    .btn-primary-add:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.45); }
+    .search-form {
+        display: flex; align-items: center; gap: 0;
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px; overflow: hidden;
+    }
+    .search-form input {
+        background: transparent; border: none; padding: 10px 16px;
+        color: #fff; outline: none; width: 220px; font-size: 0.9rem;
+    }
+    .search-form input::placeholder { color: #64748b; }
+    .search-form button {
+        background: rgba(99,102,241,0.2); border: none; padding: 10px 16px;
+        color: #a5b4fc; cursor: pointer; transition: background 0.2s;
+    }
+    .search-form button:hover { background: rgba(99,102,241,0.4); }
+    .empty-state { text-align: center; padding: 60px 20px; color: #64748b; }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; display: block; opacity: 0.3; }
+    .salary-text { font-weight: 600; color: #10b981; }
+    /* END: TEACHER_LIST_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TEACHER_LIST_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="management-header">
+        <div class="welcome-text">
+            <h1>Teacher Management</h1>
+            <p>সকল শিক্ষকের তথ্য দেখুন, আপডেট করুন এবং পরিচালনা করুন।</p>
+        </div>
+        <div class="header-actions">
+            <form class="search-form" method="GET">
+                <input type="text" name="search" placeholder="নাম, ID বা বিভাগ দিয়ে খুঁজুন..." value="{{ query }}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <a href="{% url 'admin_panel:teacher_add' %}" class="btn-primary-add">
+                <i class="fas fa-user-plus"></i> নতুন শিক্ষক যোগ করুন
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div style="display:flex; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+        <div style="background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.15); border-radius:16px; padding:16px 24px; display:flex; align-items:center; gap:12px;">
+            <i class="fas fa-chalkboard-teacher" style="color:#6366f1; font-size:1.4rem;"></i>
+            <div>
+                <div style="color:#fff; font-size:1.4rem; font-weight:700;">{{ teachers|length }}</div>
+                <div style="color:#94a3b8; font-size:0.8rem;">মোট শিক্ষক</div>
+            </div>
+        </div>
+        <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15); border-radius:16px; padding:16px 24px; display:flex; align-items:center; gap:12px;">
+            <i class="fas fa-check-circle" style="color:#10b981; font-size:1.4rem;"></i>
+            <div>
+                <div style="color:#fff; font-size:1.4rem; font-weight:700;">{{ teachers|length }}</div>
+                <div style="color:#94a3b8; font-size:0.8rem;">সক্রিয় শিক্ষক</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="teacher-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Teacher ID</th>
+                    <th>নাম ও ইমেইল</th>
+                    <th>বিভাগ</th>
+                    <th>বিষয়</th>
+                    <th>বেতন</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>পরিচালনা</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td style="color:#64748b; font-size:0.85rem;">{{ forloop.counter }}</td>
+                    <td><strong style="color:#a5b4fc;">#{{ teacher.teacher_id|default:"N/A" }}</strong></td>
+                    <td>
+                        <div class="profile-info">
+                            {% if teacher.profile_image %}
+                            <img src="{{ teacher.profile_image.url }}" alt="" class="profile-avatar">
+                            {% else %}
+                            <div class="profile-avatar-placeholder"><i class="fas fa-user-tie"></i></div>
+                            {% endif %}
+                            <div>
+                                <div class="teacher-name">{{ teacher.user.get_full_name }}</div>
+                                <div class="teacher-email">{{ teacher.user.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="dept-badge">{{ teacher.department|default:"—" }}</span></td>
+                    <td style="color:#cbd5e1;">{{ teacher.subject|default:"—" }}</td>
+                    <td><span class="salary-text">৳{{ teacher.salary|default:"0" }}</span></td>
+                    <td>
+                        {% if teacher.user.is_active %}
+                        <span class="status-badge status-active"><i class="fas fa-circle" style="font-size:0.5rem;"></i> সক্রিয়</span>
+                        {% else %}
+                        <span class="status-badge status-inactive"><i class="fas fa-circle" style="font-size:0.5rem;"></i> নিষ্ক্রিয়</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'admin_panel:teacher_detail' teacher.id %}" class="btn-action btn-view" title="বিস্তারিত দেখুন">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:teacher_edit' teacher.id %}" class="btn-action btn-edit" title="সম্পাদনা করুন">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if teacher.user.is_active %}
+                            <a href="{% url 'admin_panel:teacher_toggle_active' teacher.id %}" class="btn-action btn-toggle-on" title="নিষ্ক্রিয় করুন" onclick="return confirm('এই শিক্ষকের অ্যাকাউন্ট নিষ্ক্রিয় করবেন?')">
+                                <i class="fas fa-ban"></i>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'admin_panel:teacher_toggle_active' teacher.id %}" class="btn-action btn-toggle-off" title="সক্রিয় করুন" onclick="return confirm('এই শিক্ষকের অ্যাকাউন্ট সক্রিয় করবেন?')">
+                                <i class="fas fa-check"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'admin_panel:teacher_delete' teacher.id %}" class="btn-action btn-delete" title="মুছে ফেলুন">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <p style="font-size:1rem; margin-bottom:16px;">কোনো শিক্ষক পাওয়া যায়নি।</p>
+                            <a href="{% url 'admin_panel:teacher_add' %}" class="btn-primary-add" style="display:inline-flex;">
+                                <i class="fas fa-user-plus"></i> প্রথম শিক্ষক যোগ করুন
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: TEACHER_LIST_SECTION -->
+{% endblock %}
+<!-- END: templates/admin/teachers/teacher_list.html -->

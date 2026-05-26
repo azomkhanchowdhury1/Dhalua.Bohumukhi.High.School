@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration - School Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+    <!-- START: REGISTER_SECTION -->
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Submit your details for admin approval</p>
+        </div>
+
+        <form id="registerForm" method="POST" action="{% url 'accounts:register' %}">
+            {% csrf_token %}
+            
+            <div class="role-selector">
+                <input type="radio" id="regRoleStudent" name="role" value="Student" required>
+                <label for="regRoleStudent">Student</label>
+
+                <input type="radio" id="regRoleTeacher" name="role" value="Teacher">
+                <label for="regRoleTeacher">Teacher</label>
+
+                <input type="radio" id="regRoleStaff" name="role" value="Staff">
+                <label for="regRoleStaff">Staff</label>
+
+                <input type="radio" id="regRoleParent" name="role" value="Parent">
+                <label for="regRoleParent">Parent</label>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <input type="text" id="first_name" name="first_name" required>
+                    <label for="first_name">First Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="last_name" name="last_name" required>
+                    <label for="last_name">Last Name</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <input type="email" id="email" name="email" required>
+                    <label for="email">Email Address</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="phone_number" name="phone_number" required>
+                    <label for="phone_number">Phone Number</label>
+                </div>
+            </div>
+
+            <div class="input-group full-width">
+                <textarea id="additional_info" name="additional_info"></textarea>
+                <label for="additional_info">Additional Info (Optional)</label>
+            </div>
+
+            <button type="submit" class="register-btn">Submit Registration</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{% url 'accounts:login' %}">Sign in here</a>
+        </div>
+    </div>
+    <!-- END: REGISTER_SECTION -->
+
+    <script src="{% static 'javascript/register.js' %}"></script>
+</body>
+</html>

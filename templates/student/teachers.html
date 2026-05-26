@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_TEACHERS_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>My Teachers</h1>
+        <p>Information about instructors assigned to {{ student.current_class }}.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px, 1fr)); gap:30px;">
+        {% for t in teachers %}
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); display:flex; gap:20px; align-items:center;">
+            <img src="{% if t.profile_image %}{{ t.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Teacher" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--home-primary);">
+            <div>
+                <h3 style="color:#fff; margin-bottom:5px;">{{ t.user.get_full_name }}</h3>
+                <p style="color:var(--home-primary); font-weight:700; font-size:0.9rem;">{{ t.department }} Department</p>
+                <div style="margin-top:10px; display:flex; gap:10px;">
+                    <a href="mailto:{{ t.user.email }}" style="color:#94a3b8; font-size:1.2rem;"><i class="fas fa-envelope"></i></a>
+                    <a href="#" style="color:#94a3b8; font-size:1.2rem;"><i class="fas fa-comments"></i></a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column:1/-1; text-align:center; padding:100px; background:rgba(15,23,42,0.6); border-radius:30px; border:1px dashed rgba(255,255,255,0.1);">
+            <h3 style="color:#94a3b8;">No teachers assigned to your class yet.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- END: STUDENT_TEACHERS_SECTION -->
+{% endblock %}

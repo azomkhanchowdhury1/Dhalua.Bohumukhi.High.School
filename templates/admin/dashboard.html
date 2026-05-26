@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: ADMIN_DASHBOARD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Admin Dashboard</h1>
+            <p>Managing Dhula High School's excellence</p>
+        </div>
+        <div class="date-display" id="currentDate">
+            <i class="far fa-calendar-alt"></i>
+            <span id="dateText"></span>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon students">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="stat-info">
+                <h3>1,240</h3>
+                <p>Total Students</p>
+            </div>
+            <div class="stat-trend positive">
+                <i class="fas fa-arrow-up"></i> 12%
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon teachers">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-info">
+                <h3>85</h3>
+                <p>Total Teachers</p>
+            </div>
+            <div class="stat-trend">
+                <i class="fas fa-equals"></i> 0%
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon staff">
+                <i class="fas fa-users-cog"></i>
+            </div>
+            <div class="stat-info">
+                <h3>32</h3>
+                <p>Total Staff</p>
+            </div>
+            <div class="stat-trend positive">
+                <i class="fas fa-arrow-up"></i> 5%
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon revenue">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-info">
+                <h3>$45,200</h3>
+                <p>Total Revenue</p>
+            </div>
+            <div class="stat-trend negative">
+                <i class="fas fa-arrow-down"></i> 2%
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Modules -->
+    <h2 class="section-title">Management Modules</h2>
+    <div class="modules-grid">
+        <!-- Student Module -->
+        <div class="module-card">
+            <div class="module-header students">
+                <i class="fas fa-user-graduate"></i>
+                <h3>Students</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:student_admission' %}"><i class="fas fa-plus-circle"></i> New Admission</a></li>
+                <li><a href="{% url 'admin_panel:student_list' %}"><i class="fas fa-list"></i> Student List</a></li>
+                <li><a href="{% url 'admin_panel:student_attendance' %}"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a href="{% url 'admin_panel:student_promotion' %}"><i class="fas fa-user-plus"></i> Promotion</a></li>
+            </ul>
+        </div>
+
+        <!-- Teacher Module -->
+        <div class="module-card">
+            <div class="module-header teachers">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3>Teachers</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:teacher_add' %}"><i class="fas fa-user-plus"></i> Add Teacher</a></li>
+                <li><a href="{% url 'admin_panel:teacher_list' %}"><i class="fas fa-address-book"></i> Teacher List</a></li>
+                <li><a href="{% url 'admin_panel:teacher_salary' %}"><i class="fas fa-wallet"></i> Salary Management</a></li>
+                <li><a href="{% url 'admin_panel:teacher_assignments' %}"><i class="fas fa-calendar-alt"></i> Assignments</a></li>
+            </ul>
+        </div>
+
+        <!-- Academic Module -->
+        <div class="module-card">
+            <div class="module-header academics">
+                <i class="fas fa-school"></i>
+                <h3>Academics</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:academics_classes' %}"><i class="fas fa-layer-group"></i> Classes & Sections</a></li>
+                <li><a href="{% url 'admin_panel:academics_subjects' %}"><i class="fas fa-book"></i> Subjects</a></li>
+                <li><a href="{% url 'admin_panel:academics_timetable' %}"><i class="fas fa-clock"></i> Timetable</a></li>
+                <li><a href="{% url 'admin_panel:academics_syllabus' %}"><i class="fas fa-file-alt"></i> Syllabus</a></li>
+            </ul>
+        </div>
+
+        <!-- Exam Module -->
+        <div class="module-card">
+            <div class="module-header exams">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Examinations</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:exam_schedule' %}"><i class="fas fa-calendar-day"></i> Exam Schedule</a></li>
+                <li><a href="{% url 'admin_panel:exam_marks_entry' %}"><i class="fas fa-edit"></i> Marks Entry</a></li>
+                <li><a href="{% url 'admin_panel:exam_results' %}"><i class="fas fa-poll"></i> Results</a></li>
+                <li><a href="{% url 'admin_panel:exam_grading' %}"><i class="fas fa-award"></i> Grading System</a></li>
+            </ul>
+        </div>
+
+        <!-- Finance Module -->
+        <div class="module-card">
+            <div class="module-header finance">
+                <i class="fas fa-money-check-alt"></i>
+                <h3>Finance</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:finance_fees' %}"><i class="fas fa-receipt"></i> Fee Collection</a></li>
+                <li><a href="{% url 'admin_panel:finance_expenses' %}"><i class="fas fa-file-invoice-dollar"></i> Expenses</a></li>
+                <li><a href="{% url 'admin_panel:finance_history' %}"><i class="fas fa-history"></i> Payment History</a></li>
+                <li><a href="{% url 'admin_panel:finance_reports' %}"><i class="fas fa-chart-pie"></i> Financial Reports</a></li>
+            </ul>
+        </div>
+
+        <!-- Communication Module -->
+        <div class="module-card">
+            <div class="module-header communication">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Communication</h3>
+            </div>
+            <ul class="module-links">
+                {% for notice in notices %}
+                <li>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-sticky-note"></i> {{ notice.title|truncatechars:20 }}</a>
+                    {% if notice.attachment %}
+                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><a href="#"><i class="fas fa-info-circle"></i> No notices</a></li>
+                {% endfor %}
+                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-list"></i> View All Notices</a></li>
+                <li><a href="{% url 'admin:notices_notice_add' %}"><i class="fas fa-plus-circle"></i> Create New Notice</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END: ADMIN_DASHBOARD_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: DASHBOARD_SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set current date
+        const dateSpan = document.getElementById('dateText');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Animation for cards
+        const cards = document.querySelectorAll('.stat-card, .module-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    // END: DASHBOARD_SCRIPT
+</script>
+{% endblock %}

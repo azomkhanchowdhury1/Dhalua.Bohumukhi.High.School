@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: EXAM_SCHEDULE_EDIT_CSS */
+    .edit-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .edit-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        background: linear-gradient(to right, #ffffff, #a5b4fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: rgba(99, 102, 241, 0.5);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.15);
+    }
+
+    .form-control option {
+        background: #0f172a;
+        color: #fff;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #10b981;
+        cursor: pointer;
+    }
+
+    .checkbox-group label {
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .btn-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    /* END: EXAM_SCHEDULE_EDIT_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: EXAM_SCHEDULE_EDIT_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="edit-container">
+        <h2 class="edit-title">Edit Exam Schedule</h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="exam_id">Select Exam</label>
+                <select name="exam_id" id="exam_id" required class="form-control">
+                    {% for ex in exams %}
+                    <option value="{{ ex.id }}" {% if ex.id == schedule.exam.id %}selected{% endif %}>{{ ex.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="class_id">Select Class</label>
+                <select name="class_id" id="class_id" required class="form-control">
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if cls.id == schedule.school_class.id %}selected{% endif %}>{{ cls.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject_id">Subject</label>
+                <select name="subject_id" id="subject_id" required class="form-control">
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {% if sub.id == schedule.subject.id %}selected{% endif %}>{{ sub.name }} ({{ sub.school_class.name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" required class="form-control" value="{{ schedule.date|date:'Y-m-d' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="start_time">Start Time</label>
+                <input type="time" name="start_time" id="start_time" required class="form-control" value="{{ schedule.start_time|time:'H:i' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="room">Room</label>
+                <input type="text" name="room" id="room" required class="form-control" value="{{ schedule.room_number }}">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="is_remembered" id="is_remembered" {% if schedule.is_remembered %}checked{% endif %}>
+                <label for="is_remembered">Set Active Reminder (Bookmark)</label>
+            </div>
+
+            <div class="form-group">
+                <label for="reminder_note">Reminder Note / Notice for this Schedule</label>
+                <textarea name="reminder_note" id="reminder_note" rows="3" class="form-control" placeholder="e.g. Bring exam board, calculators allowed...">{{ schedule.reminder_note|default:'' }}</textarea>
+            </div>
+
+            <div class="btn-container">
+                <a href="{% url 'admin_panel:exam_schedule' %}" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: EXAM_SCHEDULE_EDIT_SECTION -->
+{% endblock %}

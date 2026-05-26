@@ -1,0 +1,222 @@
+/* START: DASHBOARD_STYLE */
+.dashboard-wrapper {
+    padding: 40px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+}
+
+.welcome-text h1 {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(to right, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+
+.welcome-text p {
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+.date-display {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-display i {
+    color: #6366f1;
+}
+
+/* Stats Cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.stat-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.stat-icon.students { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.stat-icon.teachers { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.stat-icon.staff { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+.stat-icon.revenue { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.stat-info h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.stat-info p {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.stat-trend {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-trend.positive { color: #10b981; }
+.stat-trend.negative { color: #ef4444; }
+
+/* Modules Grid */
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.module-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.module-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(99, 102, 241, 0.2);
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.module-header {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.module-header i {
+    font-size: 20px;
+}
+
+.module-header.students { color: #6366f1; }
+.module-header.teachers { color: #8b5cf6; }
+.module-header.academics { color: #0ea5e9; }
+.module-header.exams { color: #f59e0b; }
+.module-header.finance { color: #10b981; }
+.module-header.communication { color: #ec4899; }
+
+.module-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.module-links {
+    list-style: none;
+    padding: 15px;
+}
+
+.module-links li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.module-links li a:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #ffffff;
+    padding-left: 20px;
+}
+
+.module-links li a i {
+    font-size: 14px;
+    color: #6366f1;
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .modules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* END: DASHBOARD_STYLE */

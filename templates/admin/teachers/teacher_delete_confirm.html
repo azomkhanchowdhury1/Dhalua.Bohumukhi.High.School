@@ -1,0 +1,147 @@
+<!-- START: templates/admin/teachers/teacher_delete_confirm.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: TEACHER_DELETE_CSS */
+    .delete-container {
+        max-width: 560px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+    .delete-icon-ring {
+        width: 90px; height: 90px;
+        background: rgba(239,68,68,0.12);
+        border: 2px solid rgba(239,68,68,0.3);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.2rem; color: #ef4444;
+        animation: pulse-red 2s ease infinite;
+    }
+    @keyframes pulse-red {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.2); }
+        50% { box-shadow: 0 0 0 16px rgba(239,68,68,0); }
+    }
+    .delete-card {
+        background: rgba(15,23,42,0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(239,68,68,0.2);
+        border-radius: 28px;
+        padding: 2.5rem 2rem;
+    }
+    .delete-card h2 {
+        font-size: 1.5rem; font-weight: 700;
+        color: #fff; margin-bottom: 0.75rem;
+    }
+    .delete-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; }
+    .teacher-info-box {
+        background: rgba(239,68,68,0.07);
+        border: 1px solid rgba(239,68,68,0.15);
+        border-radius: 16px;
+        padding: 1.2rem 1.5rem;
+        margin: 1.5rem 0;
+        display: flex; align-items: center; gap: 14px; text-align: left;
+    }
+    .teacher-info-box .info-avatar {
+        width: 52px; height: 52px; border-radius: 50%;
+        background: rgba(239,68,68,0.15);
+        display: flex; align-items: center; justify-content: center;
+        color: #ef4444; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .teacher-info-box img {
+        width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+    }
+    .teacher-info-box .info-text .name { color: #f1f5f9; font-weight: 700; font-size: 1rem; }
+    .teacher-info-box .info-text .meta { color: #64748b; font-size: 0.83rem; margin-top: 3px; }
+    .warning-list {
+        background: rgba(245,158,11,0.06);
+        border: 1px solid rgba(245,158,11,0.15);
+        border-radius: 14px; padding: 1rem 1.5rem;
+        text-align: left; margin-bottom: 1.5rem;
+    }
+    .warning-list p { color: #f59e0b; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+    .warning-list ul { list-style: none; padding: 0; }
+    .warning-list ul li {
+        color: #94a3b8; font-size: 0.83rem;
+        padding: 4px 0; display: flex; align-items: center; gap: 8px;
+    }
+    .warning-list ul li::before { content: "•"; color: #f59e0b; }
+    .btn-row { display: flex; gap: 12px; }
+    .btn-cancel-link {
+        flex: 1; padding: 13px; border-radius: 14px;
+        background: rgba(255,255,255,0.05); color: #94a3b8;
+        border: 1px solid rgba(255,255,255,0.1); text-decoration: none;
+        font-weight: 600; font-size: 0.95rem; text-align: center;
+        transition: all 0.2s; display: flex; align-items: center;
+        justify-content: center; gap: 8px;
+    }
+    .btn-cancel-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-confirm-delete {
+        flex: 1; padding: 13px; border: none; border-radius: 14px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: #fff; font-weight: 700; font-size: 0.95rem;
+        cursor: pointer; transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-confirm-delete:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239,68,68,0.45); }
+    /* END: TEACHER_DELETE_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TEACHER_DELETE_CONFIRM_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="delete-container">
+        <div class="delete-card">
+            <div class="delete-icon-ring">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>নিশ্চিতভাবে মুছে ফেলবেন?</h2>
+            <p>এই শিক্ষককে মুছে ফেলার পর আর পুনরুদ্ধার করা যাবে না।</p>
+
+            <!-- Teacher Info Preview -->
+            <div class="teacher-info-box">
+                {% if teacher.profile_image %}
+                <img src="{{ teacher.profile_image.url }}" alt="">
+                {% else %}
+                <div class="info-avatar"><i class="fas fa-user-tie"></i></div>
+                {% endif %}
+                <div class="info-text">
+                    <div class="name">{{ teacher.user.get_full_name }}</div>
+                    <div class="meta">#{{ teacher.teacher_id|default:"N/A" }} &nbsp;·&nbsp; {{ teacher.department|default:"বিভাগ নেই" }}</div>
+                    <div class="meta">{{ teacher.user.email }}</div>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="warning-list">
+                <p><i class="fas fa-exclamation-circle"></i> নিচের সকল ডেটা স্থায়ীভাবে মুছে যাবে:</p>
+                <ul>
+                    <li>শিক্ষকের সম্পূর্ণ প্রোফাইল ও ব্যক্তিগত তথ্য</li>
+                    <li>লগইন অ্যাকাউন্ট (username ও পাসওয়ার্ড)</li>
+                    <li>বেতন পরিশোধের সমস্ত ইতিহাস</li>
+                    <li>নির্ধারিত সকল অ্যাসাইনমেন্ট</li>
+                </ul>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="btn-row">
+                    <a href="{% url 'admin_panel:teacher_detail' teacher.id %}" class="btn-cancel-link">
+                        <i class="fas fa-times"></i> বাতিল করুন
+                    </a>
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fas fa-trash-alt"></i> হ্যাঁ, মুছে ফেলুন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- END: TEACHER_DELETE_CONFIRM_SECTION -->
+{% endblock %}
+<!-- END: templates/admin/teachers/teacher_delete_confirm.html -->

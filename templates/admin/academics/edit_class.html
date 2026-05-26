@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: EDIT_CLASS_CSS */
+    .edit-card {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2.5rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        max-width: 600px;
+        margin: 40px auto;
+        backdrop-filter: blur(10px);
+    }
+    .form-group input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+        color: #fff;
+        margin-top: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+    .btn-save {
+        flex: 2;
+        background: #6366f1;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    .btn-save:hover {
+        background: #4f46e5;
+    }
+    .btn-cancel {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    /* END: EDIT_CLASS_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: EDIT_CLASS_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="edit-card">
+        <h2 style="color: #fff; margin-bottom: 10px;">Edit Class</h2>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Update the class name and class code below.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="color: #cbd5e1; font-size: 0.9rem; font-weight: 500;">Class Name</label>
+                <input type="text" name="name" value="{{ school_class.name }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="color: #cbd5e1; font-size: 0.9rem; font-weight: 500;">Class Code</label>
+                <input type="text" name="code" value="{{ school_class.code }}" required>
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <a href="{% url 'admin_panel:academics_classes' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: EDIT_CLASS_SECTION -->
+{% endblock %}

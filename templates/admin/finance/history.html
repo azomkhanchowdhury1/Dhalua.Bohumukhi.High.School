@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: PAYMENT_HISTORY_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Payment History</h1>
+        <p>Comprehensive logs of all financial transactions.</p>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:20px;">
+        {% for message in messages %}
+        <div style="background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %}; border:1px solid {% if message.tags == 'error' %}#ef4444{% else %}#10b981{% endif %}; color:{% if message.tags == 'error' %}#ef4444{% else %}#10b981{% endif %}; padding:12px 20px; border-radius:12px; margin-bottom:8px;">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Transaction Logs</h3>
+            <a href="{% url 'admin_panel:finance_fees' %}" class="view-all-btn" style="padding:8px 20px; font-size:0.88rem; text-decoration:none;">+ New Payment</a>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; color:#fff;">
+                <thead>
+                    <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                        <th style="padding:12px 15px;">Transaction ID</th>
+                        <th style="padding:12px 15px;">Student</th>
+                        <th style="padding:12px 15px;">Fee Type</th>
+                        <th style="padding:12px 15px;">Amount</th>
+                        <th style="padding:12px 15px;">Status</th>
+                        <th style="padding:12px 15px;">Date</th>
+                        <th style="padding:12px 15px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pay in payments %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <td style="padding:12px 15px; font-family:monospace; color:var(--home-primary);">
+                            {% if pay.is_remembered %}<span style="color:#f59e0b; margin-right:4px;">★</span>{% endif %}
+                            {{ pay.transaction_id }}
+                        </td>
+                        <td style="padding:12px 15px;">{{ pay.student.user.get_full_name }} (#{{ pay.student.student_id }})</td>
+                        <td style="padding:12px 15px;">{{ pay.fee_type.name }}</td>
+                        <td style="padding:12px 15px; font-weight:700; color:#10b981;">${{ pay.amount_paid }}</td>
+                        <td style="padding:12px 15px;">
+                            <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 10px; border-radius:20px; font-size:0.8rem;">{{ pay.status }}</span>
+                        </td>
+                        <td style="padding:12px 15px; font-size:0.85rem; color:#94a3b8;">{{ pay.payment_date|date:"d M, Y H:i" }}</td>
+                        <td style="padding:12px 15px;">
+                            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                                <a href="{% url 'admin_panel:payment_edit' pay.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;">✏️ Edit</a>
+                                <form method="POST" action="{% url 'admin_panel:payment_toggle_remember' pay.id %}" style="display:inline; margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:4px 10px; border-radius:8px; font-size:0.78rem; border:none; cursor:pointer;">{% if pay.is_remembered %}🔔{% else %}📌{% endif %}</button>
+                                </form>
+                                <a href="{% url 'admin_panel:payment_delete' pay.id %}" style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;">🗑️</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" style="text-align:center; padding:50px; color:#94a3b8;">No transactions found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- END: PAYMENT_HISTORY_SECTION -->
+{% endblock %}

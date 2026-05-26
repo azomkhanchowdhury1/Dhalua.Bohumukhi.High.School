@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: TEACHER_DASHBOARD_SPECIFIC */
+    .stat-icon.classes { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .stat-icon.students { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .stat-icon.pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .stat-icon.leave { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    
+    .module-header.attendance { color: #10b981; }
+    .module-header.marks { color: #f59e0b; }
+    .module-header.schedule { color: #6366f1; }
+    .module-header.assignments { color: #8b5cf6; }
+    .module-header.payroll { color: #0ea5e9; }
+    .module-header.communication { color: #ec4899; }
+    /* END: TEACHER_DASHBOARD_SPECIFIC */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TEACHER_DASHBOARD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Teacher Dashboard</h1>
+            <p>Welcome back, {{ user.first_name }}! Here's your schedule for today.</p>
+        </div>
+        <div class="date-display" id="currentDate">
+            <i class="far fa-calendar-alt"></i>
+            <span id="dateText"></span>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon classes">
+                <i class="fas fa-chalkboard"></i>
+            </div>
+            <div class="stat-info">
+                <h3>4</h3>
+                <p>Classes Today</p>
+            </div>
+            <div class="stat-trend positive">
+                Next: 10:30 AM
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon students">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>165</h3>
+                <p>Total Students</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3>12</h3>
+                <p>Pending Submissions</p>
+            </div>
+            <div class="stat-trend negative">
+                To Review
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon leave">
+                <i class="fas fa-calendar-minus"></i>
+            </div>
+            <div class="stat-info">
+                <h3>2</h3>
+                <p>Leave Balance</p>
+            </div>
+            <div class="stat-trend">
+                This Month
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Modules -->
+    <h2 class="section-title">Academic & Management</h2>
+    <div class="modules-grid">
+        <!-- Attendance Module -->
+        <div class="module-card">
+            <div class="module-header attendance">
+                <i class="fas fa-user-check"></i>
+                <h3>Attendance</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'teacher:attendance_mark' %}"><i class="fas fa-edit"></i> Mark Attendance</a></li>
+                <li><a href="{% url 'teacher:attendance_history' %}"><i class="fas fa-list-alt"></i> Attendance History</a></li>
+                <li><a href="{% url 'teacher:attendance_absentee' %}"><i class="fas fa-exclamation-triangle"></i> Absentee List</a></li>
+            </ul>
+        </div>
+
+        <!-- Marks Management -->
+        <div class="module-card">
+            <div class="module-header marks">
+                <i class="fas fa-file-signature"></i>
+                <h3>Marks Entry</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'teacher:marks_add' %}"><i class="fas fa-plus-circle"></i> Add Exam Marks</a></li>
+                <li><a href="{% url 'teacher:marks_results' %}"><i class="fas fa-poll"></i> View Results</a></li>
+                <li><a href="{% url 'teacher:marks_report' %}"><i class="fas fa-chart-bar"></i> Performance Report</a></li>
+            </ul>
+        </div>
+
+        <!-- Class Schedule -->
+        <div class="module-card">
+            <div class="module-header schedule">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>My Schedule</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-clock"></i> Today's Routine</a></li>
+                <li><a href="#"><i class="fas fa-calendar-week"></i> Weekly Timetable</a></li>
+                <li><a href="#"><i class="fas fa-exchange-alt"></i> Proxy Classes</a></li>
+            </ul>
+        </div>
+
+        <!-- Assignments -->
+        <div class="module-card">
+            <div class="module-header assignments">
+                <i class="fas fa-tasks"></i>
+                <h3>Assignments</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-plus-square"></i> Create Assignment</a></li>
+                <li><a href="#"><i class="fas fa-check-double"></i> Review Submissions</a></li>
+                <li><a href="#"><i class="fas fa-folder-open"></i> Study Material</a></li>
+            </ul>
+        </div>
+
+        <!-- Payroll & HR -->
+        <div class="module-card">
+            <div class="module-header payroll">
+                <i class="fas fa-wallet"></i>
+                <h3>Payroll & HR</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-money-check-alt"></i> Salary Slips</a></li>
+                <li><a href="#"><i class="fas fa-envelope-open-text"></i> Leave Request</a></li>
+                <li><a href="#"><i class="fas fa-user-tag"></i> My Profile</a></li>
+            </ul>
+        </div>
+
+        <!-- Communication -->
+        <div class="module-card">
+            <div class="module-header communication">
+                <i class="fas fa-comments"></i>
+                <h3>Communication</h3>
+            </div>
+            <ul class="module-links">
+                {% for notice in notices %}
+                <li>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{ notice.title|truncatechars:20 }}</a>
+                    {% if notice.attachment %}
+                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
+                {% endfor %}
+                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END: TEACHER_DASHBOARD_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: DASHBOARD_SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set current date
+        const dateSpan = document.getElementById('dateText');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Animation for cards
+        const cards = document.querySelectorAll('.stat-card, .module-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    // END: DASHBOARD_SCRIPT
+</script>
+{% endblock %}

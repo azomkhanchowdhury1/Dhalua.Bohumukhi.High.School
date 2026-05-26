@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: SUBJECT_EDIT_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Edit Subject</h1>
+        <p>Update the details for <strong style="color:#a5b4fc;">{{ subject.name }}</strong>.</p>
+    </div>
+
+    <div style="max-width:600px; margin:0 auto;">
+        <div style="background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+
+            {% if messages %}
+            <div style="margin-bottom:20px;">
+                {% for message in messages %}
+                <div style="padding:12px 18px; border-radius:10px;
+                    background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %};
+                    color:{% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %};
+                    border:1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.3){% else %}rgba(16,185,129,0.3){% endif %};">
+                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div style="display:flex; flex-direction:column; gap:20px;">
+
+                    <!-- Class -->
+                    <div style="display:flex; flex-direction:column; gap:7px;">
+                        <label style="color:#94a3b8; font-size:0.82rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+                            <i class="fas fa-chalkboard"></i> Class
+                        </label>
+                        <select name="class_id" required
+                            style="background:rgba(255,255,255,0.05); color:#fff; padding:13px 15px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); font-size:0.95rem; outline:none; transition:border-color 0.2s;"
+                            onfocus="this.style.borderColor='rgba(99,102,241,0.5)'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                            {% for cls in classes %}
+                            <option value="{{ cls.id }}" {% if cls.id == subject.school_class.id %}selected{% endif %}>{{ cls.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Subject Name -->
+                    <div style="display:flex; flex-direction:column; gap:7px;">
+                        <label style="color:#94a3b8; font-size:0.82rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+                            <i class="fas fa-book"></i> Subject Name
+                        </label>
+                        <input type="text" name="name" value="{{ subject.name }}" required
+                            style="background:rgba(255,255,255,0.05); color:#fff; padding:13px 15px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); font-size:0.95rem; outline:none; transition:border-color 0.2s;"
+                            onfocus="this.style.borderColor='rgba(99,102,241,0.5)'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                    </div>
+
+                    <!-- Subject Code -->
+                    <div style="display:flex; flex-direction:column; gap:7px;">
+                        <label style="color:#94a3b8; font-size:0.82rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+                            <i class="fas fa-tag"></i> Subject Code
+                        </label>
+                        <input type="text" name="code" value="{{ subject.code }}" required
+                            style="background:rgba(255,255,255,0.05); color:#fff; padding:13px 15px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); font-size:0.95rem; outline:none; transition:border-color 0.2s;"
+                            onfocus="this.style.borderColor='rgba(99,102,241,0.5)'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                    </div>
+
+                    <!-- Reminder Toggle -->
+                    <div style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.15); border-radius:14px; padding:18px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                            <label style="color:#10b981; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <i class="fas fa-bookmark"></i> Mark as Reminder
+                            </label>
+                            <label style="position:relative; display:inline-block; width:46px; height:24px; cursor:pointer;">
+                                <input type="checkbox" name="is_remembered" id="reminderToggle"
+                                    {% if subject.is_remembered %}checked{% endif %}
+                                    style="opacity:0; width:0; height:0;"
+                                    onchange="document.getElementById('reminder-note-wrap').style.display = this.checked ? 'flex' : 'none'">
+                                <span style="position:absolute; inset:0; background:rgba(255,255,255,0.1); border-radius:24px; transition:0.3s;"
+                                      id="toggleTrack"></span>
+                                <span style="position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#94a3b8; transition:0.3s;" id="toggleThumb"></span>
+                            </label>
+                        </div>
+                        <div id="reminder-note-wrap" style="display:{% if subject.is_remembered %}flex{% else %}none{% endif %}; flex-direction:column; gap:6px;">
+                            <label style="color:#94a3b8; font-size:0.8rem;">Reminder Note (optional)</label>
+                            <textarea name="reminder_note" rows="3" placeholder="Add a note about this subject..."
+                                style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); resize:vertical; font-size:0.9rem; outline:none; transition:border-color 0.2s;"
+                                onfocus="this.style.borderColor='rgba(16,185,129,0.4)'"
+                                onblur="this.style.borderColor='rgba(255,255,255,0.1)'">{{ subject.reminder_note }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="display:flex; gap:12px; margin-top:6px;">
+                        <button type="submit" class="view-all-btn" style="flex:1;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{% url 'admin_panel:academics_subjects' %}"
+                           style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:12px; background:rgba(255,255,255,0.05); color:#94a3b8; text-decoration:none; border:1px solid rgba(255,255,255,0.1); font-size:0.95rem; transition:all 0.2s;"
+                           onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff';"
+                           onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#94a3b8';">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // START: SUBJECT_EDIT_TOGGLE_JS
+    const toggle = document.getElementById('reminderToggle');
+    const track  = document.getElementById('toggleTrack');
+    const thumb  = document.getElementById('toggleThumb');
+
+    function updateToggle() {
+        if (toggle.checked) {
+            track.style.background = 'rgba(16,185,129,0.4)';
+            thumb.style.background = '#10b981';
+            thumb.style.left = '25px';
+        } else {
+            track.style.background = 'rgba(255,255,255,0.1)';
+            thumb.style.background = '#94a3b8';
+            thumb.style.left = '3px';
+        }
+    }
+    toggle.addEventListener('change', updateToggle);
+    updateToggle();
+    // END: SUBJECT_EDIT_TOGGLE_JS
+</script>
+<!-- END: SUBJECT_EDIT_SECTION -->
+{% endblock %}

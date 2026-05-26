@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load notices_extras %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/notices.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: NOTICE_LIST_PAGE -->
+<div class="notice-container">
+    <div class="notice-header">
+        <h1>Notice Board</h1>
+        <p>Stay updated with the latest announcements from our institution.</p>
+    </div>
+
+    <div class="notice-grid">
+        {% for notice in notices %}
+        <div class="notice-card" style="animation-delay: {{ forloop.counter0|add:1|mul:0.1 }}s;">
+            {% if notice.is_public %}
+            <span class="notice-badge badge-public">Public</span>
+            {% else %}
+            <span class="notice-badge badge-private">Private</span>
+            {% endif %}
+            
+            <div class="notice-date">
+                <i class="far fa-calendar-alt"></i> {{ notice.created_at|date:"F d, Y" }}
+            </div>
+            
+            <h2 class="notice-title">{{ notice.title }}</h2>
+            
+            <div class="notice-content">
+                {{ notice.content|linebreaks|truncatewords:50 }}
+                
+                {% if notice.signature %}
+                <div class="notice-signature">
+                    <img src="{{ notice.signature.url }}" alt="Headmaster Signature">
+                    <p>Headmaster</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="notice-footer">
+                <div class="notice-roles">
+                    {% if notice.is_public %}
+                        <span class="role-tag">Everyone</span>
+                    {% else %}
+                        {% if notice.target_student %}<span class="role-tag">Students</span>{% endif %}
+                        {% if notice.target_teacher %}<span class="role-tag">Teachers</span>{% endif %}
+                        {% if notice.target_staff %}<span class="role-tag">Staff</span>{% endif %}
+                        {% if notice.target_parent %}<span class="role-tag">Parents</span>{% endif %}
+                    {% endif %}
+                </div>
+                {% if notice.attachment %}
+                <a href="{{ notice.attachment.url }}" class="btn-download" download>
+                    <i class="fas fa-download"></i> Download
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-notices">
+            <i class="fas fa-bullhorn"></i>
+            <h3>No notices available at this time.</h3>
+            <p>Please check back later for updates.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- END: NOTICE_LIST_PAGE -->
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: STUDENT_PROFILE_CSS */
+    .profile-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+    }
+    .profile-card-static {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2.5rem;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        height: fit-content;
+    }
+    .profile-img-large {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid var(--home-primary);
+        object-fit: cover;
+        margin-bottom: 20px;
+    }
+    .info-list {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2.5rem;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .info-label { color: #94a3b8; }
+    .info-value { color: #fff; font-weight: 600; }
+    /* END: STUDENT_PROFILE_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_PROFILE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>My Profile</h1>
+        <p>Your academic and personal information recorded in the school system.</p>
+    </div>
+
+    <div class="profile-container">
+        <!-- Sidebar Info -->
+        <div class="profile-card-static">
+            <img src="{% if student.profile_image %}{{ student.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Profile" class="profile-img-large">
+            <h2 style="color:#fff;">{{ student.user.get_full_name }}</h2>
+            <p style="color:var(--home-primary); font-weight:700;">Student ID: {{ student.student_id }}</p>
+            <div style="margin-top:25px; display:flex; flex-direction:column; gap:12px;">
+                <a href="{% url 'student:edit_profile' %}" class="view-all-btn" style="width:100%;"><i class="fas fa-edit"></i> Edit Details</a>
+                <button onclick="document.getElementById('idCardModal').style.display='flex'" class="view-all-btn" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-id-card"></i> View ID Card</button>
+                <a href="{% url 'student:activity_log' %}" class="view-all-btn" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-history"></i> Activity Log</a>
+            </div>
+        </div>
+
+        <!-- Main Info -->
+        <div class="info-list">
+            <h3 style="color:#fff; margin-bottom:20px; border-bottom:2px solid var(--home-primary); width:fit-content; padding-bottom:5px;">Personal Details</h3>
+            <div class="info-item"><span class="info-label">Full Name</span><span class="info-value">{{ student.user.get_full_name }}</span></div>
+            <div class="info-item"><span class="info-label">Email Address</span><span class="info-value">{{ student.user.email }}</span></div>
+            <div class="info-item"><span class="info-label">Phone Number</span><span class="info-value">{{ student.phone_number|default:"Not Provided" }}</span></div>
+            <div class="info-item"><span class="info-label">Date of Birth</span><span class="info-value">{{ student.date_of_birth|default:"Not Provided" }}</span></div>
+            <div class="info-item"><span class="info-label">Gender</span><span class="info-value">{{ student.gender|default:"Not Provided" }}</span></div>
+            <div class="info-item"><span class="info-label">Blood Group</span><span class="info-value">{{ student.blood_group|default:"Not Provided" }}</span></div>
+            <div class="info-item" style="border:none;"><span class="info-label">Permanent Address</span><span class="info-value">{{ student.address|default:"Not Provided" }}</span></div>
+
+            <h3 style="color:#fff; margin-top:40px; margin-bottom:20px; border-bottom:2px solid var(--home-primary); width:fit-content; padding-bottom:5px;">Academic Details</h3>
+            <div class="info-item"><span class="info-label">Current Class</span><span class="info-value">{{ student.current_class }}</span></div>
+            <div class="info-item"><span class="info-label">Roll Number</span><span class="info-value">{{ student.roll_number }}</span></div>
+            <div class="info-item"><span class="info-label">Academic Year</span><span class="info-value">{{ student.academic_year }}</span></div>
+            <div class="info-item" style="border:none;"><span class="info-label">Admission Date</span><span class="info-value">{{ student.admission_date }}</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ID Card Modal -->
+<div id="idCardModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(10px);">
+    <div style="background:linear-gradient(135deg, #1e293b, #0f172a); width:400px; padding:30px; border-radius:25px; border:2px solid var(--home-primary); position:relative;">
+        <button onclick="document.getElementById('idCardModal').style.display='none'" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#fff; cursor:pointer;"><i class="fas fa-times"></i></button>
+        <div style="text-align:center;">
+            <h4 style="color:#fff; margin-bottom:20px;">STUDENT IDENTIFICATION</h4>
+            <img src="{% if student.profile_image %}{{ student.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Avatar" style="width:120px; height:120px; border-radius:15px; border:3px solid var(--home-primary); margin-bottom:15px;">
+            <h2 style="color:#fff; margin:5px 0;">{{ student.user.get_full_name }}</h2>
+            <p style="color:#94a3b8;">Class: {{ student.current_class }} | Roll: {{ student.roll_number }}</p>
+            <div style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px;">
+                <p style="color:var(--home-primary); font-weight:700; margin:0;">ID: {{ student.student_id }}</p>
+            </div>
+            <div style="margin-top:20px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:15px;">
+                <p style="font-size:0.75rem; color:#64748b;">Dhula High School Management System</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: STUDENT_PROFILE_SECTION -->
+{% endblock %}

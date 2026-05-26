@@ -1,0 +1,219 @@
+<!-- START: templates/admin/teachers/add_teacher.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ADD_TEACHER_CSS */
+    .back-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: #94a3b8; text-decoration: none; font-size: 0.9rem;
+        margin-bottom: 2rem; transition: color 0.2s;
+    }
+    .back-btn:hover { color: #fff; }
+    .form-card {
+        max-width: 900px; margin: 0 auto;
+        background: rgba(15,23,42,0.6); backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 28px; padding: 2.5rem;
+    }
+    .form-section-title {
+        font-size: 0.82rem; font-weight: 700; color: #6366f1;
+        text-transform: uppercase; letter-spacing: 0.08em;
+        margin: 1.8rem 0 1rem;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(99,102,241,0.2);
+    }
+    .form-section-title:first-child { margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-group label { color: #94a3b8; font-size: 0.85rem; font-weight: 500; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 12px 15px; border-radius: 12px;
+        color: #fff; outline: none; font-size: 0.9rem;
+        transition: border-color 0.2s, background 0.2s;
+        font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: rgba(99,102,241,0.5);
+        background: rgba(99,102,241,0.05);
+    }
+    .form-group textarea { resize: vertical; min-height: 85px; }
+    .form-group select option { background: #1e293b; }
+    .default-pass-note {
+        background: rgba(245,158,11,0.07);
+        border: 1px solid rgba(245,158,11,0.2);
+        border-radius: 12px; padding: 12px 16px;
+        margin-top: 1rem;
+        display: flex; align-items: flex-start; gap: 10px;
+    }
+    .default-pass-note i { color: #f59e0b; margin-top: 2px; flex-shrink: 0; }
+    .default-pass-note p { color: #94a3b8; font-size: 0.83rem; line-height: 1.6; }
+    .default-pass-note strong { color: #f59e0b; }
+    .btn-row { display: flex; gap: 12px; margin-top: 2rem; }
+    .btn-submit {
+        flex: 1; padding: 14px; border: none; border-radius: 14px;
+        font-weight: 700; font-size: 1rem; cursor: pointer;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff; transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.45); }
+    .btn-cancel {
+        padding: 14px 24px; border-radius: 14px; font-weight: 600; font-size: 0.95rem;
+        text-decoration: none; background: rgba(255,255,255,0.05); color: #94a3b8;
+        border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+    /* END: ADD_TEACHER_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: ADD_TEACHER_SECTION -->
+<div class="dashboard-wrapper">
+    <a href="{% url 'admin_panel:teacher_list' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> শিক্ষক তালিকায় ফিরুন
+    </a>
+
+    <div style="text-align:center; margin-bottom:2.5rem;">
+        <h1 style="font-size:1.8rem; background:linear-gradient(to right,#fff,#a5b4fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:700;">নতুন শিক্ষক যোগ করুন</h1>
+        <p style="color:#64748b;">নতুন একজন শিক্ষকের সম্পূর্ণ তথ্য পূরণ করুন।</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Personal Info -->
+            <p class="form-section-title"><i class="fas fa-user"></i> ব্যক্তিগত তথ্য</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>প্রথম নাম *</label>
+                    <input type="text" name="first_name" placeholder="প্রথম নাম" required>
+                </div>
+                <div class="form-group">
+                    <label>শেষ নাম *</label>
+                    <input type="text" name="last_name" placeholder="শেষ নাম" required>
+                </div>
+                <div class="form-group">
+                    <label>ইমেইল ঠিকানা *</label>
+                    <input type="email" name="email" placeholder="example@school.com" required>
+                </div>
+                <div class="form-group">
+                    <label>ফোন নম্বর</label>
+                    <input type="text" name="phone_number" placeholder="01XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>লিঙ্গ</label>
+                    <select name="gender">
+                        <option value="">— নির্বাচন করুন —</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>রক্তের গ্রুপ</label>
+                    <select name="blood_group">
+                        <option value="">— নির্বাচন করুন —</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>ঠিকানা</label>
+                    <textarea name="address" placeholder="সম্পূর্ণ ঠিকানা লিখুন"></textarea>
+                </div>
+            </div>
+
+            <!-- Professional Info -->
+            <p class="form-section-title"><i class="fas fa-briefcase"></i> পেশাদারী তথ্য</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>শিক্ষক আইডি *</label>
+                    <input type="text" name="teacher_id" placeholder="যেমন: TCH2024001" required>
+                </div>
+                <div class="form-group">
+                    <label>বিভাগ (Department) *</label>
+                    <select name="department" required>
+                        <option value="">— নির্বাচন করুন —</option>
+                        <option value="Science">Science</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Bengali">Bengali</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="History">History</option>
+                        <option value="Geography">Geography</option>
+                        <option value="ICT">ICT</option>
+                        <option value="Physical Education">Physical Education</option>
+                        <option value="Islamic Studies">Islamic Studies</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>বিষয় (Subject)</label>
+                    <input type="text" name="subject" placeholder="যেমন: Mathematics, Physics">
+                </div>
+                <div class="form-group">
+                    <label>শিক্ষাগত যোগ্যতা</label>
+                    <input type="text" name="qualification" placeholder="যেমন: M.Sc, B.Ed">
+                </div>
+                <div class="form-group">
+                    <label>অভিজ্ঞতা</label>
+                    <input type="text" name="experience" placeholder="যেমন: ৫ বছর">
+                </div>
+                <div class="form-group">
+                    <label>যোগদানের তারিখ</label>
+                    <input type="date" name="joining_date">
+                </div>
+                <div class="form-group">
+                    <label>মাসিক বেতন (BDT)</label>
+                    <input type="number" name="salary" placeholder="০.০০" step="0.01">
+                </div>
+            </div>
+
+            <!-- Default Password Notice -->
+            <div class="default-pass-note">
+                <i class="fas fa-info-circle"></i>
+                <p>
+                    নতুন শিক্ষকের প্রাথমিক পাসওয়ার্ড হবে: <strong>teacherpassword</strong><br>
+                    শিক্ষক প্রথম লগইনের পরে পাসওয়ার্ড পরিবর্তন করতে পারবেন, অথবা Admin থেকে "পাসওয়ার্ড রিসেট" করা যাবে।
+                </p>
+            </div>
+
+            <div class="btn-row">
+                <a href="{% url 'admin_panel:teacher_list' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> বাতিল
+                </a>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-user-plus"></i> শিক্ষক নিবন্ধন করুন
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: ADD_TEACHER_SECTION -->
+{% endblock %}
+<!-- END: templates/admin/teachers/add_teacher.html -->

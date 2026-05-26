@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: SEPARATE_SETTINGS_STYLE */
+    .settings-page-wrapper {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 24px;
+        animation: fadeIn 0.8s ease;
+    }
+
+    .settings-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 35px;
+        overflow: hidden;
+        min-height: 700px;
+        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+    }
+
+    .settings-sidebar {
+        background: rgba(30, 41, 59, 0.8);
+        padding: 40px 20px;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .settings-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .s-nav-item {
+        padding: 14px 20px;
+        border-radius: 12px;
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.3s;
+        border: none;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .s-nav-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+        color: #fff;
+    }
+
+    .s-nav-item.active {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+    }
+
+    .settings-content {
+        padding: 50px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .s-tab {
+        display: none;
+        animation: slideIn 0.4s ease;
+    }
+
+    .s-tab.active {
+        display: block;
+    }
+
+    .form-group-title {
+        color: #6366f1;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .custom-input {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #fff;
+        width: 100%;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .custom-input:focus {
+        border-color: #6366f1;
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .update-btn {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        border: none;
+        padding: 14px 35px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .update-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Switch Style */
+    .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 15px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px; width: 18px;
+        left: 4px; bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: #6366f1; }
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(15px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    /* END: SEPARATE_SETTINGS_STYLE */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-page-wrapper">
+    <div class="settings-container">
+        <!-- Sidebar Navigation -->
+        <div class="settings-sidebar">
+            <h2 style="margin-bottom: 30px; padding-left: 10px;">Settings</h2>
+            <div class="settings-nav">
+                <button class="s-nav-item active" onclick="switchSettings(event, 'update-profile')">
+                    <i class="fas fa-user-edit"></i> Update Profile
+                </button>
+                <button class="s-nav-item" onclick="switchSettings(event, 'security-tab')">
+                    <i class="fas fa-shield-alt"></i> Security
+                </button>
+                <button class="s-nav-item" onclick="switchSettings(event, 'notifications-tab')">
+                    <i class="fas fa-bell"></i> Notifications
+                </button>
+                <button class="s-nav-item" onclick="switchSettings(event, 'preferences-tab')">
+                    <i class="fas fa-palette"></i> Preferences
+                </button>
+                <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+                    <a href="{% url 'accounts:profile' %}" class="s-nav-item">
+                        <i class="fas fa-id-card"></i> View My Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content area -->
+        <div class="settings-content">
+            <!-- TAB: UPDATE PROFILE -->
+            <div id="update-profile" class="s-tab active">
+                <div class="form-group-title">Personal Information Updates</div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="input-row">
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Profile Picture</label>
+                            <input type="file" name="profile_image" class="custom-input">
+                        </div>
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Phone Number</label>
+                            <input type="text" name="phone_number" value="{{ profile.phone_number|default:'' }}" class="custom-input">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Date of Birth</label>
+                            <input type="date" name="date_of_birth" value="{{ profile.date_of_birth|date:'Y-m-d' }}" class="custom-input">
+                        </div>
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Gender</label>
+                            <select name="gender" class="custom-input">
+                                <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-box" style="margin-bottom: 30px;">
+                        <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Full Address</label>
+                        <textarea name="address" rows="3" class="custom-input">{{ profile.address|default:'' }}</textarea>
+                    </div>
+
+                    {% if role == 'Student' %}
+                    <div class="form-group-title">Academic Updates</div>
+                    <div class="input-row">
+                        <div class="input-box"><label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Roll Number</label><input type="text" name="roll_number" value="{{ profile.roll_number }}" class="custom-input"></div>
+                        <div class="input-box"><label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Section</label><input type="text" name="section" value="{{ profile.section }}" class="custom-input"></div>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="update-btn">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- TAB: SECURITY -->
+            <div id="security-tab" class="s-tab">
+                <div class="form-group-title">Security & Password</div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="input-box" style="margin-bottom: 20px;">
+                        <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Current Password</label>
+                        <input type="password" name="current_password" class="custom-input" placeholder="••••••••">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">New Password</label>
+                            <input type="password" name="new_password" class="custom-input" placeholder="••••••••">
+                        </div>
+                        <div class="input-box">
+                            <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="custom-input" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button type="submit" class="update-btn">Update Password</button>
+                </form>
+            </div>
+
+            <!-- TAB: NOTIFICATIONS -->
+            <div id="notifications-tab" class="s-tab">
+                <div class="form-group-title">Notification Settings</div>
+                <div class="toggle-row">
+                    <div><p style="font-weight: 600;">Email Alerts</p><p style="font-size: 12px; color: #94a3b8;">Get school updates via email.</p></div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div><p style="font-weight: 600;">SMS Emergency Alerts</p><p style="font-size: 12px; color: #94a3b8;">Critical notices on your phone.</p></div>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- TAB: PREFERENCES -->
+            <div id="preferences-tab" class="s-tab">
+                <div class="form-group-title">Display & Language</div>
+                <div class="toggle-row">
+                    <div><p style="font-weight: 600;">Dark Fusion Theme</p><p style="font-size: 12px; color: #94a3b8;">Currently active theme.</p></div>
+                    <label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+                </div>
+                <div class="input-box">
+                    <label style="display: block; color: #94a3b8; font-size: 13px; margin-bottom: 8px;">Preferred Language</label>
+                    <select class="custom-input">
+                        <option>English (US)</option>
+                        <option>Bengali</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: SEPARATE_SETTINGS_SCRIPT
+    function switchSettings(evt, tabId) {
+        const tabs = document.querySelectorAll('.s-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        const navItems = document.querySelectorAll('.s-nav-item');
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+    // END: SEPARATE_SETTINGS_SCRIPT
+</script>
+{% endblock %}

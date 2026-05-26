@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ATTENDANCE_ADMIN_CSS */
+    .attendance-controls {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .attendance-controls input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        color: #fff;
+        border-radius: 10px;
+    }
+    .student-attendance-table {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .status-options {
+        display: flex;
+        gap: 15px;
+    }
+    .status-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .status-option input { cursor: pointer; }
+    /* END: ATTENDANCE_ADMIN_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: ATTENDANCE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Daily Attendance Management</h1>
+        <p>Mark or update student attendance.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="attendance-controls">
+            <div class="form-group">
+                <label>Date:</label>
+                <input type="date" name="date" required value="{% now 'Y-m-d' %}">
+            </div>
+            <div class="form-group">
+                <label>Class:</label>
+                <select name="class_filter" style="background: rgba(255,255,255,0.05); color: #fff; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                </select>
+            </div>
+            <button type="submit" class="view-all-btn" style="margin-top: 0; padding: 10px 25px;">Save Attendance</button>
+        </div>
+
+        <div class="student-attendance-table">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <th style="padding: 15px;">Roll</th>
+                        <th style="padding: 15px;">Student Name</th>
+                        <th style="padding: 15px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 15px;">{{ student.roll_number|default:"-" }}</td>
+                        <td style="padding: 15px;">{{ student.user.get_full_name }}</td>
+                        <td style="padding: 15px;">
+                            <div class="status-options">
+                                <label class="status-option">
+                                    <input type="radio" name="status_{{ student.id }}" value="Present" checked> P
+                                </label>
+                                <label class="status-option">
+                                    <input type="radio" name="status_{{ student.id }}" value="Absent"> A
+                                </label>
+                                <label class="status-option">
+                                    <input type="radio" name="status_{{ student.id }}" value="Late"> L
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<!-- END: ATTENDANCE_SECTION -->
+{% endblock %}

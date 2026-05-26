@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: SALARY_MANAGEMENT_CSS */
+    .salary-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    .payment-form, .payment-history {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 2rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* END: SALARY_MANAGEMENT_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: SALARY_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Teacher Salary Management</h1>
+        <p>Process and track salary payments.</p>
+    </div>
+
+    <div class="salary-grid">
+        <div class="payment-form">
+            <h3>Record New Payment</h3>
+            <form method="POST" style="margin-top:20px;">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Select Teacher</label>
+                    <select name="teacher" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.user.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Amount</label>
+                    <input type="number" name="amount" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="color:#94a3b8;">Month</label>
+                        <select name="month" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                            <option>January</option><option>February</option><option>March</option><option>April</option>
+                            <option>May</option><option>June</option><option>July</option><option>August</option>
+                            <option>September</option><option>October</option><option>November</option><option>December</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="color:#94a3b8;">Year</label>
+                        <input type="text" name="year" value="2024" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    </div>
+                </div>
+                <button type="submit" class="view-all-btn" style="width:100%; margin-top:20px;">Process Payment</button>
+            </form>
+        </div>
+
+        <div class="payment-history">
+            <h3>Recent Payments</h3>
+            <table style="width:100%; margin-top:20px; border-collapse:collapse;">
+                <thead>
+                    <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                        <th style="padding:10px;">Teacher</th>
+                        <th style="padding:10px;">Period</th>
+                        <th style="padding:10px;">Amount</th>
+                        <th style="padding:10px;">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pay in payments %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <td style="padding:10px; color:#fff;">{{ pay.teacher.user.first_name }}</td>
+                        <td style="padding:10px; color:#94a3b8;">{{ pay.month }} {{ pay.year }}</td>
+                        <td style="padding:10px; color:#10b981;">{{ pay.amount }} BDT</td>
+                        <td style="padding:10px; color:#94a3b8;">{{ pay.payment_date|date:"d M, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- END: SALARY_SECTION -->
+{% endblock %}

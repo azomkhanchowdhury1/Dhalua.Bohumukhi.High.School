@@ -1,0 +1,359 @@
+/* START: ADMISSION_CSS_FILE */
+
+/* ---- Global Admission Variables & Styles ---- */
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #50e3c2;
+    --accent-color: #ff6b6b;
+    --dark-bg: #121212;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-main: #f5f5f5;
+    --text-muted: #b3b3b3;
+    --transition: all 0.3s ease-in-out;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+}
+
+/* ---- Animations ---- */
+@keyframes zoomIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeInUp {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideRight {
+    0% { transform: translateX(-40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideLeft {
+    0% { transform: translateX(40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+.animate-zoom { animation: zoomIn 1s ease forwards; opacity: 0; }
+.animate-fade-up { animation: fadeInUp 1s ease forwards; opacity: 0; }
+.animate-slide-up { animation: fadeInUp 1s ease forwards; opacity: 0; }
+.animate-slide-right { animation: slideRight 1s ease forwards; opacity: 0; }
+.animate-slide-left { animation: slideLeft 1s ease forwards; opacity: 0; }
+
+/* ---- Glassmorphism Defaults ---- */
+.glass-container {
+    padding: 80px 0;
+    background: radial-gradient(circle at top right, rgba(74, 144, 226, 0.05), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(80, 227, 194, 0.05), transparent 40%);
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Hero Section ---- */
+.admission-hero {
+    background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), 
+                url('https://images.unsplash.com/photo-1546410531-bea5aad6228d?q=80&w=1920&auto=format&fit=crop') no-repeat center center/cover;
+    padding: 120px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.hero-content {
+    animation-delay: 0.2s;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    max-width: 700px;
+    margin: 0 auto 30px;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #121212;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+    animation-delay: 0.4s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(80, 227, 194, 0.3);
+    color: #000;
+}
+
+/* ---- Process Timeline ---- */
+.process-timeline {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+}
+
+.process-timeline::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    right: 50px;
+    height: 2px;
+    background: var(--glass-border);
+    z-index: 0;
+}
+
+.process-step {
+    flex: 1;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 30px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    transition: var(--transition);
+}
+
+.process-step:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 25px rgba(74, 144, 226, 0.2);
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--dark-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    transition: var(--transition);
+}
+
+.process-step:hover .step-number {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.process-step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.process-step p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* ---- Eligibility & Requirements ---- */
+.eligibility-section {
+    padding: 80px 0;
+    background-color: #0a0a0a;
+}
+
+.eligibility-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+.requirements-list li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #d0d0d0;
+    line-height: 1.6;
+}
+
+.requirements-list i {
+    color: var(--secondary-color);
+    margin-top: 5px;
+}
+
+.fee-structure h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #fff;
+}
+
+.fee-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.fee-table th, .fee-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.fee-table th {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.fee-table tr:last-child td {
+    border-bottom: none;
+}
+
+.fee-table tr {
+    transition: var(--transition);
+}
+
+.fee-table tr:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+/* ---- Apply Form Section ---- */
+.form-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.input-group.full-width {
+    grid-column: span 2;
+}
+
+.input-group label {
+    margin-bottom: 8px;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+.input-group input, 
+.input-group select, 
+.input-group textarea {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    padding: 12px 15px;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    transition: var(--transition);
+}
+
+.input-group input:focus, 
+.input-group select:focus, 
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.2);
+}
+
+.submit-btn-wrapper {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-submit {
+    background: linear-gradient(90deg, var(--primary-color), #2a5298);
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .process-timeline {
+        flex-direction: column;
+    }
+    .process-timeline::before {
+        display: none;
+    }
+    .eligibility-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .input-group.full-width {
+        grid-column: span 1;
+    }
+}
+
+/* END: ADMISSION_CSS_FILE */

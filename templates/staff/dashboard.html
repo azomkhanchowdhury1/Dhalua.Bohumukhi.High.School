@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: STAFF_DASHBOARD_SPECIFIC */
+    .stat-icon.tasks { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .stat-icon.payroll { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+    .stat-icon.leave { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    
+    .module-header.work { color: #6366f1; }
+    .module-header.attendance { color: #10b981; }
+    .module-header.hr { color: #8b5cf6; }
+    .module-header.assets { color: #f59e0b; }
+    .module-header.communication { color: #ec4899; }
+    /* END: STAFF_DASHBOARD_SPECIFIC */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STAFF_DASHBOARD_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1>Staff Dashboard</h1>
+            <p>Welcome back, {{ user.first_name }}! Here's your task overview for today.</p>
+        </div>
+        <div class="date-display" id="currentDate">
+            <i class="far fa-calendar-alt"></i>
+            <span id="dateText"></span>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon tasks">
+                <i class="fas fa-list-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>8</h3>
+                <p>Pending Tasks</p>
+            </div>
+            <div class="stat-trend negative">
+                High Priority
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon attendance">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-info">
+                <h3>22/24</h3>
+                <p>Days Present</p>
+            </div>
+            <div class="stat-trend positive">
+                This Month
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon payroll">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Released</h3>
+                <p>Last Salary</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon leave">
+                <i class="fas fa-calendar-minus"></i>
+            </div>
+            <div class="stat-info">
+                <h3>5</h3>
+                <p>Leaves Left</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Modules -->
+    <h2 class="section-title">Operations & Management</h2>
+    <div class="modules-grid">
+        <!-- Task Management -->
+        <div class="module-card">
+            <div class="module-header work">
+                <i class="fas fa-tasks"></i>
+                <h3>Task Management</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-clipboard-list"></i> Daily Task List</a></li>
+                <li><a href="#"><i class="fas fa-check-circle"></i> Completed Tasks</a></li>
+                <li><a href="#"><i class="fas fa-clock"></i> Upcoming Work</a></li>
+            </ul>
+        </div>
+
+        <!-- Attendance -->
+        <div class="module-card">
+            <div class="module-header attendance">
+                <i class="fas fa-user-clock"></i>
+                <h3>My Attendance</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-sign-in-alt"></i> Mark Check-in</a></li>
+                <li><a href="#"><i class="fas fa-history"></i> Attendance Logs</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Leave History</a></li>
+            </ul>
+        </div>
+
+        <!-- HR & Payroll -->
+        <div class="module-card">
+            <div class="module-header hr">
+                <i class="fas fa-id-card"></i>
+                <h3>HR & Payroll</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Salary Slips</a></li>
+                <li><a href="#"><i class="fas fa-envelope-open-text"></i> Apply for Leave</a></li>
+                <li><a href="#"><i class="fas fa-user-tag"></i> View My Profile</a></li>
+            </ul>
+        </div>
+
+        <!-- Inventory & Assets -->
+        <div class="module-card">
+            <div class="module-header assets">
+                <i class="fas fa-boxes"></i>
+                <h3>Assets & Inventory</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="#"><i class="fas fa-tools"></i> Report Maintenance</a></li>
+                <li><a href="#"><i class="fas fa-archive"></i> Request Supplies</a></li>
+                <li><a href="#"><i class="fas fa-clipboard-check"></i> Asset Assignment</a></li>
+            </ul>
+        </div>
+
+        <!-- Communication -->
+        <div class="module-card">
+            <div class="module-header communication">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Announcements</h3>
+            </div>
+            <ul class="module-links">
+                {% for notice in notices %}
+                <li>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-sticky-note"></i> {{ notice.title|truncatechars:20 }}</a>
+                    {% if notice.attachment %}
+                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
+                {% endfor %}
+                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END: STAFF_DASHBOARD_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+    // START: DASHBOARD_SCRIPT
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set current date
+        const dateSpan = document.getElementById('dateText');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Animation for cards
+        const cards = document.querySelectorAll('.stat-card, .module-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    // END: DASHBOARD_SCRIPT
+</script>
+{% endblock %}

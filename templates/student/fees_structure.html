@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_FEES_STRUCTURE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Fee Structure</h1>
+        <p>Official fee categories and amounts for the current academic year.</p>
+    </div>
+
+    <div style="max-width:700px; margin:0 auto;">
+        <!-- Fee Cards -->
+        {% for fee in fee_types %}
+        <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:1.5rem 2rem; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between; gap:20px;">
+            <div style="display:flex; align-items:center; gap:18px;">
+                <div style="background:rgba(16,185,129,0.1); color:#10b981; width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <div>
+                    <h3 style="color:#fff; margin:0 0 4px; font-size:1.05rem;">{{ fee.name }}</h3>
+                    <p style="color:#64748b; margin:0; font-size:0.82rem;">Annual / Semester Fee</p>
+                </div>
+            </div>
+            <div style="text-align:right; flex-shrink:0;">
+                <p style="color:#10b981; font-size:1.5rem; font-weight:800; margin:0;">৳{{ fee.amount }}</p>
+                <a href="{% url 'student:fees_pay' %}" style="color:#94a3b8; font-size:0.8rem; text-decoration:none; margin-top:4px; display:block;">
+                    Pay Now →
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align:center; padding:80px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
+            <h3 style="color:#64748b;">No fee types have been configured yet.</h3>
+        </div>
+        {% endfor %}
+
+        <!-- Total Row -->
+        {% if fee_types %}
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.05)); border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:1.8rem 2rem; display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+            <div>
+                <h3 style="color:#fff; margin:0 0 4px;">Total Annual Fees</h3>
+                <p style="color:#64748b; margin:0; font-size:0.85rem;">Sum of all fee categories</p>
+            </div>
+            <div>
+                <p style="color:#10b981; font-size:2rem; font-weight:900; margin:0;">৳{{ total }}</p>
+            </div>
+        </div>
+
+        <div style="margin-top:30px; text-align:center;">
+            <a href="{% url 'student:fees_pay' %}" class="view-all-btn" style="padding:16px 50px; font-size:1rem;">
+                <i class="fas fa-credit-card"></i> Proceed to Pay
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- END: STUDENT_FEES_STRUCTURE_SECTION -->
+{% endblock %}

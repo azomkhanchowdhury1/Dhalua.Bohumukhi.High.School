@@ -1,0 +1,217 @@
+<!-- START: templates/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<!-- START: HOME_CSS_LINK -->
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<!-- END: HOME_CSS_LINK -->
+{% endblock %}
+
+{% block content %}
+
+<!-- START: HERO_SLIDER_SECTION -->
+<section class="hero-slider-section">
+    <div class="slider-container">
+        <div class="slide active">
+            <img src="{% static 'image/school1.jpg' %}" alt="School Image 1" onerror="this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1920&auto=format&fit=crop'">
+        </div>
+        <div class="slide">
+            <img src="{% static 'image/school2.jpg' %}" alt="School Image 2" onerror="this.src='https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1920&auto=format&fit=crop'">
+        </div>
+        <div class="slide">
+            <img src="{% static 'image/school3.jpg' %}" alt="School Image 3" onerror="this.src='https://images.unsplash.com/photo-1546410531-bea5aad6228d?q=80&w=1920&auto=format&fit=crop'">
+        </div>
+        
+        <!-- Navigation Controls -->
+        <button class="slider-btn prev-btn" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="slider-btn next-btn" onclick="changeSlide(1)">&#10095;</button>
+        
+        <div class="slider-dots">
+            <span class="dot active" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+        </div>
+    </div>
+    <div class="hero-text-overlay">
+        <h1 class="welcome-title">Welcome to Dhula High School</h1>
+        <p class="animate-fade-up">Empowering the next generation with knowledge and values.</p>
+        <a href="{% url 'accounts:login' %}" class="btn-home-primary animate-fade-up">Access Portal</a>
+    </div>
+</section>
+<!-- END: HERO_SLIDER_SECTION -->
+
+<!-- START: STATS_SECTION -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card animate-slide-up">
+                <i class="fas fa-user-graduate"></i>
+                <h3 class="counter" data-target="1500">0</h3>
+                <p>Students Enrolled</p>
+            </div>
+            <div class="stat-card animate-slide-up" style="animation-delay: 0.2s;">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3 class="counter" data-target="120">0</h3>
+                <p>Qualified Teachers</p>
+            </div>
+            <div class="stat-card animate-slide-up" style="animation-delay: 0.4s;">
+                <i class="fas fa-chart-line"></i>
+                <h3><span class="counter" data-target="98">0</span>%</h3>
+                <p>Passing Rate</p>
+            </div>
+            <div class="stat-card animate-slide-up" style="animation-delay: 0.6s;">
+                <i class="fas fa-trophy"></i>
+                <h3 class="counter" data-target="25">0</h3>
+                <p>National Awards</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: STATS_SECTION -->
+
+<!-- START: WHY_CHOOSE_US_SECTION -->
+<section class="why-choose-us-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose Our System?</h2>
+        <div class="features-grid">
+            <div class="feature-box animate-zoom">
+                <div class="icon-wrapper"><i class="fas fa-tachometer-alt"></i></div>
+                <h4>Easy Dashboard</h4>
+                <p>Manage everything from a single, intuitive interface.</p>
+            </div>
+            <div class="feature-box animate-zoom" style="animation-delay: 0.2s;">
+                <div class="icon-wrapper"><i class="fas fa-chart-bar"></i></div>
+                <h4>Live Reports</h4>
+                <p>Get real-time insights into student performance.</p>
+            </div>
+            <div class="feature-box animate-zoom" style="animation-delay: 0.4s;">
+                <div class="icon-wrapper"><i class="fas fa-mobile-alt"></i></div>
+                <h4>Mobile Friendly</h4>
+                <p>Access the system from anywhere, on any device.</p>
+            </div>
+            <div class="feature-box animate-zoom" style="animation-delay: 0.6s;">
+                <div class="icon-wrapper"><i class="fas fa-shield-alt"></i></div>
+                <h4>Secure & Safe</h4>
+                <p>Enterprise-grade security for all your data.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: WHY_CHOOSE_US_SECTION -->
+
+<!-- START: NOTICE_BOARD_SECTION -->
+<section class="notice-board-section">
+    <div class="container">
+        <div class="notice-board glass-panel animate-slide-up">
+            <h3><i class="fas fa-bullhorn"></i> Latest Notices</h3>
+            <div class="notice-grid">
+                {% for notice in public_notices %}
+                <div class="notice-box">
+                    <div class="notice-top">
+                        <div class="date-badge">
+                            <i class="far fa-calendar-alt"></i> {{ notice.created_at|date:"d M, Y" }}
+                        </div>
+                        {% if notice.attachment %}
+                        <a href="{{ notice.attachment.url }}" class="home-notice-download" download title="Download Notice">
+                            <i class="fas fa-file-download"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <h4>{{ notice.title }}</h4>
+                    <p>{{ notice.content|truncatewords:20 }}</p>
+                </div>
+                {% empty %}
+                <div class="no-notices-home">
+                    <p>No notices available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'notices:notice_list' %}" class="view-all-btn">View All Announcements</a>
+        </div>
+    </div>
+</section>
+<!-- END: NOTICE_BOARD_SECTION -->
+
+<!-- START: UPCOMING_EVENTS_SECTION -->
+<section class="upcoming-events-section">
+    <div class="container">
+        <div class="upcoming-events glass-panel animate-slide-up" style="animation-delay: 0.2s;">
+            <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
+            <div class="event-list">
+                <div class="event-item">
+                    <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=100&auto=format&fit=crop" alt="Event">
+                    <div class="event-info">
+                        <h4>Science Fair 2026</h4>
+                        <p><i class="far fa-clock"></i> 10:00 AM - 04:00 PM</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Main Auditorium</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=100&auto=format&fit=crop" alt="Event">
+                    <div class="event-info">
+                        <h4>Cultural Fest</h4>
+                        <p><i class="far fa-clock"></i> 06:00 PM - 09:00 PM</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Open Stage</p>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="view-all-btn">View All Events</a>
+        </div>
+    </div>
+</section>
+<!-- END: UPCOMING_EVENTS_SECTION -->
+
+<!-- START: TESTIMONIALS_SECTION -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="section-title">What People Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card animate-slide-up">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <p>Dhula High School has provided my children with an exceptional learning environment. The teachers are dedicated and the management system is very transparent.</p>
+                <div class="testimonial-footer">
+                    <div class="user-avatar">AK</div>
+                    <div class="user-meta">
+                        <h4>Azom Khan</h4>
+                        <span>Parent</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <p>The new digital management system makes it so easy to track my student's progress and stay updated with school notices and events.</p>
+                <div class="testimonial-footer">
+                    <div class="user-avatar">SC</div>
+                    <div class="user-meta">
+                        <h4>Sarah Chowdhury</h4>
+                        <span>Guardian</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <p>As a teacher, this system has reduced my administrative workload significantly, allowing me to focus more on teaching and student engagement.</p>
+                <div class="testimonial-footer">
+                    <div class="user-avatar">RT</div>
+                    <div class="user-meta">
+                        <h4>Rahat Talukder</h4>
+                        <span>Senior Teacher</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END: TESTIMONIALS_SECTION -->
+
+{% endblock %}
+
+{% block js %}
+<!-- START: HOME_JS_LINK -->
+<script src="{% static 'javascript/home.js' %}"></script>
+<!-- END: HOME_JS_LINK -->
+{% endblock %}
+<!-- END: templates/home.html -->

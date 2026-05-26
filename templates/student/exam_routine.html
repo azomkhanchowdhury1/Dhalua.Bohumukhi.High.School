@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_EXAM_ROUTINE_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Exam Routine</h1>
+        <p>Upcoming examination schedule for {{ student.current_class }}.</p>
+    </div>
+
+    <div style="background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:30px; border:1px solid rgba(255, 255, 255, 0.1);">
+        <table style="width:100%; border-collapse:collapse; color:#fff;">
+            <thead>
+                <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <th style="padding:15px;">Date</th>
+                    <th style="padding:15px;">Exam Name</th>
+                    <th style="padding:15px;">Subject</th>
+                    <th style="padding:15px;">Time</th>
+                    <th style="padding:15px;">Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:15px; font-weight:700; color:var(--home-primary);">{{ schedule.date|date:"d M, Y" }}</td>
+                    <td style="padding:15px;">{{ schedule.exam.name }}</td>
+                    <td style="padding:15px;">{{ schedule.subject.name }}</td>
+                    <td style="padding:15px;">{{ schedule.start_time|time:"H:i" }}</td>
+                    <td style="padding:15px;">Room {{ schedule.room_number }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No exam schedules found for your class.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: STUDENT_EXAM_ROUTINE_SECTION -->
+{% endblock %}
