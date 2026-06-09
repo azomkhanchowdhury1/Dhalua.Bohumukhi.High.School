@@ -5,6 +5,7 @@ app_name = 'student'
 
 urlpatterns = [
     path('dashboard/', views.dashboard, name='student_dashboard'),
+    path('attendance/detail/', views.attendance_detail, name='attendance_detail'),
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('activity-log/', views.activity_log, name='activity_log'),

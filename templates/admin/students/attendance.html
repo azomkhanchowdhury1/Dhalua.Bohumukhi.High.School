@@ -4,106 +4,116 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <style>
-    /* START: ATTENDANCE_ADMIN_CSS */
-    .attendance-controls {
+    /* START: ADMIN_ATTENDANCE_CSS */
+    .search-bar {
         background: rgba(15, 23, 42, 0.6);
-        padding: 2rem;
-        border-radius: 24px;
+        padding: 1.5rem 2rem;
+        border-radius: 20px;
         margin-bottom: 2rem;
         display: flex;
-        gap: 20px;
+        gap: 15px;
         align-items: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .attendance-controls input {
+    .search-bar input {
+        flex: 1;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 10px;
+        padding: 12px 20px;
         color: #fff;
-        border-radius: 10px;
+        border-radius: 12px;
+        font-size: 1rem;
     }
     .student-attendance-table {
         background: rgba(15, 23, 42, 0.6);
         padding: 2rem;
         border-radius: 24px;
         border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-x: auto;
     }
-    .status-options {
-        display: flex;
-        gap: 15px;
+    .percentage-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
     }
-    .status-option {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
+    .percentage-badge.high {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
     }
-    .status-option input { cursor: pointer; }
-    /* END: ATTENDANCE_ADMIN_CSS */
+    .percentage-badge.medium {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+    .percentage-badge.low {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+    /* END: ADMIN_ATTENDANCE_CSS */
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- START: ATTENDANCE_SECTION -->
+<!-- START: ADMIN_ATTENDANCE_SECTION -->
 <div class="dashboard-wrapper">
     <div class="section-header">
-        <h1>Daily Attendance Management</h1>
-        <p>Mark or update student attendance.</p>
+        <h1>Student Attendance Report</h1>
+        <p>Overview of student attendance percentages and records.</p>
     </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <div class="attendance-controls">
-            <div class="form-group">
-                <label>Date:</label>
-                <input type="date" name="date" required value="{% now 'Y-m-d' %}">
-            </div>
-            <div class="form-group">
-                <label>Class:</label>
-                <select name="class_filter" style="background: rgba(255,255,255,0.05); color: #fff; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-                    <option value="6">Class 6</option>
-                    <option value="7">Class 7</option>
-                    <option value="8">Class 8</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                </select>
-            </div>
-            <button type="submit" class="view-all-btn" style="margin-top: 0; padding: 10px 25px;">Save Attendance</button>
-        </div>
-
-        <div class="student-attendance-table">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <th style="padding: 15px;">Roll</th>
-                        <th style="padding: 15px;">Student Name</th>
-                        <th style="padding: 15px;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 15px;">{{ student.roll_number|default:"-" }}</td>
-                        <td style="padding: 15px;">{{ student.user.get_full_name }}</td>
-                        <td style="padding: 15px;">
-                            <div class="status-options">
-                                <label class="status-option">
-                                    <input type="radio" name="status_{{ student.id }}" value="Present" checked> P
-                                </label>
-                                <label class="status-option">
-                                    <input type="radio" name="status_{{ student.id }}" value="Absent"> A
-                                </label>
-                                <label class="status-option">
-                                    <input type="radio" name="status_{{ student.id }}" value="Late"> L
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <!-- Search Form -->
+    <form method="GET" class="search-bar">
+        <input type="text" name="search" value="{{ query }}" placeholder="Search by Student Name or ID...">
+        <button type="submit" class="view-all-btn" style="margin:0; padding:12px 25px;">
+            <i class="fas fa-search"></i> Search
+        </button>
+        {% if query %}
+        <a href="{% url 'admin_panel:student_attendance' %}" class="view-all-btn" style="margin:0; padding:12px 25px; background:rgba(239,68,68,0.2); color:#ef4444;">Clear</a>
+        {% endif %}
     </form>
+
+    <div class="student-attendance-table">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Student ID</th>
+                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Student Name</th>
+                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Class</th>
+                    <th style="text-align: center; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Present / Total</th>
+                    <th style="text-align: right; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in student_data %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 15px; color: #e2e8f0;">{{ data.student.student_id }}</td>
+                    <td style="padding: 15px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <img src="{% if data.student.profile_image %}{{ data.student.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Profile" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                            <span style="color: #fff; font-weight: 500;">{{ data.student.user.get_full_name }}</span>
+                        </div>
+                    </td>
+                    <td style="padding: 15px; color: #94a3b8;">{{ data.student.current_class }}</td>
+                    <td style="padding: 15px; text-align: center; color: #94a3b8;">
+                        {{ data.total_attended }} / {{ data.total_classes }}
+                    </td>
+                    <td style="padding: 15px; text-align: right;">
+                        <span class="percentage-badge {% if data.percentage >= 85 %}high{% elif data.percentage >= 70 %}medium{% else %}low{% endif %}">
+                            {{ data.percentage }}%
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 30px; text-align: center; color: #94a3b8;">
+                        <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5; margin-bottom: 15px; display: block;"></i>
+                        No students found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-<!-- END: ATTENDANCE_SECTION -->
+<!-- END: ADMIN_ATTENDANCE_SECTION -->
 {% endblock %}

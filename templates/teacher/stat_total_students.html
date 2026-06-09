@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: STAT_TOTAL_STUDENTS_CSS */
+    .stat-page-container {
+        padding: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .stat-page-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    .stat-page-header .icon-box {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: rgba(139, 92, 246, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #8b5cf6;
+    }
+    .stat-page-header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+    .stat-page-header p { color: #64748b; margin: 0; font-size: 14px; }
+    .back-btn {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f1f5f9;
+        color: #475569;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .back-btn:hover { background: #e2e8f0; }
+
+    .class-section {
+        margin-bottom: 32px;
+    }
+    .class-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #7c3aed;
+        background: #f5f3ff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .student-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .student-table th {
+        background: #faf5ff;
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid #e9d5ff;
+    }
+    .student-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+        color: #374151;
+    }
+    .student-table tr:last-child td { border-bottom: none; }
+    .student-table tr:hover td { background: #f9fafb; }
+
+    .gender-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .gender-badge.male   { background: #dbeafe; color: #1e40af; }
+    .gender-badge.female { background: #fce7f3; color: #9d174d; }
+
+    .summary-bar {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    .summary-card {
+        flex: 1;
+        min-width: 140px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        text-align: center;
+    }
+    .summary-card .num {
+        font-size: 32px;
+        font-weight: 800;
+        color: #7c3aed;
+    }
+    .summary-card .lbl { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    /* END: STAT_TOTAL_STUDENTS_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STAT_TOTAL_STUDENTS_CONTENT -->
+<div class="stat-page-container">
+    <div class="stat-page-header">
+        <div class="icon-box"><i class="fas fa-users"></i></div>
+        <div>
+            <h1>Total Students</h1>
+            <p>All {{ total }} enrolled students grouped by class</p>
+        </div>
+        <a href="{% url 'teacher:teacher_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+        <div class="summary-card">
+            <div class="num">{{ total }}</div>
+            <div class="lbl">Total Students</div>
+        </div>
+        {% for class_name, students_in_class in class_groups.items %}
+        <div class="summary-card">
+            <div class="num" style="font-size:22px;">{{ students_in_class|length }}</div>
+            <div class="lbl">{{ class_name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Students by Class -->
+    {% for class_name, students_in_class in class_groups.items %}
+    <div class="class-section">
+        <div class="class-section-title">
+            <i class="fas fa-layer-group"></i>
+            Class: {{ class_name }}
+            <span style="font-weight:400; color:#94a3b8; margin-left:auto;">{{ students_in_class|length }} student{{ students_in_class|length|pluralize }}</span>
+        </div>
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student ID</th>
+                    <th>Full Name</th>
+                    <th>Roll No.</th>
+                    <th>Section</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students_in_class %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ student.student_id|default:"—" }}</td>
+                    <td>
+                        {% if student.user %}
+                            {{ student.user.first_name }} {{ student.user.last_name }}
+                        {% else %}
+                            Student #{{ student.id }}
+                        {% endif %}
+                    </td>
+                    <td>{{ student.roll_number|default:"—" }}</td>
+                    <td>{{ student.section|default:"—" }}</td>
+                    <td>
+                        {% if student.gender %}
+                        <span class="gender-badge {% if student.gender == 'Male' %}male{% elif student.gender == 'Female' %}female{% endif %}">
+                            {{ student.gender }}
+                        </span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>{{ student.phone_number|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% empty %}
+    <div style="text-align:center; padding:60px; color:#94a3b8;">
+        <i class="fas fa-user-slash" style="font-size:48px; margin-bottom:16px; display:block; opacity:0.4;"></i>
+        <p>No students found.</p>
+    </div>
+    {% endfor %}
+</div>
+<!-- END: STAT_TOTAL_STUDENTS_CONTENT -->
+{% endblock %}

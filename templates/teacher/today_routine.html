@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: TODAY_ROUTINE */
+    .routine-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    .routine-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+    .routine-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .routine-table th, .routine-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .routine-table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: #4b5563;
+    }
+    .routine-table tr:hover {
+        background-color: #f3f4f6;
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+    /* END: TODAY_ROUTINE */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TODAY_ROUTINE_CONTENT -->
+<div class="routine-container">
+    <div class="routine-header">
+        <h2><i class="fas fa-clock" style="color: #6366f1;"></i> Today's Routine</h2>
+        <button class="btn btn-primary" style="background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-print"></i> Print Routine
+        </button>
+    </div>
+    
+    <table class="routine-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Room</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>09:00 AM - 09:45 AM</td>
+                <td>Class 10 (Section A)</td>
+                <td>Mathematics</td>
+                <td>Room 101</td>
+                <td><span class="status-badge" style="background: #fee2e2; color: #991b1b;">Completed</span></td>
+            </tr>
+            <tr>
+                <td>10:30 AM - 11:15 AM</td>
+                <td>Class 9 (Section B)</td>
+                <td>Physics</td>
+                <td>Room 105</td>
+                <td><span class="status-badge">Upcoming</span></td>
+            </tr>
+            <tr>
+                <td>12:00 PM - 12:45 PM</td>
+                <td>Class 8 (Section A)</td>
+                <td>Science</td>
+                <td>Room 102</td>
+                <td><span class="status-badge">Upcoming</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- END: TODAY_ROUTINE_CONTENT -->
+{% endblock %}

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     ROLE_CHOICES = (
+        ('Admin', 'Admin'),
         ('Student', 'Student'),
         ('Teacher', 'Teacher'),
         ('Staff', 'Staff'),
@@ -10,9 +11,16 @@ class UserProfile(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], blank=True, null=True)
+    blood_group = models.CharField(max_length=5, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    is_remembered = models.BooleanField(default=False)
+    reminder_note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
@@ -33,6 +41,8 @@ class RegistrationRequest(models.Model):
     is_approved = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
     email_sent = models.BooleanField(default=False)
+    is_remembered = models.BooleanField(default=False)
+    reminder_note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

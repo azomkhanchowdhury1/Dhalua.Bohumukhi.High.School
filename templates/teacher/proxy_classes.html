@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: PROXY_CLASSES */
+    .proxy-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    .proxy-header {
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+    .proxy-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .proxy-table th, .proxy-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .proxy-table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: #4b5563;
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        background-color: #fef3c7;
+        color: #b45309;
+    }
+    /* END: PROXY_CLASSES */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: PROXY_CLASSES_CONTENT -->
+<div class="proxy-container">
+    <div class="proxy-header">
+        <h2><i class="fas fa-exchange-alt" style="color: #6366f1;"></i> Proxy Classes Assigned</h2>
+    </div>
+    
+    <table class="proxy-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Class</th>
+                <th>Original Teacher</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>June 05, 2026</td>
+                <td>11:15 AM - 12:00 PM</td>
+                <td>Class 7 (Section C)</td>
+                <td>Mr. Smith (English)</td>
+                <td><span class="status-badge">Assigned</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- END: PROXY_CLASSES_CONTENT -->
+{% endblock %}

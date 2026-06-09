@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: LEAVE_REQUEST */
+    .leave-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 20px;
+        max-width: 800px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #374151;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        font-family: inherit;
+    }
+    .btn-submit {
+        background: #0ea5e9;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .btn-submit:hover {
+        background: #0284c7;
+    }
+    .leave-history {
+        margin-top: 40px;
+    }
+    .leave-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .leave-table th, .leave-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .leave-table th {
+        background-color: #f9fafb;
+    }
+    /* END: LEAVE_REQUEST */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: LEAVE_REQUEST_CONTENT -->
+<div class="leave-container">
+    <h2><i class="fas fa-envelope-open-text" style="color: #0ea5e9;"></i> Apply for Leave</h2>
+    <hr style="opacity: 0.2; margin: 15px 0;">
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Leave Type</label>
+            <select name="type" class="form-control" required>
+                <option value="Sick">Sick Leave</option>
+                <option value="Casual">Casual Leave</option>
+                <option value="Emergency">Emergency Leave</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <div class="form-group" style="flex: 1;">
+                <label>From Date</label>
+                <input type="date" name="from_date" class="form-control" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>To Date</label>
+                <input type="date" name="to_date" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Reason</label>
+            <textarea name="reason" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Request</button>
+    </form>
+
+    <div class="leave-history">
+        <h3>Recent Leave History</h3>
+        <table class="leave-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Casual Leave</td>
+                    <td>May 10 - May 11, 2026</td>
+                    <td style="color: #059669; font-weight: bold;">Approved</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: LEAVE_REQUEST_CONTENT -->
+{% endblock %}

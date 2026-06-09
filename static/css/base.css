@@ -9,7 +9,8 @@
 }
 
 body {
-    background-color: #0f172a; /* Deep elegant slate background */
+    background-color: #0f172a;
+    /* Deep elegant slate background */
     color: #e2e8f0;
     line-height: 1.6;
     overflow-x: hidden;
@@ -44,9 +45,17 @@ body {
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
+
 /* END: MESSAGES_STYLE */
 
 /* START: TOP_HEADER_STYLE */
@@ -66,7 +75,8 @@ body {
     align-items: center;
 }
 
-.top-bar-left, .top-bar-right {
+.top-bar-left,
+.top-bar-right {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -118,22 +128,24 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 24px;
     padding: 6px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(225, 255, 255, 0.08);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 40px; /* Initial width */
+    width: 40px;
+    height: 40px;
+    /* Initial width */
     overflow: hidden;
     cursor: pointer;
 }
 
 .search-box.active {
     width: 280px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(5, 5, 5, 0.1);
     border-color: rgba(99, 102, 241, 0.4);
     box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
 }
 
 .search-box i.search-icon {
-    color: #94a3b8;
+    color: #ffffff;
     font-size: 16px;
     min-width: 16px;
 }
@@ -152,12 +164,13 @@ body {
 }
 
 .search-box.active input {
-    width: 200px;
+    width: 210px;
+    height: 28px;
     opacity: 1;
 }
 
 .search-box .close-icon {
-    color: #94a3b8;
+    color: #f9fafc;
     font-size: 14px;
     cursor: pointer;
     margin-left: auto;
@@ -244,9 +257,17 @@ body {
 }
 
 @keyframes slideUpFade {
-    from { transform: translateY(10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
+
 /* END: GLOBAL_SEARCH_STYLE */
 
 /* START: HEADER_SECTION_STYLE */
@@ -393,9 +414,17 @@ body {
 }
 
 @keyframes pulse-glow {
-    0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+    }
 }
 
 .btn-login {
@@ -460,8 +489,15 @@ body {
 }
 
 @keyframes dropdownSlide {
-    from { transform: translateY(10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .dropdown-header {
@@ -523,6 +559,7 @@ body {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
 }
+
 /* END: PROFILE_DROPDOWN_STYLE */
 /* END: HEADER_SECTION_STYLE */
 
@@ -676,4 +713,213 @@ body {
     color: #64748b;
     font-size: 14px;
 }
+
+/* ============================================================
+   START: GLOBAL_FORM_FIX
+   Fixes input/select/textarea visibility across entire project
+   on the dark (#0f172a) background theme.
+   ============================================================ */
+
+/* --- Base styles for all form controls --- */
+input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+input[type="file"],
+textarea,
+select {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    font-family: 'Outfit', sans-serif !important;
+    width: 100%;
+    outline: none !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+    box-sizing: border-box;
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+
+/* Focus ring */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
+    background-color: #1a2540 !important;
+}
+
+/* --- Override browser autofill yellow background --- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+    caret-color: #f1f5f9 !important;
+    border-color: rgba(99, 102, 241, 0.25) !important;
+    transition: background-color 9999s ease !important;
+}
+
+/* --- Select dropdown arrow tint --- */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 12px !important;
+    padding-right: 38px !important;
+    cursor: pointer;
+}
+
+/* --- Select option items (browser-native dropdown list) --- */
+select option {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    padding: 8px !important;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+    background-color: #3730a3 !important;
+    color: #ffffff !important;
+}
+
+/* --- Placeholder text --- */
+input::placeholder,
+textarea::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+
+/* --- Disabled state --- */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: #0f172a !important;
+    color: #475569 !important;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* --- Textarea specific --- */
+textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+}
+
+/* --- File input style fix --- */
+input[type="file"] {
+    cursor: pointer;
+    padding: 8px 12px !important;
+}
+
+input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    margin-right: 10px;
+    transition: opacity 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    opacity: 0.85;
+}
+
+/* --- Checkbox & Radio --- */
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto !important;
+    height: 16px !important;
+    width: 16px !important;
+    padding: 0 !important;
+    border: 1.5px solid #475569 !important;
+    background-color: #1e293b !important;
+    accent-color: #6366f1;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* --- Label style --- */
+label {
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* --- Form group spacing (general utility) --- */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* --- Buttons inside forms --- */
+button[type="submit"],
+input[type="submit"] {
+    width: auto !important;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 11px 24px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+}
+
+button[type="submit"]:hover,
+input[type="submit"]:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* --- Dashboard / inner-page white-background form context ---
+   Some inner pages use white cards. Override back to light for those. */
+.form-white input,
+.form-white textarea,
+.form-white select {
+    background-color: #f9fafb !important;
+    color: #1e293b !important;
+    border: 1.5px solid #d1d5db !important;
+}
+
+.form-white input:focus,
+.form-white textarea:focus,
+.form-white select:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+    background-color: #fff !important;
+}
+
+.form-white label {
+    color: #374151;
+}
+
+.form-white input:-webkit-autofill,
+.form-white input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #f9fafb inset !important;
+    -webkit-text-fill-color: #1e293b !important;
+}
+
+/* END: GLOBAL_FORM_FIX */
 /* END: BASE_STYLE */

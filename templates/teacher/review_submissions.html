@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* START: REVIEW_SUBMISSIONS */
+    .review-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    .review-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .review-table th, .review-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .review-table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: #4b5563;
+    }
+    .badge-pending {
+        background-color: #fef3c7;
+        color: #b45309;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .action-btn {
+        background: #8b5cf6;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+    }
+    /* END: REVIEW_SUBMISSIONS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: REVIEW_SUBMISSIONS_CONTENT -->
+<div class="review-container">
+    <h2><i class="fas fa-check-double" style="color: #8b5cf6;"></i> Review Submissions</h2>
+    <hr style="opacity: 0.2; margin: 15px 0;">
+    
+    <table class="review-table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Assignment Title</th>
+                <th>Submitted On</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Doe</td>
+                <td>Math Chapter 5 Exercise</td>
+                <td>June 03, 2026</td>
+                <td><span class="badge-pending">Pending Review</span></td>
+                <td><a href="#" class="action-btn">Grade</a></td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>Science Project</td>
+                <td>June 04, 2026</td>
+                <td><span class="badge-pending">Pending Review</span></td>
+                <td><a href="#" class="action-btn">Grade</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- END: REVIEW_SUBMISSIONS_CONTENT -->
+{% endblock %}

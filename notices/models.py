@@ -23,6 +23,9 @@ class Notice(models.Model):
     signature = models.ImageField(upload_to='notices/signatures/', null=True, blank=True, help_text="Upload headmaster's signature image.")
     attachment = models.FileField(upload_to='notices/attachments/', null=True, blank=True, help_text="Upload official PDF or Image notice.")
 
+    is_remembered = models.BooleanField(default=False)
+    reminder_note = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return self.title
 

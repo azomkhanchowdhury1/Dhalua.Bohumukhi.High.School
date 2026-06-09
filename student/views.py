@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Student, StudentActivityLog
+from .models import Student, StudentActivityLog, Attendance, ClassAttendance
 from notices.models import Notice
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -9,31 +9,138 @@ from academics.models import Timetable, Syllabus, Subject, SchoolClass
 from teacher.models import Teacher, TeacherAssignment
 from .models import StudentHomework, StudyMaterial, LibraryBook
 
+def _get_school_class(current_class_str):
+    """Robust SchoolClass lookup — handles exact, icontains, and numeric variants."""
+    if not current_class_str:
+        return None
+    # 1. Exact match
+    cls = SchoolClass.objects.filter(name=current_class_str).first()
+    if cls:
+        return cls
+    # 2. Case-insensitive contains
+    cls = SchoolClass.objects.filter(name__icontains=current_class_str).first()
+    if cls:
+        return cls
+    # 3. Try stripping 'Class ' prefix and search for number/word
+    stripped = current_class_str.replace('Class ', '').replace('class ', '').strip()
+    cls = SchoolClass.objects.filter(
+        Q(name__icontains=stripped) | Q(code__icontains=stripped)
+    ).first()
+    return cls
+
+
 @login_required
 def dashboard(request):
     student = get_object_or_404(Student, user=request.user)
     notices = Notice.objects.filter(Q(is_public=True) | Q(target_student=True)).distinct().order_by('-created_at')[:5]
-    return render(request, 'student/dashboard.html', {'notices': notices, 'student': student})
+
+    # --- Attendance Rate (all subjects combined) ---
+    total_records = Attendance.objects.filter(student=student, class_attendance__is_held=True).count()
+    total_attended = Attendance.objects.filter(student=student, status='Present', class_attendance__is_held=True).count()
+    attendance_percentage = round((total_attended / total_records) * 100, 1) if total_records > 0 else 0
+
+    # --- Active Subjects (subjects for student's class) — use robust lookup ---
+    school_class_obj = _get_school_class(student.current_class)
+    active_subjects_count = Subject.objects.filter(school_class=school_class_obj).count() if school_class_obj else 0
+
+    # --- Pending Homework (submitted homeworks = total, not really "pending", but we show submitted count) ---
+    pending_homework_count = StudentHomework.objects.filter(student=student).count()
+
+    # --- Last GPA: average grade point from latest exam results ---
+    from exams.models import StudentResult, Exam
+    last_exam = Exam.objects.order_by('-id').first()
+    last_gpa = 0.0
+    if last_exam:
+        results = StudentResult.objects.filter(student=student, exam=last_exam).select_related('grade')
+        points = [r.grade.point for r in results if r.grade]
+        last_gpa = round(sum(float(p) for p in points) / len(points), 2) if points else 0.0
+
+    return render(request, 'student/dashboard.html', {
+        'notices': notices,
+        'student': student,
+        'attendance_percentage': attendance_percentage,
+        'active_subjects_count': active_subjects_count,
+        'pending_homework_count': pending_homework_count,
+        'last_gpa': last_gpa,
+    })
+
+@login_required
+def attendance_detail(request):
+    """Per-subject attendance breakdown for the logged-in student."""
+    student = get_object_or_404(Student, user=request.user)
+    school_class_obj = SchoolClass.objects.filter(name=student.current_class).first()
+    subjects = Subject.objects.filter(school_class=school_class_obj) if school_class_obj else []
+
+    subject_data = []
+    for subject in subjects:
+        held = ClassAttendance.objects.filter(
+            school_class=school_class_obj, subject=subject, is_held=True
+        ).count()
+        attended = Attendance.objects.filter(
+            student=student,
+            class_attendance__subject=subject,
+            class_attendance__is_held=True,
+            status='Present'
+        ).count()
+        pct = round((attended / held) * 100, 1) if held > 0 else 0
+        subject_data.append({
+            'subject': subject,
+            'held': held,
+            'attended': attended,
+            'percentage': pct,
+        })
+
+    return render(request, 'student/attendance_detail.html', {
+        'student': student,
+        'subject_data': subject_data,
+    })
+
+
+
+
 
 @login_required
 def academic_timetable(request):
     student = get_object_or_404(Student, user=request.user)
-    # Filter timetable by the student's current class name through the section relation
-    timetable = Timetable.objects.filter(section__school_class__name=student.current_class).order_by('day', 'start_time')
+    school_class_obj = _get_school_class(student.current_class)
+    if school_class_obj:
+        timetable = Timetable.objects.filter(
+            section__school_class=school_class_obj
+        ).order_by('day', 'start_time')
+    else:
+        timetable = Timetable.objects.none()
     return render(request, 'student/timetable.html', {'timetable': timetable, 'student': student})
 
 @login_required
 def academic_syllabus(request):
     student = get_object_or_404(Student, user=request.user)
-    # Filter syllabus by the student's current class name through the subject relation
-    syllabus = Syllabus.objects.filter(subject__school_class__name=student.current_class).order_by('-uploaded_at')
+    school_class_obj = _get_school_class(student.current_class)
+    if school_class_obj:
+        syllabus = Syllabus.objects.filter(
+            subject__school_class=school_class_obj
+        ).order_by('-uploaded_at')
+    else:
+        syllabus = Syllabus.objects.none()
     return render(request, 'student/syllabus.html', {'syllabus': syllabus, 'student': student})
 
 @login_required
 def academic_teachers(request):
     student = get_object_or_404(Student, user=request.user)
-    # Fetch all teachers for now as there is no formal class assignment model yet
-    teachers = Teacher.objects.all()
+    school_class_obj = _get_school_class(student.current_class)
+
+    if school_class_obj:
+        # 1st priority: teachers who have taken class via ClassAttendance
+        teacher_ids = ClassAttendance.objects.filter(
+            school_class=school_class_obj
+        ).values_list('teacher_id', flat=True).distinct()
+        teachers = Teacher.objects.filter(id__in=teacher_ids)
+        # 2nd fallback: if no attendance records yet, show all teachers
+        if not teachers.exists():
+            teachers = Teacher.objects.all()
+    else:
+        # No class found at all — show all teachers so page isn't empty
+        teachers = Teacher.objects.all()
+
     return render(request, 'student/teachers.html', {'teachers': teachers, 'student': student})
 
 @login_required
@@ -158,7 +265,26 @@ def learning_library(request):
 
 @login_required
 def learning_online_class(request):
-    return render(request, 'student/online_class.html')
+    student = get_object_or_404(Student, user=request.user)
+    school_class_obj = _get_school_class(student.current_class)
+    from academics.models import OnlineClass
+    
+    if school_class_obj:
+        live_classes = OnlineClass.objects.filter(school_class=school_class_obj, status='Live').order_by('start_time')
+        scheduled_classes = OnlineClass.objects.filter(school_class=school_class_obj, status='Scheduled').order_by('start_time')
+        recorded_classes = OnlineClass.objects.filter(school_class=school_class_obj, status='Recorded').order_by('-start_time')
+    else:
+        live_classes = OnlineClass.objects.filter(status='Live').order_by('start_time')
+        scheduled_classes = OnlineClass.objects.filter(status='Scheduled').order_by('start_time')
+        recorded_classes = OnlineClass.objects.filter(status='Recorded').order_by('-start_time')
+
+    return render(request, 'online_classes.html', {
+        'live_classes': live_classes,
+        'scheduled_classes': scheduled_classes,
+        'recorded_classes': recorded_classes,
+        'is_teacher': False,
+        'student': student,
+    })
 
 # --- Fees & Dues Views ---
 from finance.models import FeeType, FeePayment

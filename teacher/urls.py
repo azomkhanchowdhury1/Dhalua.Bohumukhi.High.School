@@ -6,6 +6,12 @@ app_name = 'teacher'
 urlpatterns = [
     path('dashboard/', views.dashboard, name='teacher_dashboard'),
 
+    # Dashboard Stat Detail Pages
+    path('stats/classes-today/', views.stat_classes_today, name='stat_classes_today'),
+    path('stats/total-students/', views.stat_total_students, name='stat_total_students'),
+    path('stats/pending-submissions/', views.stat_pending_submissions, name='stat_pending_submissions'),
+    path('stats/leave-balance/', views.stat_leave_balance, name='stat_leave_balance'),
+
     # Attendance
     path('attendance/mark/', views.attendance_mark, name='attendance_mark'),
     path('attendance/history/', views.attendance_history, name='attendance_history'),
@@ -15,4 +21,22 @@ urlpatterns = [
     path('marks/add/', views.marks_add, name='marks_add'),
     path('marks/results/', views.marks_results, name='marks_results'),
     path('marks/report/', views.marks_report, name='marks_report'),
+
+    # My Schedule
+    path('schedule/today/', views.today_routine, name='today_routine'),
+    path('schedule/weekly/', views.weekly_timetable, name='weekly_timetable'),
+    path('schedule/proxy/', views.proxy_classes, name='proxy_classes'),
+
+    # Assignments
+    path('assignments/create/', views.create_assignment, name='create_assignment'),
+    path('assignments/review/', views.review_submissions, name='review_submissions'),
+    path('assignments/study-material/', views.study_material, name='study_material'),
+
+    # Online Classes
+    path('online-classes/', views.online_classes, name='online_classes'),
+
+    # Payroll & HR
+    path('hr/salary-slips/', views.salary_slips, name='salary_slips'),
+    path('hr/leave-request/', views.leave_request, name='leave_request'),
+    path('hr/profile/', views.my_profile, name='my_profile'),
 ]

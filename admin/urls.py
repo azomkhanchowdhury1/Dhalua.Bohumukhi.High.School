@@ -49,6 +49,11 @@ urlpatterns = [
     # END: SYLLABUS_MANAGEMENT_URLS
     
     # Exam Management
+    # START: EXAM_CRUD_URLS
+    path('exams/', views.exam_list, name='exam_list'),
+    path('exams/<int:exam_id>/edit/', views.exam_edit, name='exam_edit'),
+    path('exams/<int:exam_id>/delete/', views.exam_delete, name='exam_delete'),
+    # END: EXAM_CRUD_URLS
     path('exams/schedule/', views.exam_schedule, name='exam_schedule'),
     path('exams/schedule/<int:schedule_id>/edit/', views.exam_schedule_edit, name='exam_schedule_edit'),
     path('exams/schedule/<int:schedule_id>/delete/', views.exam_schedule_delete, name='exam_schedule_delete'),
@@ -81,5 +86,65 @@ urlpatterns = [
     path('finance/expense/<int:expense_id>/toggle-remember/', views.expense_toggle_remember, name='expense_toggle_remember'),
     path('finance/history/', views.finance_history, name='finance_history'),
     path('finance/reports/', views.finance_reports, name='finance_reports'),
-    # END: FINANCE_MANAGEMENT_URLS
+    # START: GALLERY_MANAGEMENT_URLS
+    path('gallery/', views.gallery_list, name='gallery_list'),
+    path('gallery/<int:item_id>/edit/', views.gallery_edit, name='gallery_edit'),
+    path('gallery/<int:item_id>/delete/', views.gallery_delete, name='gallery_delete'),
+    path('gallery/<int:item_id>/toggle-remember/', views.gallery_toggle_remember, name='gallery_toggle_remember'),
+    # END: GALLERY_MANAGEMENT_URLS
+    
+    # START: NOTICE_MANAGEMENT_URLS
+    path('notices/', views.notice_list, name='notice_list'),
+    path('notices/add/', views.notice_add, name='notice_add'),
+    path('notices/<int:notice_id>/edit/', views.notice_edit, name='notice_edit'),
+    path('notices/<int:notice_id>/delete/', views.notice_delete, name='notice_delete'),
+    path('notices/<int:notice_id>/toggle-remember/', views.notice_toggle_remember, name='notice_toggle_remember'),
+    # END: NOTICE_MANAGEMENT_URLS
+    # START: STAFF_MANAGEMENT_URLS
+    path('staff/', views.staff_list, name='staff_list'),
+    path('staff/add/', views.staff_add, name='staff_add'),
+    path('staff/<int:staff_id>/edit/', views.staff_edit, name='staff_edit'),
+    path('staff/<int:staff_id>/delete/', views.staff_delete, name='staff_delete'),
+    # END: STAFF_MANAGEMENT_URLS
+    
+    # START: PARENT_MANAGEMENT_URLS
+    path('parents/', views.parent_list, name='parent_list'),
+    path('parents/add/', views.parent_add, name='parent_add'),
+    path('parents/<int:parent_id>/edit/', views.parent_edit, name='parent_edit'),
+    path('parents/<int:parent_id>/delete/', views.parent_delete, name='parent_delete'),
+    # END: PARENT_MANAGEMENT_URLS
+
+    # START: ACCOUNTS_MANAGEMENT_URLS
+    path('accounts/registration-requests/', views.registration_requests, name='registration_requests'),
+    path('accounts/registration-requests/<int:req_id>/edit/', views.registration_requests_edit, name='registration_requests_edit'),
+    path('accounts/registration-requests/<int:req_id>/delete/', views.registration_requests_delete, name='registration_requests_delete'),
+    path('accounts/registration-requests/<int:req_id>/toggle-remember/', views.registration_requests_toggle_remember, name='registration_requests_toggle_remember'),
+    
+    path('accounts/user-profiles/', views.user_profiles, name='user_profiles'),
+    path('accounts/user-profiles/add/', views.user_profiles_add, name='user_profiles_add'),
+    path('accounts/user-profiles/<int:profile_id>/edit/', views.user_profiles_edit, name='user_profiles_edit'),
+    path('accounts/user-profiles/<int:profile_id>/delete/', views.user_profiles_delete, name='user_profiles_delete'),
+    path('accounts/user-profiles/<int:profile_id>/toggle-remember/', views.user_profiles_toggle_remember, name='user_profiles_toggle_remember'),
+    # END: ACCOUNTS_MANAGEMENT_URLS
+
+    # START: AUTH_MANAGEMENT_URLS
+    path('auth/groups/', views.auth_groups, name='auth_groups'),
+    path('auth/groups/add/', views.auth_groups_add, name='auth_groups_add'),
+    path('auth/groups/<int:group_id>/edit/', views.auth_groups_edit, name='auth_groups_edit'),
+    path('auth/groups/<int:group_id>/delete/', views.auth_groups_delete, name='auth_groups_delete'),
+    
+    path('auth/users/', views.auth_users, name='auth_users'),
+    path('auth/users/add/', views.auth_users_add, name='auth_users_add'),
+    path('auth/users/<int:user_id>/edit/', views.auth_users_edit, name='auth_users_edit'),
+    path('auth/users/<int:user_id>/delete/', views.auth_users_delete, name='auth_users_delete'),
+    path('auth/users/<int:user_id>/toggle-active/', views.auth_user_toggle_active, name='auth_user_toggle_active'),
+    # END: AUTH_MANAGEMENT_URLS
+    
+    # START: EVENTS_MANAGEMENT_URLS
+    path('events/', views.event_list, name='event_list'),
+    path('events/add/', views.event_add, name='event_add'),
+    path('events/<int:event_id>/edit/', views.event_edit, name='event_edit'),
+    path('events/<int:event_id>/delete/', views.event_delete, name='event_delete'),
+    path('events/<int:event_id>/toggle-remember/', views.event_toggle_remember, name='event_toggle_remember'),
+    # END: EVENTS_MANAGEMENT_URLS
 ]

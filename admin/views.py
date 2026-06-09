@@ -9,6 +9,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
 from notices.models import Notice
+from gallery.models import Gallery
+from staff.models import Staff
+from prents.models import Parent
+from accounts.models import RegistrationRequest, UserProfile
 
 # START: ADMIN_DASHBOARD_VIEWS
 @staff_member_required
@@ -63,19 +67,32 @@ def student_admission(request):
 
 @staff_member_required
 def student_attendance(request):
+    query = request.GET.get('search', '')
     students = Student.objects.all()
-    if request.method == 'POST':
-        date = request.POST.get('date')
-        for student in students:
-            status = request.POST.get(f'status_{student.id}')
-            if status:
-                Attendance.objects.update_or_create(
-                    student=student,
-                    date=date,
-                    defaults={'status': status}
-                )
-        messages.success(request, "Attendance updated successfully!")
-    return render(request, 'admin/students/attendance.html', {'students': students})
+    
+    if query:
+        students = students.filter(
+            Q(user__first_name__icontains=query) | 
+            Q(user__last_name__icontains=query) |
+            Q(student_id__icontains=query)
+        )
+    
+    student_data = []
+    for student in students:
+        total_records = Attendance.objects.filter(student=student, class_attendance__is_held=True).count()
+        total_attended = Attendance.objects.filter(student=student, status='Present', class_attendance__is_held=True).count()
+        percentage = round((total_attended / total_records) * 100, 1) if total_records > 0 else 0
+        student_data.append({
+            'student': student,
+            'percentage': percentage,
+            'total_attended': total_attended,
+            'total_classes': total_records
+        })
+        
+    return render(request, 'admin/students/attendance.html', {
+        'student_data': student_data,
+        'query': query
+    })
 
 @staff_member_required
 def student_promotion(request):
@@ -603,6 +620,44 @@ def syllabus_toggle_remember(request, syllabus_id):
 # END: SYLLABUS_MANAGEMENT_VIEWS
 
 # --- Exam Management Views ---
+# START: EXAM_CRUD_VIEWS
+@staff_member_required
+def exam_list(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        year = request.POST.get('year')
+        is_active = request.POST.get('is_active') == 'on'
+        
+        Exam.objects.create(name=name, year=year, is_active=is_active)
+        messages.success(request, f"Exam '{name}' added successfully!")
+        return redirect('admin_panel:exam_list')
+        
+    exams = Exam.objects.all().order_by('-year', 'name')
+    return render(request, 'admin/exams/exam_list.html', {'exams': exams})
+
+@staff_member_required
+def exam_edit(request, exam_id):
+    exam = get_object_or_404(Exam, id=exam_id)
+    if request.method == 'POST':
+        exam.name = request.POST.get('name')
+        exam.year = request.POST.get('year')
+        exam.is_active = request.POST.get('is_active') == 'on'
+        exam.save()
+        messages.success(request, f"Exam '{exam.name}' updated successfully!")
+        return redirect('admin_panel:exam_list')
+    return render(request, 'admin/exams/exam_edit.html', {'exam': exam})
+
+@staff_member_required
+def exam_delete(request, exam_id):
+    exam = get_object_or_404(Exam, id=exam_id)
+    if request.method == 'POST':
+        name = exam.name
+        exam.delete()
+        messages.success(request, f"Exam '{name}' deleted successfully!")
+        return redirect('admin_panel:exam_list')
+    return render(request, 'admin/exams/exam_delete_confirm.html', {'exam': exam})
+# END: EXAM_CRUD_VIEWS
+
 @staff_member_required
 def exam_schedule(request):
     if request.method == 'POST':
@@ -1006,4 +1061,629 @@ def expense_toggle_remember(request, expense_id):
     messages.success(request, f"Expense '{expense.title}' has been {status}!")
     return redirect('admin_panel:finance_expenses')
 # END: FINANCE_EXPENSE_CRUD_VIEWS
+# START: GALLERY_VIEWS
+@staff_member_required
+def gallery_list(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        category = request.POST.get('category')
+        file = request.FILES.get('file')
+        if title and file and category:
+            Gallery.objects.create(title=title, category=category, file=file)
+            messages.success(request, f"Media '{title}' uploaded successfully!")
+        return redirect('admin_panel:gallery_list')
+
+    items = Gallery.objects.all().order_by('-created_at')
+    return render(request, 'admin/gallery/gallery_list.html', {'items': items})
+
+@staff_member_required
+def gallery_delete(request, item_id):
+    item = get_object_or_404(Gallery, id=item_id)
+    if request.method == 'POST':
+        if item.file:
+            item.file.delete(save=False)
+        item.delete()
+        messages.success(request, "Media deleted successfully!")
+        return redirect('admin_panel:gallery_list')
+    return redirect('admin_panel:gallery_list')
+# END: GALLERY_VIEWS
+
+# START: NOTICE_VIEWS
+@staff_member_required
+def notice_list(request):
+    notices = Notice.objects.all().order_by('-created_at')
+    return render(request, 'admin/notices/notice_list.html', {'notices': notices})
+
+@staff_member_required
+def notice_add(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        is_public = request.POST.get('is_public') == 'on'
+        target_student = request.POST.get('target_student') == 'on'
+        target_teacher = request.POST.get('target_teacher') == 'on'
+        target_staff = request.POST.get('target_staff') == 'on'
+        target_parent = request.POST.get('target_parent') == 'on'
+        signature = request.FILES.get('signature')
+        attachment = request.FILES.get('attachment')
+        
+        Notice.objects.create(
+            title=title, content=content, is_public=is_public,
+            target_student=target_student, target_teacher=target_teacher,
+            target_staff=target_staff, target_parent=target_parent,
+            signature=signature, attachment=attachment,
+            created_by=request.user
+        )
+        messages.success(request, "Notice created successfully!")
+        return redirect('admin_panel:notice_list')
+    return render(request, 'admin/notices/notice_edit.html')
+
+@staff_member_required
+def notice_edit(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    if request.method == 'POST':
+        notice.title = request.POST.get('title', notice.title)
+        notice.content = request.POST.get('content', notice.content)
+        notice.is_public = request.POST.get('is_public') == 'on'
+        notice.target_student = request.POST.get('target_student') == 'on'
+        notice.target_teacher = request.POST.get('target_teacher') == 'on'
+        notice.target_staff = request.POST.get('target_staff') == 'on'
+        notice.target_parent = request.POST.get('target_parent') == 'on'
+        
+        if 'signature' in request.FILES:
+            notice.signature = request.FILES.get('signature')
+        if 'attachment' in request.FILES:
+            notice.attachment = request.FILES.get('attachment')
+            
+        notice.save()
+        messages.success(request, "Notice updated successfully!")
+        return redirect('admin_panel:notice_list')
+    return render(request, 'admin/notices/notice_edit.html', {'notice': notice})
+
+@staff_member_required
+def notice_delete(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    if request.method == 'POST':
+        notice.delete()
+        messages.success(request, "Notice deleted successfully!")
+        return redirect('admin_panel:notice_list')
+    return render(request, 'admin/notices/notice_delete_confirm.html', {'notice': notice})
+# END: NOTICE_VIEWS
+
+# START: STAFF_VIEWS
+@staff_member_required
+def staff_list(request):
+    query = request.GET.get('search', '')
+    staffs = Staff.objects.select_related('user').all()
+    if query:
+        staffs = staffs.filter(Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query) | Q(staff_id__icontains=query) | Q(designation__icontains=query))
+    return render(request, 'admin/staff/staff_list.html', {'staffs': staffs, 'search': query})
+
+@staff_member_required
+def staff_add(request):
+    students = Student.objects.all()
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        designation = request.POST.get('designation')
+        department = request.POST.get('department')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        salary = request.POST.get('salary') or None
+        joining_date = request.POST.get('joining_date') or None
+        work_shift = request.POST.get('work_shift')
+        gender = request.POST.get('gender')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f"Username '{username}' already taken.")
+            return redirect('admin_panel:staff_add')
+
+        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, is_staff=True)
+        staff_id = f"STF{user.id:04d}"
+        profile_image = request.FILES.get('profile_image')
+        Staff.objects.create(user=user, staff_id=staff_id, designation=designation, department=department, phone_number=phone_number, address=address, salary=salary, joining_date=joining_date, work_shift=work_shift, gender=gender, profile_image=profile_image)
+        messages.success(request, f"Staff '{first_name} {last_name}' added successfully!")
+        return redirect('admin_panel:staff_list')
+    return render(request, 'admin/staff/staff_edit.html', {'mode': 'add'})
+
+@staff_member_required
+def staff_edit(request, staff_id):
+    staff = get_object_or_404(Staff, id=staff_id)
+    if request.method == 'POST':
+        staff.user.first_name = request.POST.get('first_name', staff.user.first_name)
+        staff.user.last_name = request.POST.get('last_name', staff.user.last_name)
+        staff.user.email = request.POST.get('email', staff.user.email)
+        staff.user.save()
+        staff.designation = request.POST.get('designation', staff.designation)
+        staff.department = request.POST.get('department', staff.department)
+        staff.phone_number = request.POST.get('phone_number', staff.phone_number)
+        staff.address = request.POST.get('address', staff.address)
+        staff.salary = request.POST.get('salary') or staff.salary
+        staff.joining_date = request.POST.get('joining_date') or staff.joining_date
+        staff.work_shift = request.POST.get('work_shift', staff.work_shift)
+        staff.gender = request.POST.get('gender', staff.gender)
+        if 'profile_image' in request.FILES:
+            staff.profile_image = request.FILES['profile_image']
+        staff.save()
+        messages.success(request, "Staff updated successfully!")
+        return redirect('admin_panel:staff_list')
+    return render(request, 'admin/staff/staff_edit.html', {'staff': staff, 'mode': 'edit'})
+
+@staff_member_required
+def staff_delete(request, staff_id):
+    staff = get_object_or_404(Staff, id=staff_id)
+    if request.method == 'POST':
+        user = staff.user
+        staff.delete()
+        user.delete()
+        messages.success(request, "Staff deleted successfully!")
+        return redirect('admin_panel:staff_list')
+    return render(request, 'admin/staff/staff_delete_confirm.html', {'staff': staff})
+# END: STAFF_VIEWS
+
+# START: PARENT_VIEWS
+@staff_member_required
+def parent_list(request):
+    query = request.GET.get('search', '')
+    parents = Parent.objects.select_related('user', 'linked_student').all()
+    if query:
+        parents = parents.filter(Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query) | Q(parent_id__icontains=query))
+    return render(request, 'admin/parents/parent_list.html', {'parents': parents, 'search': query})
+
+@staff_member_required
+def parent_add(request):
+    students = Student.objects.all()
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        gender = request.POST.get('gender')
+        occupation = request.POST.get('occupation')
+        relationship_type = request.POST.get('relationship_type')
+        linked_student_id = request.POST.get('linked_student')
+        emergency_contact_number = request.POST.get('emergency_contact_number')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f"Username '{username}' already taken.")
+            return render(request, 'admin/parents/parent_edit.html', {'mode': 'add', 'students': students})
+
+        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
+        parent_id = f"PAR{user.id:04d}"
+        linked_student = Student.objects.filter(id=linked_student_id).first()
+        profile_image = request.FILES.get('profile_image')
+        Parent.objects.create(user=user, parent_id=parent_id, phone_number=phone_number, address=address, gender=gender, occupation=occupation, relationship_type=relationship_type, linked_student=linked_student, emergency_contact_number=emergency_contact_number, profile_image=profile_image)
+        messages.success(request, f"Parent '{first_name} {last_name}' added successfully!")
+        return redirect('admin_panel:parent_list')
+    return render(request, 'admin/parents/parent_edit.html', {'mode': 'add', 'students': students})
+
+@staff_member_required
+def parent_edit(request, parent_id):
+    parent = get_object_or_404(Parent, id=parent_id)
+    students = Student.objects.all()
+    if request.method == 'POST':
+        parent.user.first_name = request.POST.get('first_name', parent.user.first_name)
+        parent.user.last_name = request.POST.get('last_name', parent.user.last_name)
+        parent.user.email = request.POST.get('email', parent.user.email)
+        parent.user.save()
+        parent.phone_number = request.POST.get('phone_number', parent.phone_number)
+        parent.address = request.POST.get('address', parent.address)
+        parent.gender = request.POST.get('gender', parent.gender)
+        parent.occupation = request.POST.get('occupation', parent.occupation)
+        parent.relationship_type = request.POST.get('relationship_type', parent.relationship_type)
+        parent.emergency_contact_number = request.POST.get('emergency_contact_number', parent.emergency_contact_number)
+        linked_student_id = request.POST.get('linked_student')
+        parent.linked_student = Student.objects.filter(id=linked_student_id).first()
+        if 'profile_image' in request.FILES:
+            parent.profile_image = request.FILES['profile_image']
+        parent.save()
+        messages.success(request, "Parent updated successfully!")
+        return redirect('admin_panel:parent_list')
+    return render(request, 'admin/parents/parent_edit.html', {'parent': parent, 'mode': 'edit', 'students': students})
+
+@staff_member_required
+def parent_delete(request, parent_id):
+    parent = get_object_or_404(Parent, id=parent_id)
+    if request.method == 'POST':
+        user = parent.user
+        parent.delete()
+        if user:
+            user.delete()
+        messages.success(request, "Parent deleted successfully!")
+        return redirect('admin_panel:parent_list')
+    return render(request, 'admin/parents/parent_delete_confirm.html', {'parent': parent})
+# END: PARENT_VIEWS
+
+# START: ACCOUNTS_VIEWS
+@staff_member_required
+def registration_requests(request):
+    if request.method == 'POST':
+        req_id = request.POST.get('req_id')
+        action = request.POST.get('action')
+        reg_req = get_object_or_404(RegistrationRequest, id=req_id)
+        if action == 'approve':
+            if User.objects.filter(email=reg_req.email).exists():
+                messages.error(request, f"User with email {reg_req.email} already exists. No new account created.")
+            else:
+                import string, random
+                from django.utils.text import slugify
+                from student.models import Student
+                from teacher.models import Teacher
+                from staff.models import Staff
+                from prents.models import Parent as SchoolParent
+                
+                # 1. Generate Username
+                username = slugify(reg_req.first_name + reg_req.last_name)
+                if User.objects.filter(username=username).exists():
+                    username = f"{username}{random.randint(10, 99)}"
+                
+                # 2. Generate Random Password
+                password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                
+                # 3. Create User
+                user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=reg_req.email,
+                    first_name=reg_req.first_name,
+                    last_name=reg_req.last_name
+                )
+                
+                # 4. Create Role Profile
+                if reg_req.role == 'Student':
+                    Student.objects.create(user=user, phone_number=reg_req.phone_number, student_id=f"STU{random.randint(1000, 9999)}")
+                elif reg_req.role == 'Teacher':
+                    Teacher.objects.create(user=user, phone_number=reg_req.phone_number, teacher_id=f"TEA{random.randint(1000, 9999)}", salary=0)
+                elif reg_req.role == 'Staff':
+                    Staff.objects.create(user=user, phone_number=reg_req.phone_number, staff_id=f"STA{random.randint(1000, 9999)}", salary=0)
+                elif reg_req.role == 'Parent':
+                    SchoolParent.objects.create(user=user, phone_number=reg_req.phone_number, parent_id=f"PAR{random.randint(1000, 9999)}")
+
+                reg_req.is_approved = True
+                reg_req.is_rejected = False
+                reg_req.save()
+                
+                # 5. Send Email Notification
+                try:
+                    from django.core.mail import send_mail
+                    from django.conf import settings
+                    subject = 'Your School Management System Account'
+                    message = f'Hello {reg_req.first_name},\n\nYour registration request has been approved.\n\nUsername: {username}\nPassword: {password}\n\nYou can now login at: http://127.0.0.1:8000/accounts/login/\n\nRegards,\nSchool Admin'
+                    send_mail(subject, message, settings.EMAIL_HOST_USER, [reg_req.email], fail_silently=False)
+                    reg_req.email_sent = True
+                    reg_req.save()
+                    messages.success(request, f"Request from '{reg_req.first_name}' approved, user created and email sent successfully!")
+                except Exception as e:
+                    messages.warning(request, f"User created but failed to send email: {e}")
+                
+        elif action == 'reject':
+            reg_req.is_rejected = True
+            reg_req.is_approved = False
+            reg_req.save()
+            messages.success(request, f"Request from '{reg_req.first_name}' rejected.")
+    requests_qs = RegistrationRequest.objects.all().order_by('-created_at')
+    return render(request, 'admin/accounts/registration_requests_list.html', {'requests': requests_qs})
+
+@staff_member_required
+def user_profiles(request):
+    query = request.GET.get('search', '')
+    profiles = UserProfile.objects.select_related('user').all()
+    if query:
+        profiles = profiles.filter(Q(user__username__icontains=query) | Q(user__first_name__icontains=query) | Q(user__email__icontains=query))
+    return render(request, 'admin/accounts/user_profiles_list.html', {'profiles': profiles, 'search': query})
+
+@staff_member_required
+def auth_users(request):
+    query = request.GET.get('search', '')
+    users = User.objects.all().order_by('-date_joined')
+    if query:
+        users = users.filter(Q(username__icontains=query) | Q(email__icontains=query) | Q(first_name__icontains=query))
+    return render(request, 'admin/auth/users_list.html', {'users': users, 'search': query})
+
+@staff_member_required
+def auth_groups(request):
+    from django.contrib.auth.models import Group
+    groups = Group.objects.all()
+    return render(request, 'admin/auth/groups_list.html', {'groups': groups})
+
+@staff_member_required
+def auth_user_toggle_active(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = not user.is_active
+    user.save()
+    status = "activated" if user.is_active else "deactivated"
+    messages.success(request, f"User '{user.username}' has been {status}.")
+    return redirect('admin_panel:auth_users')
+
+# START: GALLERY_EDIT_AND_REMEMBER
+@staff_member_required
+def gallery_edit(request, item_id):
+    item = get_object_or_404(Gallery, id=item_id)
+    if request.method == 'POST':
+        item.title = request.POST.get('title', item.title)
+        item.category = request.POST.get('category', item.category)
+        if 'file' in request.FILES:
+            item.file = request.FILES.get('file')
+        item.is_remembered = request.POST.get('is_remembered') == 'on'
+        item.reminder_note = request.POST.get('reminder_note', '')
+        item.save()
+        messages.success(request, f"Gallery item '{item.title}' updated successfully!")
+        return redirect('admin_panel:gallery_list')
+    return render(request, 'admin/gallery/gallery_form.html', {'item': item})
+
+@staff_member_required
+def gallery_toggle_remember(request, item_id):
+    item = get_object_or_404(Gallery, id=item_id)
+    item.is_remembered = not item.is_remembered
+    item.save()
+    status = "marked with reminder" if item.is_remembered else "removed from reminders"
+    messages.success(request, f"Gallery item '{item.title}' has been {status}!")
+    return redirect('admin_panel:gallery_list')
+# END: GALLERY_EDIT_AND_REMEMBER
+
+# START: NOTICE_TOGGLE_REMEMBER
+@staff_member_required
+def notice_toggle_remember(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    notice.is_remembered = not notice.is_remembered
+    notice.save()
+    status = "marked with reminder" if notice.is_remembered else "removed from reminders"
+    messages.success(request, f"Notice '{notice.title}' has been {status}!")
+    return redirect('admin_panel:notice_list')
+# END: NOTICE_TOGGLE_REMEMBER
+
+# START: REGISTRATION_REQUESTS_CRUD
+@staff_member_required
+def registration_requests_edit(request, req_id):
+    req = get_object_or_404(RegistrationRequest, id=req_id)
+    if request.method == 'POST':
+        req.first_name = request.POST.get('first_name', req.first_name)
+        req.last_name = request.POST.get('last_name', req.last_name)
+        req.phone_number = request.POST.get('phone_number', req.phone_number)
+        req.role = request.POST.get('role', req.role)
+        req.is_remembered = request.POST.get('is_remembered') == 'on'
+        req.reminder_note = request.POST.get('reminder_note', '')
+        req.save()
+        messages.success(request, "Registration request updated!")
+        return redirect('admin_panel:registration_requests')
+    return render(request, 'admin/accounts/registration_requests_form.html', {'req': req})
+
+@staff_member_required
+def registration_requests_delete(request, req_id):
+    req = get_object_or_404(RegistrationRequest, id=req_id)
+    if request.method == 'POST':
+        req.delete()
+        messages.success(request, "Registration request deleted!")
+        return redirect('admin_panel:registration_requests')
+    return render(request, 'admin/accounts/registration_requests_delete_confirm.html', {'req': req})
+
+@staff_member_required
+def registration_requests_toggle_remember(request, req_id):
+    req = get_object_or_404(RegistrationRequest, id=req_id)
+    req.is_remembered = not req.is_remembered
+    req.save()
+    status = "marked" if req.is_remembered else "unmarked"
+    messages.success(request, f"Registration request {status} for reminders.")
+    return redirect('admin_panel:registration_requests')
+# END: REGISTRATION_REQUESTS_CRUD
+
+# START: USER_PROFILES_CRUD
+@staff_member_required
+def user_profiles_add(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        role = request.POST.get('role')
+        phone = request.POST.get('phone_number')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists!")
+            return redirect('admin_panel:user_profiles_add')
+            
+        user = User.objects.create_user(username=username, email=email, password='defaultpassword')
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        UserProfile.objects.create(user=user, role=role, phone_number=phone)
+        messages.success(request, "User Profile created successfully!")
+        return redirect('admin_panel:user_profiles')
+    return render(request, 'admin/accounts/user_profiles_form.html')
+
+@staff_member_required
+def user_profiles_edit(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    if request.method == 'POST':
+        profile.user.first_name = request.POST.get('first_name', profile.user.first_name)
+        profile.user.last_name = request.POST.get('last_name', profile.user.last_name)
+        profile.user.email = request.POST.get('email', profile.user.email)
+        profile.user.save()
+        
+        profile.role = request.POST.get('role', profile.role)
+        profile.phone_number = request.POST.get('phone_number', profile.phone_number)
+        profile.is_remembered = request.POST.get('is_remembered') == 'on'
+        profile.reminder_note = request.POST.get('reminder_note', '')
+        profile.save()
+        messages.success(request, "User Profile updated successfully!")
+        return redirect('admin_panel:user_profiles')
+    return render(request, 'admin/accounts/user_profiles_form.html', {'profile': profile})
+
+@staff_member_required
+def user_profiles_delete(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    if request.method == 'POST':
+        user = profile.user
+        profile.delete()
+        user.delete()
+        messages.success(request, "User profile and account deleted!")
+        return redirect('admin_panel:user_profiles')
+    return render(request, 'admin/accounts/user_profiles_delete_confirm.html', {'profile': profile})
+
+@staff_member_required
+def user_profiles_toggle_remember(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    profile.is_remembered = not profile.is_remembered
+    profile.save()
+    status = "marked" if profile.is_remembered else "unmarked"
+    messages.success(request, f"User profile {status} for reminders.")
+    return redirect('admin_panel:user_profiles')
+# END: USER_PROFILES_CRUD
+
+# START: AUTH_GROUPS_CRUD
+@staff_member_required
+def auth_groups_add(request):
+    from django.contrib.auth.models import Group
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        Group.objects.create(name=name)
+        messages.success(request, f"Group '{name}' created!")
+        return redirect('admin_panel:auth_groups')
+    return render(request, 'admin/auth/groups_form.html')
+
+@staff_member_required
+def auth_groups_edit(request, group_id):
+    from django.contrib.auth.models import Group
+    group = get_object_or_404(Group, id=group_id)
+    if request.method == 'POST':
+        group.name = request.POST.get('name', group.name)
+        group.save()
+        messages.success(request, "Group updated!")
+        return redirect('admin_panel:auth_groups')
+    return render(request, 'admin/auth/groups_form.html', {'group': group})
+
+@staff_member_required
+def auth_groups_delete(request, group_id):
+    from django.contrib.auth.models import Group
+    group = get_object_or_404(Group, id=group_id)
+    if request.method == 'POST':
+        group.delete()
+        messages.success(request, "Group deleted!")
+        return redirect('admin_panel:auth_groups')
+    return render(request, 'admin/auth/groups_delete_confirm.html', {'group': group})
+# END: AUTH_GROUPS_CRUD
+
+# START: AUTH_USERS_CRUD
+@staff_member_required
+def auth_users_add(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists!")
+            return redirect('admin_panel:auth_users_add')
+        user = User.objects.create_user(username=username, email=email, password='defaultpassword')
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        messages.success(request, "User created successfully!")
+        return redirect('admin_panel:auth_users')
+    return render(request, 'admin/auth/users_form.html')
+
+@staff_member_required
+def auth_users_edit(request, user_id):
+    edit_user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        edit_user.first_name = request.POST.get('first_name', edit_user.first_name)
+        edit_user.last_name = request.POST.get('last_name', edit_user.last_name)
+        edit_user.email = request.POST.get('email', edit_user.email)
+        edit_user.save()
+        messages.success(request, "User updated successfully!")
+        return redirect('admin_panel:auth_users')
+    return render(request, 'admin/auth/users_form.html', {'edit_user': edit_user})
+
+@staff_member_required
+def auth_users_delete(request, user_id):
+    del_user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        del_user.delete()
+        messages.success(request, "User deleted!")
+        return redirect('admin_panel:auth_users')
+    return render(request, 'admin/auth/users_delete_confirm.html', {'del_user': del_user})
+# END: AUTH_USERS_CRUD
+
+# END: ACCOUNTS_VIEWS
 # END: ADMIN_DASHBOARD_VIEWS
+
+# START: EVENTS_VIEWS
+@staff_member_required
+def event_list(request):
+    from events.models import Event
+    events = Event.objects.all().order_by('-date', '-time')
+    return render(request, 'admin/events/event_list.html', {'events': events})
+
+@staff_member_required
+def event_add(request):
+    from events.models import Event
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        location = request.POST.get('location')
+        image = request.FILES.get('image')
+        
+        Event.objects.create(
+            title=title, description=description, date=date,
+            time=time, location=location, image=image
+        )
+        messages.success(request, "Event created successfully!")
+        return redirect('admin_panel:event_list')
+    return render(request, 'admin/events/event_edit.html')
+
+@staff_member_required
+def event_edit(request, event_id):
+    from events.models import Event
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        event.title = request.POST.get('title', event.title)
+        event.description = request.POST.get('description', event.description)
+        event.date = request.POST.get('date', event.date)
+        event.time = request.POST.get('time', event.time)
+        event.location = request.POST.get('location', event.location)
+        event.is_remembered = request.POST.get('is_remembered') == 'on'
+        event.reminder_note = request.POST.get('reminder_note', '')
+        
+        if 'image' in request.FILES:
+            event.image = request.FILES.get('image')
+            
+        event.save()
+        messages.success(request, "Event updated successfully!")
+        return redirect('admin_panel:event_list')
+    return render(request, 'admin/events/event_edit.html', {'event': event})
+
+@staff_member_required
+def event_delete(request, event_id):
+    from events.models import Event
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        if event.image:
+            event.image.delete(save=False)
+        event.delete()
+        messages.success(request, "Event deleted successfully!")
+        return redirect('admin_panel:event_list')
+    return render(request, 'admin/events/event_delete_confirm.html', {'event': event})
+
+@staff_member_required
+def event_toggle_remember(request, event_id):
+    from events.models import Event
+    event = get_object_or_404(Event, id=event_id)
+    event.is_remembered = not event.is_remembered
+    if request.method == 'POST':
+        reminder_note = request.POST.get('reminder_note', '')
+        if reminder_note:
+            event.reminder_note = reminder_note
+    event.save()
+    status = "marked with reminder" if event.is_remembered else "removed from reminders"
+    messages.success(request, f"Event '{event.title}' has been {status}!")
+    return redirect('admin_panel:event_list')
+# END: EVENTS_VIEWS

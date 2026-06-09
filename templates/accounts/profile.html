@@ -1,206 +1,564 @@
 {% extends 'base.html' %}
 {% load static %}
 
+<!-- Start: Profile Page CSS -->
 {% block css %}
 <style>
-    /* START: SEPARATE_PROFILE_STYLE */
-    .profile-page-wrapper {
-        max-width: 1200px;
-        margin: 60px auto;
-        padding: 0 24px;
-        animation: fadeIn 0.8s ease;
-    }
+/* Start: Profile Page Styles */
+.ps-wrapper {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 24px;
+    animation: ps-fadeUp 0.6s ease;
+}
 
-    .profile-header-card {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 30px;
-        padding: 40px;
-        display: flex;
-        align-items: center;
-        gap: 40px;
-        margin-bottom: 30px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
+@keyframes ps-fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-    .profile-pic-box {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        padding: 5px;
-        background: linear-gradient(135deg, #6366f1, #ec4899);
-        position: relative;
-    }
+/* ── Hero Banner ── */
+.ps-hero {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #1a0733 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 50px 50px 40px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
 
-    .profile-pic-box img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #0f172a;
-    }
+/* Animated glow orbs */
+.ps-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+}
 
-    .header-info h1 {
-        font-size: 36px;
-        font-weight: 800;
-        margin-bottom: 10px;
-        background: linear-gradient(to right, #fff, #a5b4fc);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+.ps-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+}
 
-    .role-badge {
-        background: rgba(99, 102, 241, 0.2);
-        color: #a5b4fc;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
+/* Avatar */
+.ps-avatar-ring {
+    position: relative;
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #6366f1, #ec4899, #a855f7);
+    box-shadow: 0 0 30px rgba(99,102,241,0.4);
+}
 
-    .profile-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 30px;
-    }
+.ps-avatar-ring img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #0f172a;
+    display: block;
+}
 
-    .info-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        padding: 30px;
-        transition: 0.3s;
-    }
+.ps-avatar-ring .ps-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid #0f172a;
+    background: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    color: #6366f1;
+}
 
-    .info-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.3);
-    }
+/* Hero Info */
+.ps-hero-info {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
 
-    .info-card h3 {
-        color: #6366f1;
-        font-size: 18px;
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
+.ps-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.4);
+    color: #a5b4fc;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+}
 
-    .data-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+.ps-hero-name {
+    font-size: 38px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 6px;
+    background: linear-gradient(135deg, #fff 40%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+}
 
-    .data-row span:first-child {
-        color: #94a3b8;
-        font-size: 14px;
-    }
+.ps-hero-username {
+    color: #64748b;
+    font-size: 15px;
+    margin-bottom: 24px;
+}
 
-    .data-row span:last-child {
-        color: #fff;
-        font-weight: 600;
-        font-size: 14px;
-    }
+.ps-hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
 
-    .edit-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 20px;
-    }
+.ps-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    white-space: nowrap;
+}
 
-    .edit-btn:hover {
-        background: #6366f1;
-        border-color: #6366f1;
-        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-    }
+.ps-btn-primary {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(99,102,241,0.35);
+}
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    /* END: SEPARATE_PROFILE_STYLE */
+.ps-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99,102,241,0.5);
+    color: #fff;
+}
+
+.ps-btn-ghost {
+    background: rgba(255,255,255,0.06);
+    color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ps-btn-ghost:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+}
+
+/* ── Stats Strip ── */
+.ps-stats-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.ps-stat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 18px;
+    padding: 22px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.ps-stat-card:hover {
+    background: rgba(99,102,241,0.07);
+    border-color: rgba(99,102,241,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.ps-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.ps-stat-icon.indigo { background: rgba(99,102,241,0.15); color: #818cf8; }
+.ps-stat-icon.pink   { background: rgba(236,72,153,0.15);  color: #f472b6; }
+.ps-stat-icon.cyan   { background: rgba(6,182,212,0.15);   color: #22d3ee; }
+.ps-stat-icon.amber  { background: rgba(245,158,11,0.15);  color: #fbbf24; }
+.ps-stat-icon.green  { background: rgba(16,185,129,0.15);  color: #34d399; }
+.ps-stat-icon.rose   { background: rgba(244,63,94,0.15);   color: #fb7185; }
+
+.ps-stat-text .ps-stat-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.ps-stat-text .ps-stat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #f1f5f9;
+    line-height: 1.2;
+    word-break: break-all;
+}
+
+/* ── Info Grid ── */
+.ps-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .ps-info-grid { grid-template-columns: 1fr; }
+    .ps-hero { flex-direction: column; text-align: center; padding: 36px 24px; }
+    .ps-hero-actions { justify-content: center; }
+    .ps-stats-strip { grid-template-columns: 1fr 1fr; }
+}
+
+.ps-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 22px;
+    padding: 30px;
+    transition: border-color 0.3s;
+}
+
+.ps-card:hover {
+    border-color: rgba(99,102,241,0.2);
+}
+
+.ps-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #a5b4fc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.ps-card-title i {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(99,102,241,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
+    font-size: 15px;
+}
+
+.ps-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.ps-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.ps-row-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ps-row-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+    text-align: right;
+}
+
+.ps-badge-active {
+    background: rgba(16,185,129,0.15);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+/* End: Profile Page Styles */
 </style>
 {% endblock %}
+<!-- End: Profile Page CSS -->
 
+<!-- Start: Profile Page Content -->
 {% block content %}
-<div class="profile-page-wrapper">
-    <!-- Header Card -->
-    <div class="profile-header-card">
-        <div class="profile-pic-box">
-            {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="Profile">
+<div class="ps-wrapper">
+
+    <!-- Start: Hero Section -->
+    <div class="ps-hero">
+        <!-- Start: Avatar -->
+        <div class="ps-avatar-ring">
+            {% if profile and profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="Profile Photo">
+            {% elif user_profile and user_profile.profile_image %}
+                <img src="{{ user_profile.profile_image.url }}" alt="Profile Photo">
             {% else %}
-                <img src="{% static 'image/default-avatar.png' %}" alt="Default Profile">
+                <div class="ps-avatar-fallback"><i class="fas fa-user"></i></div>
             {% endif %}
         </div>
-        <div class="header-info">
-            <span class="role-badge">{{ role }}</span>
-            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-            <p style="color: #94a3b8; font-size: 15px; margin-bottom: 15px;">
-                <i class="fas fa-map-marker-alt"></i> {{ profile.address|default:"Location not set" }}
-            </p>
-            <a href="{% url 'accounts:settings' %}" class="edit-btn">
-                <i class="fas fa-user-edit"></i> Edit Profile & Information
-            </a>
+        <!-- End: Avatar -->
+
+        <!-- Start: Hero Info -->
+        <div class="ps-hero-info">
+            <div class="ps-role-badge">
+                <i class="fas fa-shield-alt"></i> {{ role|default:"User" }}
+            </div>
+            <h1 class="ps-hero-name">{{ user.first_name }} {{ user.last_name }}</h1>
+            <div class="ps-hero-username">@{{ user.username }}</div>
+            <div class="ps-hero-actions">
+                <a href="{% url 'accounts:settings' %}" class="ps-btn ps-btn-primary">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </a>
+                <a href="/" class="ps-btn ps-btn-ghost">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </div>
+        </div>
+        <!-- End: Hero Info -->
+    </div>
+    <!-- End: Hero Section -->
+
+    <!-- Start: Stats Strip -->
+    <div class="ps-stats-strip">
+        <div class="ps-stat-card">
+            <div class="ps-stat-icon indigo"><i class="fas fa-envelope"></i></div>
+            <div class="ps-stat-text">
+                <div class="ps-stat-label">Email</div>
+                <div class="ps-stat-value">{{ user.email|default:"Not Set" }}</div>
+            </div>
+        </div>
+        <div class="ps-stat-card">
+            <div class="ps-stat-icon pink"><i class="fas fa-phone"></i></div>
+            <div class="ps-stat-text">
+                <div class="ps-stat-label">Phone</div>
+                <div class="ps-stat-value">
+                    {% if profile and profile.phone_number %}{{ profile.phone_number }}
+                    {% elif user_profile and user_profile.phone_number %}{{ user_profile.phone_number }}
+                    {% else %}Not Set{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="ps-stat-card">
+            <div class="ps-stat-icon cyan"><i class="fas fa-tint"></i></div>
+            <div class="ps-stat-text">
+                <div class="ps-stat-label">Blood Group</div>
+                <div class="ps-stat-value">
+                    {% if profile and profile.blood_group %}{{ profile.blood_group }}
+                    {% elif user_profile and user_profile.blood_group %}{{ user_profile.blood_group }}
+                    {% else %}Not Set{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="ps-stat-card">
+            <div class="ps-stat-icon green"><i class="fas fa-circle"></i></div>
+            <div class="ps-stat-text">
+                <div class="ps-stat-label">Account Status</div>
+                <div class="ps-stat-value"><span class="ps-badge-active">Active</span></div>
+            </div>
         </div>
     </div>
+    <!-- End: Stats Strip -->
 
-    <!-- Data Grid -->
-    <div class="profile-grid">
-        <!-- Personal Info -->
-        <div class="info-card">
-            <h3><i class="fas fa-user"></i> Personal Information</h3>
-            <div class="data-row"><span>Full Name</span><span>{{ user.first_name }} {{ user.last_name }}</span></div>
-            <div class="data-row"><span>Date of Birth</span><span>{{ profile.date_of_birth|default:"Not Set" }}</span></div>
-            <div class="data-row"><span>Gender</span><span>{{ profile.gender|default:"Not Set" }}</span></div>
-            <div class="data-row"><span>Blood Group</span><span>{{ profile.blood_group|default:"Not Set" }}</span></div>
-            <div class="data-row"><span>Username</span><span>{{ user.username }}</span></div>
+    <!-- Start: Info Grid -->
+    <div class="ps-info-grid">
+
+        <!-- Start: Personal Info Card -->
+        <div class="ps-card">
+            <div class="ps-card-title">
+                <i class="fas fa-user"></i> Personal Information
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Full Name</span>
+                <span class="ps-row-value">{{ user.first_name }} {{ user.last_name }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Username</span>
+                <span class="ps-row-value">{{ user.username }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Gender</span>
+                <span class="ps-row-value">
+                    {% if profile and profile.gender %}{{ profile.gender }}
+                    {% elif user_profile and user_profile.gender %}{{ user_profile.gender }}
+                    {% else %}Not Set{% endif %}
+                </span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Date of Birth</span>
+                <span class="ps-row-value">
+                    {% if profile and profile.date_of_birth %}{{ profile.date_of_birth }}
+                    {% elif user_profile and user_profile.date_of_birth %}{{ user_profile.date_of_birth }}
+                    {% else %}Not Set{% endif %}
+                </span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Address</span>
+                <span class="ps-row-value">
+                    {% if profile and profile.address %}{{ profile.address }}
+                    {% elif user_profile and user_profile.address %}{{ user_profile.address }}
+                    {% else %}Not Set{% endif %}
+                </span>
+            </div>
         </div>
+        <!-- End: Personal Info Card -->
 
-        <!-- Contact Info -->
-        <div class="info-card">
-            <h3><i class="fas fa-address-book"></i> Contact Details</h3>
-            <div class="data-row"><span>Mobile Number</span><span>{{ profile.phone_number|default:"Not Set" }}</span></div>
-            <div class="data-row"><span>Email Address</span><span>{{ user.email }}</span></div>
-            <div class="data-row"><span>Address</span><span>{{ profile.address|default:"Not Set" }}</span></div>
-            <div class="data-row"><span>Account Status</span><span style="color: #10b981;">Active</span></div>
-        </div>
-
-        <!-- Academic/Professional Info -->
-        <div class="info-card">
+        <!-- Start: Role-Specific Card -->
+        <div class="ps-card">
             {% if role == 'Student' %}
-            <h3><i class="fas fa-graduation-cap"></i> Academic Details</h3>
-            <div class="data-row"><span>Student ID</span><span>{{ profile.student_id }}</span></div>
-            <div class="data-row"><span>Class</span><span>{{ profile.current_class }}</span></div>
-            <div class="data-row"><span>Roll Number</span><span>{{ profile.roll_number }}</span></div>
-            <div class="data-row"><span>Section</span><span>{{ profile.section }}</span></div>
+            <div class="ps-card-title">
+                <i class="fas fa-graduation-cap"></i> Academic Details
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Student ID</span>
+                <span class="ps-row-value">{{ profile.student_id|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Roll Number</span>
+                <span class="ps-row-value">{{ profile.roll_number|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Class</span>
+                <span class="ps-row-value">{{ profile.current_class|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Section</span>
+                <span class="ps-row-value">{{ profile.section|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Academic Year</span>
+                <span class="ps-row-value">{{ profile.academic_year|default:"Not Set" }}</span>
+            </div>
+
             {% elif role == 'Teacher' %}
-            <h3><i class="fas fa-chalkboard-teacher"></i> Professional Details</h3>
-            <div class="data-row"><span>Department</span><span>{{ profile.department }}</span></div>
-            <div class="data-row"><span>Expertise</span><span>{{ profile.subject }}</span></div>
-            <div class="data-row"><span>Qualification</span><span>{{ profile.qualification }}</span></div>
+            <div class="ps-card-title">
+                <i class="fas fa-chalkboard-teacher"></i> Professional Details
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Teacher ID</span>
+                <span class="ps-row-value">{{ profile.teacher_id|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Department</span>
+                <span class="ps-row-value">{{ profile.department|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Subject</span>
+                <span class="ps-row-value">{{ profile.subject|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Qualification</span>
+                <span class="ps-row-value">{{ profile.qualification|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Experience</span>
+                <span class="ps-row-value">{{ profile.experience|default:"Not Set" }}</span>
+            </div>
+
+            {% elif role == 'Staff' %}
+            <div class="ps-card-title">
+                <i class="fas fa-briefcase"></i> Work Details
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Staff ID</span>
+                <span class="ps-row-value">{{ profile.staff_id|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Department</span>
+                <span class="ps-row-value">{{ profile.department|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Designation</span>
+                <span class="ps-row-value">{{ profile.designation|default:"Not Set" }}</span>
+            </div>
+
+            {% elif role == 'Parent' %}
+            <div class="ps-card-title">
+                <i class="fas fa-users"></i> Parent Details
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Parent ID</span>
+                <span class="ps-row-value">{{ profile.parent_id|default:"Not Set" }}</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Occupation</span>
+                <span class="ps-row-value">{{ profile.occupation|default:"Not Set" }}</span>
+            </div>
+
             {% else %}
-            <h3><i class="fas fa-briefcase"></i> Work Details</h3>
-            <div class="data-row"><span>Role</span><span>{{ role }}</span></div>
-            <div class="data-row"><span>Access Level</span><span>Authorized</span></div>
+            <div class="ps-card-title">
+                <i class="fas fa-user-shield"></i> Admin Details
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Role</span>
+                <span class="ps-row-value">Super Administrator</span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Access Level</span>
+                <span class="ps-row-value"><span class="ps-badge-active">Full Access</span></span>
+            </div>
+            <div class="ps-row">
+                <span class="ps-row-label">Admin Panel</span>
+                <span class="ps-row-value"><a href="{% url 'admin:index' %}" style="color:#818cf8;text-decoration:none;">Go to Admin Panel</a></span>
+            </div>
             {% endif %}
         </div>
+        <!-- End: Role-Specific Card -->
+
     </div>
+    <!-- End: Info Grid -->
+
 </div>
 {% endblock %}
+<!-- End: Profile Page Content -->

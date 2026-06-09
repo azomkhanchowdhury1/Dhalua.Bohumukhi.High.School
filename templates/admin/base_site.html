@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | School Admin Dashboard{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">School Management</a></h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Side-by-side fieldsets improvements */
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px;
+    }
+    .form-row > div {
+        flex: 1;
+        min-width: 250px;
+    }
+    .form-row label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    /* Custom Sidebar Accordion Styles */
+    #nav-sidebar > div.module table tr {
+        display: none; /* Hide rows by default */
+    }
+    #nav-sidebar > div.module.expanded table tr {
+        display: table-row; /* Show rows when expanded */
+    }
+    
+    /* Make the app title clickable to expand/collapse */
+    #nav-sidebar > div.module > table > caption {
+        cursor: pointer;
+        background: var(--primary, #417690);
+        padding: 10px;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 2px;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+    #nav-sidebar > div.module > table > caption:hover {
+        background: var(--secondary, #79aec8);
+    }
+    
+    #nav-sidebar > div.module > table > caption a {
+        color: white !important;
+        pointer-events: none; /* Let the caption handle the click */
+        font-size: 14px;
+    }
+    
+    /* Active Link Styles */
+    #nav-sidebar a[aria-current="page"] {
+        font-weight: bold !important;
+        background-color: var(--selected-bg, #f3f4f6) !important;
+        border-left: 4px solid var(--primary, #417690) !important;
+        padding-left: 6px;
+        color: var(--primary, #417690) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const appModules = document.querySelectorAll('#nav-sidebar > div.module');
+        
+        // Check local storage for expanded states
+        const expandedApps = JSON.parse(localStorage.getItem('expandedApps') || '{}');
+        
+        appModules.forEach(module => {
+            const caption = module.querySelector('caption');
+            if(!caption) return;
+            
+            const appName = caption.textContent.trim();
+            
+            // Auto expand if it contains the current active link
+            const hasActiveLink = module.querySelector('a[aria-current="page"]');
+            if (hasActiveLink || expandedApps[appName]) {
+                module.classList.add('expanded');
+                expandedApps[appName] = true;
+            }
+            
+            caption.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent following the link
+                
+                // Toggle this module
+                const isExpanded = module.classList.toggle('expanded');
+                
+                // Save state
+                expandedApps[appName] = isExpanded;
+                
+                // Close others (Accordion effect)
+                appModules.forEach(otherModule => {
+                    if (otherModule !== module) {
+                        otherModule.classList.remove('expanded');
+                        const otherName = otherModule.querySelector('caption').textContent.trim();
+                        expandedApps[otherName] = false;
+                    }
+                });
+                localStorage.setItem('expandedApps', JSON.stringify(expandedApps));
+            });
+        });
+    });
+</script>
+{% endblock %}

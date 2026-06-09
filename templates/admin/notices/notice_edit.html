@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+/* Start: Premium Notice Edit Styles */
+@keyframes ne-fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ne-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+    animation: ne-fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Header Section */
+.ne-header {
+    text-align: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.ne-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ne-header p {
+    color: #94a3b8;
+    font-size: 15px;
+}
+
+.ne-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #ec4899);
+    margin: 16px auto 0;
+    border-radius: 3px;
+}
+
+/* Form Container */
+.ne-form-container {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Elements */
+.ne-form-group {
+    margin-bottom: 24px;
+}
+
+.ne-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ne-label .required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.ne-input, .ne-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #f8fafc;
+    font-size: 15px;
+    font-family: inherit;
+    padding: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.ne-textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.ne-input:focus, .ne-textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.ne-input::placeholder, .ne-textarea::placeholder {
+    color: #64748b;
+}
+
+/* Grid Layout for Checkboxes and Files */
+.ne-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .ne-grid { grid-template-columns: 1fr; }
+}
+
+/* Checkbox Cards */
+.ne-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.ne-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ne-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.ne-checkbox-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.ne-checkbox-item input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.ne-checkbox-item input[type="checkbox"]:checked {
+    background: #6366f1;
+    border-color: #6366f1;
+}
+
+.ne-checkbox-item input[type="checkbox"]:checked::after {
+    content: '\2714';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.ne-checkbox-item span {
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Custom File Uploads */
+.ne-file-upload {
+    background: rgba(0, 0, 0, 0.15);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.ne-file-upload:hover {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.ne-file-upload i {
+    font-size: 24px;
+    color: #818cf8;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.ne-file-upload .file-text {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.ne-file-upload input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.ne-current-file {
+    font-size: 12px;
+    color: #34d399;
+    margin-top: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Actions */
+.ne-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ne-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border: none;
+}
+
+.ne-btn-submit {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.ne-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+.ne-btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ne-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+/* End: Premium Notice Edit Styles */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: NOTICE_EDIT_SECTION -->
+<div class="ne-wrapper">
+    <div class="ne-header">
+        <h1>{% if notice %}Edit Notice{% else %}Create Notice{% endif %}</h1>
+        <p>Compose announcements for the school portal.</p>
+    </div>
+
+    <div class="ne-form-container">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Title -->
+            <div class="ne-form-group">
+                <label class="ne-label">Notice Title <span class="required">*</span></label>
+                <input type="text" name="title" value="{{ notice.title }}" class="ne-input" required placeholder="e.g. Eid-ul-Fitr Holidays">
+            </div>
+            
+            <!-- Content -->
+            <div class="ne-form-group">
+                <label class="ne-label">Message Content <span class="required">*</span></label>
+                <textarea name="content" class="ne-textarea" required placeholder="Write the notice body here...">{{ notice.content }}</textarea>
+            </div>
+
+            <div class="ne-grid">
+                <!-- Target Audience -->
+                <div class="ne-card">
+                    <label class="ne-label"><i class="fas fa-users" style="color: #6366f1; margin-right: 6px;"></i> Target Audience</label>
+                    <div class="ne-checkbox-list" style="margin-top: 16px;">
+                        <label class="ne-checkbox-item">
+                            <input type="checkbox" name="target_student" {% if notice.target_student %}checked{% endif %}>
+                            <span>Students</span>
+                        </label>
+                        <label class="ne-checkbox-item">
+                            <input type="checkbox" name="target_teacher" {% if notice.target_teacher %}checked{% endif %}>
+                            <span>Teachers</span>
+                        </label>
+                        <label class="ne-checkbox-item">
+                            <input type="checkbox" name="target_staff" {% if notice.target_staff %}checked{% endif %}>
+                            <span>Staff</span>
+                        </label>
+                        <label class="ne-checkbox-item">
+                            <input type="checkbox" name="target_parent" {% if notice.target_parent %}checked{% endif %}>
+                            <span>Parents</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Visibility & Attachments -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- Visibility -->
+                    <div class="ne-card">
+                        <label class="ne-label"><i class="fas fa-eye" style="color: #ec4899; margin-right: 6px;"></i> Visibility</label>
+                        <div class="ne-checkbox-list" style="margin-top: 16px;">
+                            <label class="ne-checkbox-item">
+                                <input type="checkbox" name="is_public" {% if notice.is_public %}checked{% endif %}>
+                                <span>Make Public (Visible without login)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="ne-card">
+                        <label class="ne-label"><i class="fas fa-paperclip" style="color: #a855f7; margin-right: 6px;"></i> Attachments</label>
+                        
+                        <div style="margin-top: 16px; margin-bottom: 16px;">
+                            <div class="ne-file-upload">
+                                <input type="file" name="attachment" onchange="this.nextElementSibling.nextElementSibling.textContent = this.files[0]?.name || 'Click to select file'">
+                                <i class="fas fa-file-pdf"></i>
+                                <div class="file-text">Attachment (PDF/Image)</div>
+                            </div>
+                            {% if notice.attachment %}
+                                <div class="ne-current-file">
+                                    <i class="fas fa-check-circle"></i> Attached: {{ notice.attachment.name }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <div class="ne-file-upload">
+                                <input type="file" name="signature" accept="image/*" onchange="this.nextElementSibling.nextElementSibling.textContent = this.files[0]?.name || 'Click to select image'">
+                                <i class="fas fa-signature"></i>
+                                <div class="file-text">Headmaster Signature</div>
+                            </div>
+                            {% if notice.signature %}
+                                <div class="ne-current-file">
+                                    <i class="fas fa-check-circle"></i> Attached: {{ notice.signature.name }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="ne-actions">
+                <a href="{% url 'admin_panel:notice_list' %}" class="ne-btn ne-btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="ne-btn ne-btn-submit">
+                    <i class="fas fa-paper-plane"></i> {% if notice %}Update Notice{% else %}Publish Notice{% endif %}
+                </button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+<!-- END: NOTICE_EDIT_SECTION -->
+{% endblock %}

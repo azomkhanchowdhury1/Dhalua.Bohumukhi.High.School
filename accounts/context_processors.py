@@ -22,6 +22,9 @@ def user_profile_context(request):
         elif hasattr(user, 'parent_profile'):
             role = "Parent"
             profile = user.parent_profile
+        elif user.is_superuser and hasattr(user, 'profile'):
+            role = "Admin"
+            profile = user.profile
         
         return {
             'global_role': role,

@@ -124,7 +124,7 @@
                             class="dropdown-item">
                             <i class="fas fa-user-circle"></i> My Profile
                         </a>
-                        <a href="#" class="dropdown-item">
+                        <a href="{% url 'accounts:settings' %}" class="dropdown-item">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                         {% if global_role == 'Admin' %}

@@ -5,24 +5,91 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.text import slugify
+from django.utils.html import format_html
 from .models import UserProfile, RegistrationRequest
 from student.models import Student
 from teacher.models import Teacher
 from staff.models import Staff
 from prents.models import Parent as SchoolParent
 
+from django.contrib.auth.admin import UserAdmin
+
+# START: CUSTOM_USER_ADMIN
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+
+class CustomUserAdmin(UserAdmin):
+    inlines = (UserProfileInline,)
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+# END: CUSTOM_USER_ADMIN
+
+# START: USER_PROFILE_ADMIN
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role', 'phone_number', 'is_verified')
-    list_filter = ('role', 'is_verified')
+    list_display = ('user', 'role', 'phone_number', 'is_verified', 'image_preview')
+    list_filter = ('role', 'is_verified', 'is_remembered')
     search_fields = ('user__username', 'user__email', 'phone_number')
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': (
+                ('user', 'role'),
+                'profile_image',
+            )
+        }),
+        ('Personal Information', {
+            'fields': (
+                ('phone_number', 'date_of_birth'),
+                ('gender', 'blood_group'),
+                'address'
+            )
+        }),
+        ('Verification & Settings', {
+            'fields': (
+                ('is_verified', 'otp_code'),
+                ('is_remembered', 'reminder_note')
+            )
+        }),
+    )
 
+    def image_preview(self, obj):
+        if obj.profile_image:
+            return format_html('<img src="{}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" />', obj.profile_image.url)
+        return "No Image"
+    image_preview.short_description = 'Profile Image'
+# END: USER_PROFILE_ADMIN
+
+# START: REGISTRATION_REQUEST_ADMIN
 @admin.register(RegistrationRequest)
 class RegistrationRequestAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'role', 'is_approved', 'email_sent', 'is_rejected', 'created_at')
+    list_display = ('first_name', 'last_name', 'email', 'role', 'is_approved', 'email_sent', 'created_at')
     list_filter = ('role', 'is_approved', 'email_sent', 'is_rejected')
     search_fields = ('first_name', 'last_name', 'email', 'phone_number')
     actions = ['approve_requests', 'reject_requests']
+    
+    fieldsets = (
+        ('Request Details', {
+            'fields': (
+                ('first_name', 'last_name'),
+                ('email', 'phone_number'),
+                'role',
+            )
+        }),
+        ('Additional Info', {
+            'fields': ('additional_info',)
+        }),
+        ('Status', {
+            'fields': (
+                ('is_approved', 'is_rejected'),
+                ('email_sent', 'is_remembered'),
+                'reminder_note'
+            )
+        }),
+    )
 
     def process_approval(self, req):
         """Helper method to handle the logic of creating user and sending email."""
@@ -110,3 +177,4 @@ class RegistrationRequestAdmin(admin.ModelAdmin):
     def reject_requests(self, request, queryset):
         queryset.update(is_rejected=True, is_approved=False)
     reject_requests.short_description = "Reject selected requests"
+# END: REGISTRATION_REQUEST_ADMIN

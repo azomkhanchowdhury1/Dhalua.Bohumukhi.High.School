@@ -139,24 +139,24 @@
         <div class="upcoming-events glass-panel animate-slide-up" style="animation-delay: 0.2s;">
             <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
             <div class="event-list">
+                {% for event in upcoming_events %}
                 <div class="event-item">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% else %}
                     <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=100&auto=format&fit=crop" alt="Event">
+                    {% endif %}
                     <div class="event-info">
-                        <h4>Science Fair 2026</h4>
-                        <p><i class="far fa-clock"></i> 10:00 AM - 04:00 PM</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Main Auditorium</p>
+                        <h4>{{ event.title }}</h4>
+                        <p><i class="far fa-clock"></i> {{ event.date|date:"d M, Y" }} | {{ event.time|time:"h:i A" }}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
                     </div>
                 </div>
-                <div class="event-item">
-                    <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=100&auto=format&fit=crop" alt="Event">
-                    <div class="event-info">
-                        <h4>Cultural Fest</h4>
-                        <p><i class="far fa-clock"></i> 06:00 PM - 09:00 PM</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Open Stage</p>
-                    </div>
-                </div>
+                {% empty %}
+                <p>No upcoming events.</p>
+                {% endfor %}
             </div>
-            <a href="#" class="view-all-btn">View All Events</a>
+            <a href="{% url 'events:event_list' %}" class="view-all-btn">View All Events</a>
         </div>
     </div>
 </section>

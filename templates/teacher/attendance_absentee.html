@@ -27,10 +27,21 @@
         {% if sections %}
         <div style="display:flex; align-items:center; gap:10px;">
             <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Section:</label>
-            <select name="section_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+            <select name="section_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;" onchange="this.form.submit()">
                 <option value="">— All Sections —</option>
                 {% for sec in sections %}
                 <option value="{{ sec.id }}" {% if selected_section_id == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        {% if subjects %}
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Subject:</label>
+            <select name="subject_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+                <option value="">— All Subjects —</option>
+                {% for sub in subjects %}
+                <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
                 {% endfor %}
             </select>
         </div>

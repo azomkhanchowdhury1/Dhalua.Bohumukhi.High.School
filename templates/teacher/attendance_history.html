@@ -3,21 +3,96 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ATTENDANCE_HISTORY_CSS */
+    .class-filter-bar {
+        background: rgba(15,23,42,0.6);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .class-filter-bar label { color: #94a3b8; font-size: 0.9rem; white-space:nowrap; }
+    .class-filter-bar select, .class-filter-bar input {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px;
+        padding: 11px 18px;
+        color: #fff;
+        font-size: 0.95rem;
+    }
+    .class-filter-bar select option { background: #0f172a; }
+    
+    .radio-group { display: flex; gap: 10px; }
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        transition: all 0.2s;
+    }
+    .radio-group input[type="radio"] { display: none; }
+    .radio-group input[type="radio"]:checked + label {
+        border-color: transparent;
+        color: #fff;
+        font-weight: 600;
+    }
+    .present-radio input:checked + label { background: rgba(16,185,129,0.2); color: #10b981; border-color: rgba(16,185,129,0.4); }
+    .absent-radio input:checked + label { background: rgba(239,68,68,0.2); color: #ef4444; border-color: rgba(239,68,68,0.4); }
+    .late-radio input:checked + label { background: rgba(245,158,11,0.2); color: #f59e0b; border-color: rgba(245,158,11,0.4); }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(239,68,68,0.4);
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #10b981; }
+    input:checked + .slider:before { transform: translateX(26px); }
+    /* END: ATTENDANCE_HISTORY_CSS */
+</style>
 {% endblock %}
 
 {% block content %}
 <!-- START: TEACHER_ATTENDANCE_HISTORY_SECTION -->
 <div class="dashboard-wrapper">
     <div class="section-header">
-        <h1>Attendance History</h1>
-        <p>Review attendance records for a specific class and date.</p>
+        <h1>Attendance History & Edit</h1>
+        <p>Review, recover or edit attendance records for a specific class, subject and date.</p>
     </div>
 
     <!-- Filter Bar -->
-    <form method="GET" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:1.5rem 2rem; margin-bottom:30px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+    <form method="GET" class="class-filter-bar">
         <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Class:</label>
-            <select name="class_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;" onchange="this.form.submit()">
+            <label>Class:</label>
+            <select name="class_id" onchange="this.form.submit()">
                 <option value="">— Select Class —</option>
                 {% for cls in classes %}
                 <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }} ({{ cls.code }})</option>
@@ -26,8 +101,8 @@
         </div>
         {% if sections %}
         <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Section:</label>
-            <select name="section_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+            <label>Section:</label>
+            <select name="section_id" onchange="this.form.submit()">
                 <option value="">— All Sections —</option>
                 {% for sec in sections %}
                 <option value="{{ sec.id }}" {% if selected_section_id == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec.name }}</option>
@@ -35,63 +110,93 @@
             </select>
         </div>
         {% endif %}
+        {% if subjects %}
         <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem;">Date:</label>
-            <input type="date" name="date" value="{{ selected_date }}" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+            <label>Subject:</label>
+            <select name="subject_id" required>
+                <option value="">— Select Subject —</option>
+                {% for sub in subjects %}
+                <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label>Date:</label>
+            <input type="date" name="date" value="{{ selected_date }}" required>
         </div>
         <button type="submit" class="view-all-btn" style="padding:11px 28px;">
-            <i class="fas fa-search"></i> Filter
+            <i class="fas fa-search"></i> Find Records
         </button>
     </form>
 
-    {% if records %}
-    <!-- Summary Chips -->
-    <div style="display:flex; gap:15px; margin-bottom:25px; flex-wrap:wrap;">
-        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); color:#10b981; padding:10px 22px; border-radius:50px; font-size:0.9rem; font-weight:600;">
-            <i class="fas fa-check-circle"></i> Present: {% with records|length as total %}{{ records|length }}{% endwith %}
-        </div>
-    </div>
+    {% if class_att %}
+    <form method="POST">
+        {% csrf_token %}
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px; background:rgba(255,255,255,0.03); padding:15px 20px; border-radius:16px;">
+                <h3 style="color:#fff; margin:0;">Class Metadata</h3>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span style="color:#94a3b8; font-size:0.95rem;">Was Class Held?</span>
+                    <label class="switch">
+                        <input type="checkbox" name="is_held" {% if is_held %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse;">
-            <thead>
-                <tr>
-                    <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">#</th>
-                    <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Student</th>
-                    <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Roll No</th>
-                    <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for rec in records %}
-                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                    <td style="padding:14px 18px; color:#64748b;">{{ forloop.counter }}</td>
-                    <td style="padding:14px 18px; color:#e2e8f0; font-weight:600;">{{ rec.student.user.get_full_name }}</td>
-                    <td style="padding:14px 18px; color:#94a3b8;">{{ rec.student.roll_number|default:"—" }}</td>
-                    <td style="padding:14px 18px;">
-                        {% if rec.status == 'Present' %}
-                        <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 14px; border-radius:20px; font-size:0.82rem; font-weight:600;"><i class="fas fa-check-circle"></i> Present</span>
-                        {% elif rec.status == 'Absent' %}
-                        <span style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 14px; border-radius:20px; font-size:0.82rem; font-weight:600;"><i class="fas fa-times-circle"></i> Absent</span>
-                        {% elif rec.status == 'Late' %}
-                        <span style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:4px 14px; border-radius:20px; font-size:0.82rem; font-weight:600;"><i class="fas fa-clock"></i> Late</span>
-                        {% else %}
-                        <span style="color:#64748b; font-size:0.85rem;">Not Marked</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% elif selected_class %}
+            <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">#</th>
+                        <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Student</th>
+                        <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Roll No</th>
+                        <th style="text-align:left; padding:14px 18px; color:#94a3b8; font-size:0.82rem; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08);">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in records %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:14px 18px; color:#64748b;">{{ forloop.counter }}</td>
+                        <td style="padding:14px 18px; color:#e2e8f0; font-weight:600;">{{ rec.student.user.get_full_name }}</td>
+                        <td style="padding:14px 18px; color:#94a3b8;">{{ rec.student.roll_number|default:"—" }}</td>
+                        <td style="padding:14px 18px;">
+                            <div class="radio-group">
+                                <span class="present-radio">
+                                    <input type="radio" name="status_{{ rec.student.id }}" id="present_{{ rec.student.id }}" value="Present" {% if rec.status == 'Present' %}checked{% endif %}>
+                                    <label for="present_{{ rec.student.id }}"><i class="fas fa-check"></i> Present</label>
+                                </span>
+                                <span class="absent-radio">
+                                    <input type="radio" name="status_{{ rec.student.id }}" id="absent_{{ rec.student.id }}" value="Absent" {% if rec.status == 'Absent' %}checked{% endif %}>
+                                    <label for="absent_{{ rec.student.id }}"><i class="fas fa-times"></i> Absent</label>
+                                </span>
+                                <span class="late-radio">
+                                    <input type="radio" name="status_{{ rec.student.id }}" id="late_{{ rec.student.id }}" value="Late" {% if rec.status == 'Late' %}checked{% endif %}>
+                                    <label for="late_{{ rec.student.id }}"><i class="fas fa-clock"></i> Late</label>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div style="margin-top:25px; display:flex; justify-content:flex-end;">
+                <button type="submit" class="view-all-btn" style="padding:14px 40px; font-size:1rem;">
+                    <i class="fas fa-save"></i> Update History
+                </button>
+            </div>
+        </div>
+    </form>
+    {% elif selected_class and selected_subject_id %}
     <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <h3 style="color:#64748b;">No attendance records found for the selected class and date.</h3>
-        <a href="{% url 'teacher:attendance_mark' %}" style="color:var(--home-primary); display:block; margin-top:10px;">Mark attendance now →</a>
+        <h3 style="color:#64748b;">No attendance records found for the selected criteria.</h3>
+        <a href="{% url 'teacher:attendance_mark' %}?class_id={{ selected_class }}&section_id={{ selected_section_id }}&subject_id={{ selected_subject_id }}" style="color:var(--home-primary); display:block; margin-top:10px;">Mark attendance now →</a>
     </div>
     {% else %}
     <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <h3 style="color:#64748b;">Select a class and date to view attendance history.</h3>
+        <h3 style="color:#64748b;">Select a class, subject and date to view and edit attendance history.</h3>
     </div>
     {% endif %}
 </div>

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .list-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+        align-items: start;
+    }
+    .action-btn { transition: 0.2s; text-decoration: none; }
+    .edit-action { color: #6366f1; }
+    .delete-action { color: #ef4444; }
+    
+    @media (max-width: 992px) {
+        .list-container { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1>Exams List</h1>
+        <p>Manage all examination terms and sessions.</p>
+    </div>
+
+    <div class="list-container">
+        <!-- Add Exam Form -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+            <h3>Add New Exam</h3>
+            <form method="POST" style="margin-top:20px;">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Exam Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Mid Term, Final Exam" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+                    <label style="color:#94a3b8;">Year</label>
+                    <input type="text" name="year" required placeholder="e.g. 2024" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                    <input type="checkbox" name="is_active" id="is_active" checked style="width:18px; height:18px; accent-color:#10b981;">
+                    <label for="is_active" style="color:#e2e8f0; cursor:pointer;">Is Active?</label>
+                </div>
+                <button type="submit" class="view-all-btn" style="width:100%;">Save Exam</button>
+            </form>
+        </div>
+
+        <!-- Exams List -->
+        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+            <h3>All Exams</h3>
+            <div style="margin-top:20px; overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; color:#fff;">
+                    <thead>
+                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                            <th style="padding:15px;">Name</th>
+                            <th style="padding:15px;">Year</th>
+                            <th style="padding:15px;">Status</th>
+                            <th style="padding:15px; text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exam in exams %}
+                        <tr style="border-bottom:1px solid rgba(255, 255, 255, 0.05);">
+                            <td style="padding:15px;"><strong>{{ exam.name }}</strong></td>
+                            <td style="padding:15px;">{{ exam.year }}</td>
+                            <td style="padding:15px;">
+                                {% if exam.is_active %}
+                                <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:4px 10px; border-radius:8px; font-size:0.8rem;">Active</span>
+                                {% else %}
+                                <span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:4px 10px; border-radius:8px; font-size:0.8rem;">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding:15px; text-align:center;">
+                                <div style="display:flex; gap:10px; justify-content:center;">
+                                    <a href="{% url 'admin_panel:exam_edit' exam.id %}" class="action-btn edit-action" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="{% url 'admin_panel:exam_delete' exam.id %}" class="action-btn delete-action" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" style="text-align:center; padding:50px; color:#94a3b8;">No exams found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

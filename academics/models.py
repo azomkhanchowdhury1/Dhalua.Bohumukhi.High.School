@@ -7,6 +7,9 @@ class SchoolClass(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "School Classes"
+
 class Section(models.Model):
     school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, related_name='sections')
     name = models.CharField(max_length=10) # e.g. A, B, C
@@ -65,3 +68,28 @@ class Syllabus(models.Model):
     
     def __str__(self):
         return f"{self.subject.name} Syllabus"
+
+    class Meta:
+        verbose_name_plural = "Syllabuses"
+
+# START: ONLINE_CLASS_MODEL
+class OnlineClass(models.Model):
+    STATUS_CHOICES = [
+        ('Live', 'Live'),
+        ('Scheduled', 'Scheduled'),
+        ('Recorded', 'Recorded')
+    ]
+    title = models.CharField(max_length=200) # e.g. Mathematics - Chapter 5
+    topic = models.CharField(max_length=255, blank=True, null=True) # e.g. Quadratic Equations...
+    teacher = models.ForeignKey('teacher.Teacher', on_delete=models.CASCADE, related_name='online_classes')
+    school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, null=True, blank=True, related_name='online_classes')
+    start_time = models.DateTimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Scheduled')
+    meeting_link = models.URLField(blank=True, null=True)
+    recording_url = models.URLField(blank=True, null=True)
+    duration_minutes = models.IntegerField(default=45)
+    students_count = models.IntegerField(default=0) # For mockup display
+
+    def __str__(self):
+        return f"{self.title} - {self.status}"
+# END: ONLINE_CLASS_MODEL

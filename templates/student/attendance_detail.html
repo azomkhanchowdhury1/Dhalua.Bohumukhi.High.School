@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: ATTENDANCE_DETAIL_CSS */
+    .subject-row {
+        background: rgba(15,23,42,0.6);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 16px;
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: border-color 0.3s;
+    }
+    .subject-row:hover { border-color: rgba(99,102,241,0.4); }
+    .subject-icon {
+        width: 46px; height: 46px;
+        background: rgba(99,102,241,0.12);
+        color: #6366f1;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .subject-name { color:#fff; font-weight:600; font-size:1rem; }
+    .subject-meta { color:#94a3b8; font-size:0.82rem; margin-top:2px; }
+    .progress-bar-wrap {
+        flex: 1;
+        height: 8px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        transition: width 1s ease;
+    }
+    .pct-badge {
+        min-width: 52px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .color-high { background: linear-gradient(90deg,#10b981,#34d399); color:#10b981; }
+    .color-mid  { background: linear-gradient(90deg,#f59e0b,#fcd34d); color:#f59e0b; }
+    .color-low  { background: linear-gradient(90deg,#ef4444,#f87171); color:#ef4444; }
+    /* END: ATTENDANCE_DETAIL_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: STUDENT_ATTENDANCE_DETAIL_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1><i class="fas fa-chart-bar" style="color:#10b981;"></i> Attendance Detail</h1>
+        <p>Subject-wise attendance breakdown for {{ student.user.get_full_name }} — {{ student.current_class }}</p>
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <a href="{% url 'student:student_dashboard' %}" class="view-all-btn" style="padding:10px 22px; font-size:0.9rem;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    {% if subject_data %}
+    <div style="display:flex; flex-direction:column; gap:14px;">
+        {% for item in subject_data %}
+        <div class="subject-row">
+            <div class="subject-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div style="min-width:180px;">
+                <div class="subject-name">{{ item.subject.name }}</div>
+                <div class="subject-meta">{{ item.attended }} attended / {{ item.held }} held</div>
+            </div>
+            <div class="progress-bar-wrap">
+                {% if item.percentage >= 75 %}
+                <div class="progress-bar-fill color-high" style="width:{{ item.percentage }}%;"></div>
+                {% elif item.percentage >= 50 %}
+                <div class="progress-bar-fill color-mid" style="width:{{ item.percentage }}%;"></div>
+                {% else %}
+                <div class="progress-bar-fill color-low" style="width:{{ item.percentage }}%;"></div>
+                {% endif %}
+            </div>
+            <div class="pct-badge {% if item.percentage >= 75 %}color-high{% elif item.percentage >= 50 %}color-mid{% else %}color-low{% endif %}">
+                {{ item.percentage }}%
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex; gap:24px; margin-top:30px; flex-wrap:wrap;">
+        <span style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.85rem;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#10b981;display:inline-block;"></span> ≥ 75% (Good)
+        </span>
+        <span style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.85rem;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#f59e0b;display:inline-block;"></span> 50–74% (Average)
+        </span>
+        <span style="display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:0.85rem;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#ef4444;display:inline-block;"></span> &lt; 50% (Low)
+        </span>
+    </div>
+    {% else %}
+    <div style="text-align:center; padding:70px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
+        <i class="fas fa-calendar-times" style="font-size:3rem;color:rgba(255,255,255,0.15);display:block;margin-bottom:18px;"></i>
+        <h3 style="color:#64748b;">No attendance data found.</h3>
+        <p style="color:#475569;font-size:0.9rem;margin-top:8px;">Attendance will appear here once your teacher marks classes.</p>
+    </div>
+    {% endif %}
+</div>
+<!-- END: STUDENT_ATTENDANCE_DETAIL_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+// START: ATTENDANCE_DETAIL_SCRIPT
+document.addEventListener('DOMContentLoaded', () => {
+    // Animate progress bars on load
+    document.querySelectorAll('.progress-bar-fill').forEach(bar => {
+        const target = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = target; }, 200);
+    });
+});
+// END: ATTENDANCE_DETAIL_SCRIPT
+</script>
+{% endblock %}

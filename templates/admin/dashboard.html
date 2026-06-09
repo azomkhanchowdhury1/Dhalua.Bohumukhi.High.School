@@ -123,6 +123,9 @@
                 <h3>Examinations</h3>
             </div>
             <ul class="module-links">
+                <!-- START: EXAM_CRUD_SIDEBAR -->
+                <li><a href="{% url 'admin_panel:exam_list' %}"><i class="fas fa-list-alt"></i> Manage Exams</a></li>
+                <!-- END: EXAM_CRUD_SIDEBAR -->
                 <li><a href="{% url 'admin_panel:exam_schedule' %}"><i class="fas fa-calendar-day"></i> Exam Schedule</a></li>
                 <li><a href="{% url 'admin_panel:exam_marks_entry' %}"><i class="fas fa-edit"></i> Marks Entry</a></li>
                 <li><a href="{% url 'admin_panel:exam_results' %}"><i class="fas fa-poll"></i> Results</a></li>
@@ -164,6 +167,69 @@
                 <hr style="opacity: 0.1; margin: 10px 0;">
                 <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-list"></i> View All Notices</a></li>
                 <li><a href="{% url 'admin:notices_notice_add' %}"><i class="fas fa-plus-circle"></i> Create New Notice</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Additional Modules Added as per Request -->
+    <h2 class="section-title" style="margin-top: 30px;">System & Admin Modules</h2>
+    <div class="modules-grid">
+        <!-- Accounts Module -->
+        <div class="module-card">
+            <div class="module-header" style="color: #6366f1;">
+                <i class="fas fa-user-shield"></i>
+                <h3>Accounts</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:registration_requests' %}"><i class="fas fa-user-check"></i> Registration Requests</a></li>
+                <li><a href="{% url 'admin_panel:user_profiles' %}"><i class="fas fa-id-card"></i> User Profiles</a></li>
+            </ul>
+        </div>
+
+        <!-- Authentication Module -->
+        <div class="module-card">
+            <div class="module-header" style="color: #f43f5e;">
+                <i class="fas fa-key"></i>
+                <h3>Authentication</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:auth_groups' %}"><i class="fas fa-users"></i> Groups</a></li>
+                <li><a href="{% url 'admin_panel:auth_users' %}"><i class="fas fa-user-lock"></i> Users</a></li>
+            </ul>
+        </div>
+
+        <!-- Gallery Module -->
+        <div class="module-card">
+            <div class="module-header" style="color: #10b981;">
+                <i class="fas fa-images"></i>
+                <h3>Gallery</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:gallery_list' %}"><i class="fas fa-image"></i> Galleries</a></li>
+            </ul>
+        </div>
+
+        <!-- Notices Module (Standalone) -->
+        <div class="module-card">
+            <div class="module-header" style="color: #eab308;">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Notices</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:notice_list' %}"><i class="fas fa-list"></i> All Notices</a></li>
+                <li><a href="{% url 'admin_panel:notice_add' %}"><i class="fas fa-plus-circle"></i> Add Notice</a></li>
+            </ul>
+        </div>
+        
+        <!-- Events Module -->
+        <div class="module-card">
+            <div class="module-header" style="color: #8b5cf6;">
+                <i class="fas fa-calendar-star"></i>
+                <h3>Events</h3>
+            </div>
+            <ul class="module-links">
+                <li><a href="{% url 'admin_panel:event_list' %}"><i class="fas fa-list"></i> All Events</a></li>
+                <li><a href="{% url 'admin_panel:event_add' %}"><i class="fas fa-plus-circle"></i> Add Event</a></li>
             </ul>
         </div>
     </div>

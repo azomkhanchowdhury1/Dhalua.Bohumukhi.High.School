@@ -101,9 +101,20 @@
         <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px;">
                 <h3 style="color:#fff; margin:0;">Students ({{ students|length }})</h3>
-                <div style="display:flex; align-items:center; gap:15px;">
+                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                    <label style="color:#94a3b8; font-size:0.9rem;">Subject:</label>
+                    <select name="subject_id" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
+                        <option value="">— Select Subject —</option>
+                        {% for sub in subjects %}
+                        <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label style="color:#94a3b8; font-size:0.9rem;">Time:</label>
+                    <input type="time" name="time" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
+
                     <label style="color:#94a3b8; font-size:0.9rem;">Date:</label>
-                    <input type="date" name="date" value="{{ today }}" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
+                    <input type="date" name="date" value="{{ today }}" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
                 </div>
             </div>
 

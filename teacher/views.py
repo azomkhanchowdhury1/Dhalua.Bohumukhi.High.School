@@ -1,33 +1,126 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from notices.models import Notice
-from student.models import Student, Attendance
-from teacher.models import Teacher
-from academics.models import SchoolClass, Section
+from student.models import Student, Attendance, ClassAttendance, StudentHomework
+from teacher.models import Teacher, SalaryPayment
+from academics.models import SchoolClass, Section, Subject
 import datetime
 
 # START: TEACHER_VIEWS
 @login_required
 def dashboard(request):
     notices = Notice.objects.filter(Q(is_public=True) | Q(target_teacher=True)).distinct().order_by('-created_at')[:5]
-    return render(request, 'teacher/dashboard.html', {'notices': notices})
+    today = datetime.date.today()
+
+    # Real stat data
+    teacher = Teacher.objects.filter(user=request.user).first()
+
+    # Classes Today: distinct classes held today by this teacher
+    classes_today = ClassAttendance.objects.filter(teacher=teacher, date=today).count() if teacher else 0
+    next_class = ClassAttendance.objects.filter(teacher=teacher, date=today, time__gt=datetime.datetime.now().time()).order_by('time').first() if teacher else None
+
+    # Total Students: students in classes this teacher teaches
+    total_students = Student.objects.count()
+
+    # Pending Submissions: StudentHomework items without a grade/review (simple count)
+    pending_submissions = StudentHomework.objects.count()
+
+    # Leave Balance: approved leaves this month (count used)
+    leave_used = SalaryPayment.objects.filter(teacher=teacher).count() if teacher else 0  # placeholder until leave model exists
+    leave_balance = max(0, 10 - leave_used)  # assume 10 days annual leave
+
+    return render(request, 'teacher/dashboard.html', {
+        'notices': notices,
+        'classes_today': classes_today,
+        'next_class': next_class,
+        'total_students': total_students,
+        'pending_submissions': pending_submissions,
+        'leave_balance': leave_balance,
+    })
+
+# --- Stat Detail Views ---
+@login_required
+def stat_classes_today(request):
+    """Shows all classes held today by this teacher."""
+    teacher = Teacher.objects.filter(user=request.user).first()
+    today = datetime.date.today()
+    classes = ClassAttendance.objects.filter(
+        teacher=teacher, date=today
+    ).select_related('school_class', 'section', 'subject').order_by('time') if teacher else []
+
+    present_counts = {}
+    absent_counts = {}
+    for cls in classes:
+        present_counts[cls.id] = cls.student_attendances.filter(status='Present').count()
+        absent_counts[cls.id] = cls.student_attendances.filter(status='Absent').count()
+
+    return render(request, 'teacher/stat_classes_today.html', {
+        'classes': classes,
+        'today': today,
+        'present_counts': present_counts,
+        'absent_counts': absent_counts,
+    })
+
+@login_required
+def stat_total_students(request):
+    """Shows all students with class & section breakdown."""
+    students = Student.objects.all().order_by('current_class', 'section', 'roll_number')
+    class_groups = {}
+    for s in students:
+        key = s.current_class or 'Unassigned'
+        class_groups.setdefault(key, []).append(s)
+    total = students.count()
+    return render(request, 'teacher/stat_total_students.html', {
+        'students': students,
+        'class_groups': class_groups,
+        'total': total,
+    })
+
+@login_required
+def stat_pending_submissions(request):
+    """Shows pending homework/assignment submissions."""
+    submissions = StudentHomework.objects.select_related('student').order_by('-submitted_at')
+    return render(request, 'teacher/stat_pending_submissions.html', {
+        'submissions': submissions,
+        'count': submissions.count(),
+    })
+
+@login_required
+def stat_leave_balance(request):
+    """Shows leave balance and history."""
+    teacher = Teacher.objects.filter(user=request.user).first()
+    salary_payments = SalaryPayment.objects.filter(teacher=teacher).order_by('-payment_date') if teacher else []
+    leave_used = salary_payments.count()
+    leave_balance = max(0, 10 - leave_used)
+    return render(request, 'teacher/stat_leave_balance.html', {
+        'teacher': teacher,
+        'salary_payments': salary_payments,
+        'leave_balance': leave_balance,
+        'leave_used': leave_used,
+        'leave_total': 10,
+    })
 
 # --- Attendance Views ---
+
 @login_required
 def attendance_mark(request):
     teacher = get_object_or_404(Teacher, user=request.user)
     classes = SchoolClass.objects.all()
     students = []
     sections = []
+    subjects = []
+    
     selected_class = request.GET.get('class_id')
     selected_section_id = request.GET.get('section_id')
+    selected_subject_id = request.GET.get('subject_id')
     today = datetime.date.today()
 
     if selected_class:
         school_class = get_object_or_404(SchoolClass, id=selected_class)
         sections = school_class.sections.all()
+        subjects = school_class.subjects.all()
         
         # Build robust class matching queries
         class_name_clean = school_class.name.strip()
@@ -55,31 +148,55 @@ def attendance_mark(request):
             
         students = Student.objects.filter(query)
 
+        selected_section = None
         if selected_section_id:
             selected_section = get_object_or_404(Section, id=selected_section_id)
             students = students.filter(section__iexact=selected_section.name.strip())
 
         if request.method == 'POST':
             date = request.POST.get('date', str(today))
+            time = request.POST.get('time')
+            subject_id = request.POST.get('subject_id')
+            
+            if not subject_id:
+                messages.error(request, "Please select a subject.")
+                return redirect(f"{request.path}?class_id={selected_class}&section_id={selected_section_id or ''}")
+            
+            subject = get_object_or_404(Subject, id=subject_id)
+            
+            class_att, created = ClassAttendance.objects.update_or_create(
+                teacher=teacher,
+                school_class=school_class,
+                section=selected_section,
+                subject=subject,
+                date=date,
+                defaults={'time': time, 'is_held': True}
+            )
+
             for student in students:
                 status = request.POST.get(f'status_{student.id}', 'Absent')
                 Attendance.objects.update_or_create(
+                    class_attendance=class_att,
                     student=student,
-                    date=date,
-                    defaults={'status': status}
+                    defaults={'date': date, 'status': status}
                 )
             messages.success(request, f"Attendance for {school_class.name} on {date} has been saved!")
+            
             redirect_url = f"{request.path}?class_id={selected_class}"
             if selected_section_id:
                 redirect_url += f"&section_id={selected_section_id}"
+            if subject_id:
+                redirect_url += f"&subject_id={subject_id}"
             return redirect(redirect_url)
 
     return render(request, 'teacher/attendance_mark.html', {
         'classes': classes,
         'sections': sections,
+        'subjects': subjects,
         'students': students,
         'selected_class': selected_class,
         'selected_section_id': selected_section_id,
+        'selected_subject_id': selected_subject_id,
         'today': today,
     })
 
@@ -88,13 +205,19 @@ def attendance_history(request):
     classes = SchoolClass.objects.all()
     selected_class = request.GET.get('class_id')
     selected_section_id = request.GET.get('section_id')
+    selected_subject_id = request.GET.get('subject_id')
     selected_date = request.GET.get('date', str(datetime.date.today()))
+    
     records = []
     sections = []
+    subjects = []
+    class_att = None
+    is_held = True
 
     if selected_class:
         school_class = get_object_or_404(SchoolClass, id=selected_class)
         sections = school_class.sections.all()
+        subjects = school_class.subjects.all()
         
         # Build robust class matching queries
         class_name_clean = school_class.name.strip()
@@ -122,23 +245,65 @@ def attendance_history(request):
             
         students = Student.objects.filter(query)
 
+        selected_section = None
         if selected_section_id:
             selected_section = get_object_or_404(Section, id=selected_section_id)
             students = students.filter(section__iexact=selected_section.name.strip())
 
-        for student in students:
-            att = Attendance.objects.filter(student=student, date=selected_date).first()
-            records.append({
-                'student': student,
-                'status': att.status if att else 'Not Marked',
-            })
+        if selected_subject_id:
+            class_att = ClassAttendance.objects.filter(
+                school_class=school_class,
+                section=selected_section,
+                subject_id=selected_subject_id,
+                date=selected_date
+            ).first()
+            
+            if class_att:
+                is_held = class_att.is_held
+                for student in students:
+                    att = Attendance.objects.filter(student=student, class_attendance=class_att).first()
+                    records.append({
+                        'student': student,
+                        'status': att.status if att else 'Not Marked',
+                    })
+            else:
+                is_held = False # No class attendance record found
+
+        if request.method == 'POST':
+            if class_att:
+                is_held_post = request.POST.get('is_held') == 'on'
+                class_att.is_held = is_held_post
+                class_att.save()
+                
+                if is_held_post:
+                    for student in students:
+                        status = request.POST.get(f'status_{student.id}')
+                        if status:
+                            Attendance.objects.update_or_create(
+                                class_attendance=class_att,
+                                student=student,
+                                defaults={'date': selected_date, 'status': status}
+                            )
+                
+                messages.success(request, "Attendance history updated.")
+            
+            redirect_url = f"{request.path}?class_id={selected_class}&date={selected_date}"
+            if selected_section_id:
+                redirect_url += f"&section_id={selected_section_id}"
+            if selected_subject_id:
+                redirect_url += f"&subject_id={selected_subject_id}"
+            return redirect(redirect_url)
 
     return render(request, 'teacher/attendance_history.html', {
         'classes': classes,
         'sections': sections,
+        'subjects': subjects,
         'records': records,
+        'class_att': class_att,
+        'is_held': is_held,
         'selected_class': selected_class,
         'selected_section_id': selected_section_id,
+        'selected_subject_id': selected_subject_id,
         'selected_date': selected_date,
     })
 
@@ -147,13 +312,16 @@ def attendance_absentee(request):
     classes = SchoolClass.objects.all()
     selected_class = request.GET.get('class_id')
     selected_section_id = request.GET.get('section_id')
+    selected_subject_id = request.GET.get('subject_id')
     selected_date = request.GET.get('date', str(datetime.date.today()))
     absentees = []
     sections = []
+    subjects = []
 
     if selected_class:
         school_class = get_object_or_404(SchoolClass, id=selected_class)
         sections = school_class.sections.all()
+        subjects = school_class.subjects.all()
         
         # Build robust class matching queries
         class_name_clean = school_class.name.strip()
@@ -183,20 +351,25 @@ def attendance_absentee(request):
             query,
             date=selected_date,
             status='Absent'
-        ).select_related('student')
+        ).select_related('student', 'class_attendance')
         
         if selected_section_id:
             selected_section = get_object_or_404(Section, id=selected_section_id)
             absentees_query = absentees_query.filter(student__section__iexact=selected_section.name.strip())
+            
+        if selected_subject_id:
+            absentees_query = absentees_query.filter(class_attendance__subject_id=selected_subject_id)
             
         absentees = absentees_query
 
     return render(request, 'teacher/attendance_absentee.html', {
         'classes': classes,
         'sections': sections,
+        'subjects': subjects,
         'absentees': absentees,
         'selected_class': selected_class,
         'selected_section_id': selected_section_id,
+        'selected_subject_id': selected_subject_id,
         'selected_date': selected_date,
     })
 
@@ -303,4 +476,65 @@ def marks_report(request):
         'report_data': report_data,
         'selected_exam': selected_exam, 'selected_class': selected_class,
     })
+
+# --- My Schedule Views ---
+@login_required
+def today_routine(request):
+    return render(request, 'teacher/today_routine.html')
+
+@login_required
+def weekly_timetable(request):
+    return render(request, 'teacher/weekly_timetable.html')
+
+@login_required
+def proxy_classes(request):
+    return render(request, 'teacher/proxy_classes.html')
+
+# --- Assignments Views ---
+@login_required
+def create_assignment(request):
+    return render(request, 'teacher/create_assignment.html')
+
+@login_required
+def review_submissions(request):
+    return render(request, 'teacher/review_submissions.html')
+
+@login_required
+def study_material(request):
+    return render(request, 'teacher/study_material.html')
+
+# --- Payroll & HR Views ---
+@login_required
+def salary_slips(request):
+    return render(request, 'teacher/salary_slips.html')
+
+@login_required
+def leave_request(request):
+    return render(request, 'teacher/leave_request.html')
+
+@login_required
+def my_profile(request):
+    return render(request, 'teacher/my_profile.html')
+
+# --- Online Classes ---
+from academics.models import OnlineClass
+import datetime
+
+@login_required
+def online_classes(request):
+    teacher = Teacher.objects.filter(user=request.user).first()
+    
+    # Categorize classes
+    now = datetime.datetime.now()
+    live_classes = OnlineClass.objects.filter(teacher=teacher, status='Live').order_by('start_time') if teacher else []
+    scheduled_classes = OnlineClass.objects.filter(teacher=teacher, status='Scheduled').order_by('start_time') if teacher else []
+    recorded_classes = OnlineClass.objects.filter(teacher=teacher, status='Recorded').order_by('-start_time') if teacher else []
+    
+    return render(request, 'online_classes.html', {
+        'live_classes': live_classes,
+        'scheduled_classes': scheduled_classes,
+        'recorded_classes': recorded_classes,
+        'is_teacher': True
+    })
+
 # END: TEACHER_VIEWS

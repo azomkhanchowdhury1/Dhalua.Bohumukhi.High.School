@@ -22,14 +22,30 @@ class Student(models.Model):
             return f"{self.user.first_name} {self.user.last_name} ({self.student_id})"
         return f"Student {self.student_id or self.id}"
 
+class ClassAttendance(models.Model):
+    teacher = models.ForeignKey('teacher.Teacher', on_delete=models.SET_NULL, null=True, related_name='classes_taken')
+    school_class = models.ForeignKey('academics.SchoolClass', on_delete=models.CASCADE, related_name='attendances')
+    section = models.ForeignKey('academics.Section', on_delete=models.CASCADE, null=True, blank=True)
+    subject = models.ForeignKey('academics.Subject', on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField(null=True, blank=True)
+    is_held = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.school_class} - {self.subject} on {self.date}"
+
 class Attendance(models.Model):
+    class_attendance = models.ForeignKey(ClassAttendance, on_delete=models.CASCADE, related_name='student_attendances', null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField()
     status = models.CharField(max_length=10, choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Late', 'Late'), ('Leave', 'Leave')])
     remarks = models.TextField(blank=True, null=True)
 
     class Meta:
-        unique_together = ('student', 'date')
+        unique_together = ('student', 'class_attendance')
+        verbose_name_plural = "Attendance"
 
 class PromotionHistory(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -41,6 +57,9 @@ class PromotionHistory(models.Model):
 
     def __str__(self):
         return f"{self.student} promoted to {self.to_class}"
+
+    class Meta:
+        verbose_name_plural = "Promotion Histories"
 
 class StudentActivityLog(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='activity_logs')
@@ -62,6 +81,9 @@ class StudentHomework(models.Model):
 
     def __str__(self):
         return f"{self.student.student_id} - {self.title}"
+
+    class Meta:
+        verbose_name_plural = "Student Homework"
 
 class StudyMaterial(models.Model):
     school_class = models.ForeignKey('academics.SchoolClass', on_delete=models.CASCADE, related_name='study_materials')

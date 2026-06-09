@@ -106,10 +106,14 @@ def global_search(request):
 # END: GLOBAL_SEARCH_VIEW
 
 from notices.models import Notice
+from events.models import Event
+from django.utils import timezone
 
 def home_view(request):
     public_notices = Notice.objects.filter(is_public=True).order_by('-created_at')[:5]
-    return render(request, 'home.html', {'public_notices': public_notices})
+    today = timezone.now().date()
+    upcoming_events = Event.objects.filter(date__gte=today).order_by('date', 'time')[:2]
+    return render(request, 'home.html', {'public_notices': public_notices, 'upcoming_events': upcoming_events})
 
 def about_view(request):
     return render(request, 'about.html')
@@ -210,10 +214,13 @@ def register_view(request):
 @login_required
 def profile_view(request):
     user = request.user
-    role = ""
+    role = "Admin" if user.is_superuser else ""
     profile_data = None
-    
-    # Identify profile type
+    user_profile = None
+
+    if hasattr(user, 'profile'):
+        user_profile = user.profile
+
     if hasattr(user, 'student_profile'):
         role = "Student"
         profile_data = user.student_profile
@@ -226,63 +233,163 @@ def profile_view(request):
     elif hasattr(user, 'parent_profile'):
         role = "Parent"
         profile_data = user.parent_profile
-        
-    if request.method == 'POST':
-        # Common Fields
-        profile_data.phone_number = request.POST.get('phone_number')
-        profile_data.date_of_birth = request.POST.get('date_of_birth')
-        profile_data.gender = request.POST.get('gender')
-        profile_data.blood_group = request.POST.get('blood_group')
-        profile_data.address = request.POST.get('address')
-        
-        if request.FILES.get('profile_image'):
-            profile_data.profile_image = request.FILES.get('profile_image')
-            
-        # Role Specific Fields
-        if role == 'Student':
-            profile_data.roll_number = request.POST.get('roll_number')
-            profile_data.current_class = request.POST.get('current_class')
-            profile_data.section = request.POST.get('section')
-        elif role == 'Teacher':
-            profile_data.department = request.POST.get('department')
-            profile_data.subject = request.POST.get('subject')
-            profile_data.qualification = request.POST.get('qualification')
-        elif role == 'Staff':
-            profile_data.designation = request.POST.get('designation')
-            profile_data.department = request.POST.get('department')
-        elif role == 'Parent':
-            profile_data.occupation = request.POST.get('occupation')
-            
-        profile_data.save()
-        messages.success(request, "Your profile has been updated successfully!")
-        return redirect('accounts:profile')
-        
+    elif user.is_superuser:
+        role = "Admin"
+        profile_data = user_profile
+
     return render(request, 'accounts/profile.html', {
         'role': role,
-        'profile': profile_data
+        'profile': profile_data,
+        'user_profile': user_profile
     })
 
 @login_required
 def settings_view(request):
+    user = request.user
+    role = "Admin" if user.is_superuser else ""
+    profile_data = None
+    
+    if hasattr(user, 'student_profile'):
+        role = "Student"
+        profile_data = user.student_profile
+    elif hasattr(user, 'teacher_profile'):
+        role = "Teacher"
+        profile_data = user.teacher_profile
+    elif hasattr(user, 'staff_profile'):
+        role = "Staff"
+        profile_data = user.staff_profile
+    elif hasattr(user, 'parent_profile'):
+        role = "Parent"
+        profile_data = user.parent_profile
+    elif user.is_superuser:
+        role = "Admin"
+        profile_data = user.profile if hasattr(user, 'profile') else None
+
     if request.method == 'POST':
-        current_pw = request.POST.get('current_password')
-        new_pw = request.POST.get('new_password')
-        confirm_pw = request.POST.get('confirm_password')
+        action = request.POST.get('action')
         
-        user = request.user
-        if user.check_password(current_pw):
-            if new_pw == confirm_pw:
-                user.set_password(new_pw)
-                user.save()
-                auth_login(request, user) # Re-login to keep session active
-                messages.success(request, "Password updated successfully!")
+        if action == 'update_profile':
+            # --- Save User model fields (only if not empty) ---
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            if first_name:
+                user.first_name = first_name
+            if last_name:
+                user.last_name = last_name
+            user.save()
+
+            # --- Save UserProfile (phone, image, remember me) ---
+            if hasattr(user, 'profile'):
+                phone = request.POST.get('phone_number', '').strip()
+                if phone:
+                    user.profile.phone_number = phone
+                user.profile.is_remembered = request.POST.get('is_remembered') == 'on'
+                if request.FILES.get('profile_image'):
+                    user.profile.profile_image = request.FILES.get('profile_image')
+                user.profile.save()
+
+            # --- Save role-specific profile (Student/Teacher/Staff/Parent) ---
+            if profile_data and role != 'Admin':
+                phone = request.POST.get('phone_number', '').strip()
+                if phone:
+                    profile_data.phone_number = phone
+
+                dob = request.POST.get('date_of_birth', '').strip()
+                if dob and hasattr(profile_data, 'date_of_birth'):
+                    profile_data.date_of_birth = dob
+
+                gender = request.POST.get('gender', '').strip()
+                if gender and hasattr(profile_data, 'gender'):
+                    profile_data.gender = gender
+
+                blood_group = request.POST.get('blood_group', '').strip()
+                if hasattr(profile_data, 'blood_group'):
+                    profile_data.blood_group = blood_group
+
+                address = request.POST.get('address', '').strip()
+                if hasattr(profile_data, 'address'):
+                    profile_data.address = address
+
+                if request.FILES.get('profile_image') and hasattr(profile_data, 'profile_image'):
+                    profile_data.profile_image = request.FILES.get('profile_image')
+
+                if role == 'Student':
+                    profile_data.roll_number = request.POST.get('roll_number', getattr(profile_data, 'roll_number', '') or '').strip() or getattr(profile_data, 'roll_number', '')
+                    profile_data.current_class = request.POST.get('current_class', getattr(profile_data, 'current_class', '') or '').strip() or getattr(profile_data, 'current_class', '')
+                    profile_data.section = request.POST.get('section', getattr(profile_data, 'section', '') or '').strip() or getattr(profile_data, 'section', '')
+                elif role == 'Teacher':
+                    dept = request.POST.get('department', '').strip()
+                    if dept:
+                        profile_data.department = dept
+                    subj = request.POST.get('subject', '').strip()
+                    if subj:
+                        profile_data.subject = subj
+                    qual = request.POST.get('qualification', '').strip()
+                    if qual:
+                        profile_data.qualification = qual
+                elif role == 'Staff':
+                    desig = request.POST.get('designation', '').strip()
+                    if desig and hasattr(profile_data, 'designation'):
+                        profile_data.designation = desig
+                    dept = request.POST.get('department', '').strip()
+                    if dept and hasattr(profile_data, 'department'):
+                        profile_data.department = dept
+                elif role == 'Parent':
+                    occ = request.POST.get('occupation', '').strip()
+                    if occ and hasattr(profile_data, 'occupation'):
+                        profile_data.occupation = occ
+
+                profile_data.save()
+
+            # --- Also save admin profile fields if Admin ---
+            if role == 'Admin' and hasattr(user, 'profile'):
+                phone = request.POST.get('phone_number', '').strip()
+                if phone:
+                    user.profile.phone_number = phone
+                dob = request.POST.get('date_of_birth', '').strip()
+                if dob:
+                    user.profile.date_of_birth = dob
+                gender = request.POST.get('gender', '').strip()
+                if gender:
+                    user.profile.gender = gender
+                blood_group = request.POST.get('blood_group', '').strip()
+                user.profile.blood_group = blood_group
+                address = request.POST.get('address', '').strip()
+                user.profile.address = address
+                if request.FILES.get('profile_image'):
+                    user.profile.profile_image = request.FILES.get('profile_image')
+                user.profile.save()
+
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('accounts:settings')
+
+        elif action == 'change_password':
+            current_pw = request.POST.get('current_password')
+            new_pw = request.POST.get('new_password')
+            confirm_pw = request.POST.get('confirm_password')
+            
+            if user.check_password(current_pw):
+                if new_pw == confirm_pw:
+                    user.set_password(new_pw)
+                    user.save()
+                    auth_login(request, user) # Re-login to keep session active
+                    messages.success(request, "Password updated successfully!")
+                else:
+                    messages.error(request, "New passwords do not match.")
             else:
-                messages.error(request, "New passwords do not match.")
-        else:
-            messages.error(request, "Current password is incorrect.")
-        return redirect('accounts:settings')
-        
-    return render(request, 'accounts/settings.html')
+                messages.error(request, "Current password is incorrect.")
+            return redirect('accounts:settings')
+
+        elif action == 'delete_account':
+            user.delete()
+            messages.success(request, "Your account has been deleted successfully.")
+            return redirect('accounts:login')
+
+    return render(request, 'accounts/settings.html', {
+        'role': role,
+        'profile': profile_data,
+        'user_profile': user.profile if hasattr(user, 'profile') else None
+    })
 
 def logout_view(request):
     auth_logout(request)
