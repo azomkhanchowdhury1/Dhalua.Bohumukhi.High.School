@@ -147,4 +147,10 @@ urlpatterns = [
     path('events/<int:event_id>/delete/', views.event_delete, name='event_delete'),
     path('events/<int:event_id>/toggle-remember/', views.event_toggle_remember, name='event_toggle_remember'),
     # END: EVENTS_MANAGEMENT_URLS
+
+    # START: PAYOUT_URLS
+    path('finance/payouts/', views.finance_payouts, name='finance_payouts'),
+    path('finance/payouts/<int:payout_id>/approve/', views.payout_approve, name='payout_approve'),
+    path('finance/payouts/<int:payout_id>/reject/', views.payout_reject, name='payout_reject'),
+    # END: PAYOUT_URLS
 ]

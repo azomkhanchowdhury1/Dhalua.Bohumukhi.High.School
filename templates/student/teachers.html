@@ -21,8 +21,8 @@
                 <h3 style="color:#fff; margin-bottom:5px;">{{ t.user.get_full_name }}</h3>
                 <p style="color:var(--home-primary); font-weight:700; font-size:0.9rem;">{{ t.department }} Department</p>
                 <div style="margin-top:10px; display:flex; gap:10px;">
-                    <a href="mailto:{{ t.user.email }}" style="color:#94a3b8; font-size:1.2rem;"><i class="fas fa-envelope"></i></a>
-                    <a href="#" style="color:#94a3b8; font-size:1.2rem;"><i class="fas fa-comments"></i></a>
+                    <a href="mailto:{{ t.user.email }}" style="color:#94a3b8; font-size:1.2rem;" title="Email Teacher"><i class="fas fa-envelope"></i></a>
+                    <a href="javascript:void(0)" onclick="openChatModal('{{ t.id }}', '{{ t.user.get_full_name|escapejs }}')" style="color:#94a3b8; font-size:1.2rem;" title="Message Teacher"><i class="fas fa-comments"></i></a>
                 </div>
             </div>
         </div>
@@ -33,5 +33,176 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Direct Message Modal -->
+<div class="modal-overlay" id="chatModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
+    <div class="modal-container" style="max-width:550px; background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:24px; overflow:hidden; display:flex; flex-direction:column; width:90%; max-height:85vh;">
+        <div class="modal-header" style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
+            <h3 style="color:#fff; margin:0;" id="chatTitle"><i class="fas fa-comments" style="color:var(--home-primary); margin-right:10px;"></i> Chat</h3>
+            <button onclick="closeChatModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chatHistory" style="padding:1.5rem; flex:1; overflow-y:auto; min-height:280px; max-height:400px; display:flex; flex-direction:column; gap:12px; background:rgba(0,0,0,0.15);">
+            <!-- Messages load here -->
+        </div>
+        <div style="padding:1.2rem; border-top:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.01); display:flex; gap:10px;">
+            <input type="text" id="chatInput" placeholder="Type your message here..." style="flex:1; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 16px; outline:none; font-size:0.95rem;">
+            <button onclick="sendChatMessage()" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color:#fff; border:none; border-radius:12px; padding:0 20px; font-weight:600; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-bubble {
+        padding: 10px 14px;
+        border-radius: 16px;
+        max-width: 80%;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+    .chat-bubble.sent {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+    }
+    .chat-bubble.received {
+        background: rgba(255,255,255,0.08);
+        color: #f1f5f9;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+    }
+    .chat-time {
+        font-size: 0.72rem;
+        color: #64748b;
+        margin-top: 4px;
+        display: block;
+        text-align: right;
+    }
+    .chat-bubble.received .chat-time {
+        text-align: left;
+    }
+</style>
+
+<script>
+    // START: STUDENT_TEACHER_CHAT_SCRIPT
+    let activeTeacherId = null;
+    let pollInterval = null;
+
+    function openChatModal(teacherId, teacherName) {
+        activeTeacherId = teacherId;
+        document.getElementById('chatTitle').innerHTML = `<i class="fas fa-comments" style="color:#6366f1; margin-right:10px;"></i> Chat with ${teacherName}`;
+        document.getElementById('chatModal').style.display = 'flex';
+        document.getElementById('chatHistory').innerHTML = '<div style="text-align:center; color:#64748b; margin-top:20px;">Loading chat history...</div>';
+        
+        loadChatHistory();
+        
+        // Poll every 5 seconds for new messages
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(loadChatHistory, 5000);
+        
+        // Handle input Enter key
+        document.getElementById('chatInput').addEventListener('keypress', handleKeyPress);
+    }
+
+    function closeChatModal() {
+        document.getElementById('chatModal').style.display = 'none';
+        if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+        }
+        document.getElementById('chatInput').removeEventListener('keypress', handleKeyPress);
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+
+    function loadChatHistory() {
+        if (!activeTeacherId) return;
+        
+        fetch(`/students/academic/teachers/message/?teacher_id=${activeTeacherId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const chatHistory = document.getElementById('chatHistory');
+                    const isAtBottom = chatHistory.scrollHeight - chatHistory.clientHeight <= chatHistory.scrollTop + 50;
+                    
+                    chatHistory.innerHTML = '';
+                    if (data.messages.length === 0) {
+                        chatHistory.innerHTML = '<div style="text-align:center; color:#64748b; margin-top:20px;">No messages yet. Send a message to start conversation!</div>';
+                        return;
+                    }
+                    
+                    data.messages.forEach(msg => {
+                        const isSentByMe = msg.sender_id === data.current_user_id;
+                        const bubble = document.createElement('div');
+                        bubble.className = `chat-bubble ${isSentByMe ? 'sent' : 'received'}`;
+                        bubble.innerHTML = `
+                            <div>${escapeHTML(msg.message)}</div>
+                            <span class="chat-time">${msg.created_at}</span>
+                        `;
+                        chatHistory.appendChild(bubble);
+                    });
+                    
+                    if (isAtBottom) {
+                        chatHistory.scrollTop = chatHistory.scrollHeight;
+                    }
+                }
+            })
+            .catch(err => console.error("Error loading chat history:", err));
+    }
+
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text || !activeTeacherId) return;
+
+        input.value = '';
+        
+        fetch('/students/academic/teachers/message/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                teacher_id: activeTeacherId,
+                message: text
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadChatHistory();
+            }
+        })
+        .catch(err => console.error("Error sending message:", err));
+    }
+
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    // END: STUDENT_TEACHER_CHAT_SCRIPT
+</script>
 <!-- END: STUDENT_TEACHERS_SECTION -->
 {% endblock %}

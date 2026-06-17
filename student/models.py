@@ -78,6 +78,10 @@ class StudentHomework(models.Model):
     description = models.TextField(blank=True, null=True)
     file = models.FileField(upload_to='homework/', blank=True, null=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+    teacher = models.ForeignKey('teacher.Teacher', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_homeworks')
+    marks = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    graded = models.BooleanField(default=False)
+    feedback = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.student.student_id} - {self.title}"

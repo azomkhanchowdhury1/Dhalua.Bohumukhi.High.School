@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: DOWNLOAD_ADMIT_CARD -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-id-badge"></i> Download Admit Card</h2>
+    <div class="module-content">
+        <p>Download admit cards for upcoming examinations.</p>
+        <div class="placeholder-text">
+            Admit cards are usually available 1 week prior to the start of exams.
+        </div>
+    </div>
+</div>
+<!-- END: DOWNLOAD_ADMIT_CARD -->
+{% endblock %}

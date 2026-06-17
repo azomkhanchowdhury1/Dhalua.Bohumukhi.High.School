@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from .models import Student, StudentActivityLog, Attendance, ClassAttendance
 from notices.models import Notice
 from django.db.models import Q, Avg
@@ -230,24 +231,34 @@ def activity_log(request):
 def learning_homework(request):
     student = get_object_or_404(Student, user=request.user)
     homeworks = StudentHomework.objects.filter(student=student).order_by('-submitted_at')
+    teachers = Teacher.objects.select_related('user').all().order_by('user__first_name')
 
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
         subject = request.POST.get('subject')
+        teacher_id = request.POST.get('teacher_id')
         file = request.FILES.get('file')
+        
+        teacher = get_object_or_404(Teacher, id=teacher_id) if teacher_id else None
+
         StudentHomework.objects.create(
             student=student, title=title,
-            description=description, subject=subject, file=file
+            description=description, subject=subject, file=file,
+            teacher=teacher
         )
         StudentActivityLog.objects.create(
             student=student, action="Submitted Homework",
-            details=f"Submitted homework: {title}"
+            details=f"Submitted homework: {title} to {teacher.user.get_full_name() if teacher else 'None'}"
         )
         messages.success(request, "Homework submitted successfully!")
         return redirect('student:learning_homework')
 
-    return render(request, 'student/homework.html', {'homeworks': homeworks, 'student': student})
+    return render(request, 'student/homework.html', {
+        'homeworks': homeworks, 
+        'student': student,
+        'teachers': teachers
+    })
 
 @login_required
 def learning_study_material(request):
@@ -334,5 +345,66 @@ def fees_structure(request):
     return render(request, 'student/fees_structure.html', {
         'fee_types': fee_types,
         'total': total
+    })
+
+@login_required
+def message_teacher(request):
+    from staff.models import DirectMessage
+    teacher_id = request.GET.get('teacher_id') or request.POST.get('teacher_id')
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    teacher_user = teacher.user
+
+    if request.method == 'POST':
+        import json
+        msg_text = ""
+        try:
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                msg_text = data.get('message', '').strip()
+            else:
+                msg_text = request.POST.get('message', '').strip()
+        except Exception:
+            msg_text = request.POST.get('message', '').strip()
+
+        if msg_text:
+            msg = DirectMessage.objects.create(
+                sender=request.user,
+                receiver=teacher_user,
+                message=msg_text
+            )
+            return JsonResponse({
+                'status': 'success',
+                'message': {
+                    'id': msg.id,
+                    'sender': msg.sender.username,
+                    'sender_name': msg.sender.get_full_name() or msg.sender.username,
+                    'message': msg.message,
+                    'created_at': msg.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            })
+        return JsonResponse({'status': 'error', 'message': 'Empty message'}, status=400)
+
+    # GET: fetch messages
+    messages = DirectMessage.objects.filter(
+        Q(sender=request.user, receiver=teacher_user) |
+        Q(sender=teacher_user, receiver=request.user)
+    ).order_by('created_at')
+
+    msg_list = []
+    for msg in messages:
+        msg_list.append({
+            'sender_id': msg.sender.id,
+            'sender_name': msg.sender.get_full_name() or msg.sender.username,
+            'message': msg.message,
+            'created_at': msg.created_at.strftime('%d %b %Y, %I:%M %p')
+        })
+
+    # Mark as read
+    DirectMessage.objects.filter(sender=teacher_user, receiver=request.user, is_read=False).update(is_read=True)
+
+    return JsonResponse({
+        'status': 'success',
+        'messages': msg_list,
+        'current_user_id': request.user.id
     })
 

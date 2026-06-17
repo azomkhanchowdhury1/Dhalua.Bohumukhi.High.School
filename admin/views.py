@@ -1687,3 +1687,41 @@ def event_toggle_remember(request, event_id):
     messages.success(request, f"Event '{event.title}' has been {status}!")
     return redirect('admin_panel:event_list')
 # END: EVENTS_VIEWS
+
+# START: PAYOUT_MANAGEMENT_VIEWS
+from finance.models import PayoutRequest
+import datetime
+
+@staff_member_required
+def finance_payouts(request):
+    payouts = PayoutRequest.objects.all().select_related('user').order_by('-requested_at')
+    return render(request, 'admin/finance/payouts.html', {'payouts': payouts})
+
+@staff_member_required
+def payout_approve(request, payout_id):
+    payout = get_object_or_404(PayoutRequest, id=payout_id)
+    import uuid
+    payout.status = 'Approved'
+    payout.processed_at = datetime.datetime.now()
+    payout.transaction_id = 'ADMIN' + str(uuid.uuid4()).replace('-','')[:10].upper()
+    payout.save()
+    # Create expense record
+    Expense.objects.create(
+        title=f"Salary Payout - {payout.user.get_full_name() or payout.user.username}",
+        category='Salary',
+        amount=payout.amount,
+        date=datetime.date.today(),
+        description=f"Approved payout via {payout.payment_method}. TXN: {payout.transaction_id}"
+    )
+    messages.success(request, f"Payout of ৳{payout.amount} approved!")
+    return redirect('admin_panel:finance_payouts')
+
+@staff_member_required
+def payout_reject(request, payout_id):
+    payout = get_object_or_404(PayoutRequest, id=payout_id)
+    payout.status = 'Rejected'
+    payout.processed_at = datetime.datetime.now()
+    payout.save()
+    messages.success(request, f"Payout request rejected.")
+    return redirect('admin_panel:finance_payouts')
+# END: PAYOUT_MANAGEMENT_VIEWS

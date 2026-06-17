@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: DETAILED_ABSENCE_LOG -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-history"></i> Detailed Absence Log</h2>
+    <div class="module-content">
+        <p>Track all marked absences and tardiness records.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No absences recorded.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: DETAILED_ABSENCE_LOG -->
+{% endblock %}

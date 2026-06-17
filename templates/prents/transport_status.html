@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: TRANSPORT_STATUS -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-bus"></i> Transport Status</h2>
+    <div class="module-content">
+        <p>Track school bus routes and current status.</p>
+        <div class="placeholder-text">
+            Transport details (Route, Driver info, Pickup time) will be displayed if your child is registered for school transport.
+        </div>
+    </div>
+</div>
+<!-- END: TRANSPORT_STATUS -->
+{% endblock %}

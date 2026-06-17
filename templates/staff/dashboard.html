@@ -1,31 +1,41 @@
+<!-- STAFF_DASHBOARD_TEMPLATE_START -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: STAFF_DASHBOARD_SPECIFIC */
-    .stat-icon.tasks { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
-    .stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .stat-icon.payroll { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
-    .stat-icon.leave { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
-    
-    .module-header.work { color: #6366f1; }
-    .module-header.attendance { color: #10b981; }
-    .module-header.hr { color: #8b5cf6; }
-    .module-header.assets { color: #f59e0b; }
-    .module-header.communication { color: #ec4899; }
-    /* END: STAFF_DASHBOARD_SPECIFIC */
-</style>
 {% endblock %}
 
 {% block content %}
-<!-- START: STAFF_DASHBOARD_SECTION -->
+
+<!-- 18. Notifications Bar Start -->
+<div class="notifications-bar">
+    <span class="notif-label">Staff Portal</span>
+    <div class="notification-icon" onclick="openModal('emergencyModal')" title="Emergency Alerts">
+        <i class="fas fa-bell"></i>
+        {% if emergencies %}
+        <span class="notification-badge">{{ emergencies.count }}</span>
+        {% endif %}
+    </div>
+    <div class="notification-icon" style="color: #ef4444;" onclick="openModal('messageModal')" title="Messages">
+        <i class="fas fa-envelope"></i>
+        {% if messages_received %}
+        <span class="notification-badge" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">{{ messages_received.count }}</span>
+        {% endif %}
+    </div>
+    <div class="notif-user">
+        <i class="fas fa-user-circle"></i>
+        <span>{{ user.first_name }} {{ user.last_name }}</span>
+    </div>
+</div>
+<!-- 18. Notifications Bar End -->
+
+<!-- 1. Dashboard Wrapper Start -->
 <div class="dashboard-wrapper">
     <div class="dashboard-header">
         <div class="welcome-text">
-            <h1>Staff Dashboard</h1>
-            <p>Welcome back, {{ user.first_name }}! Here's your task overview for today.</p>
+            <h1><i class="fas fa-school"></i> Staff Dashboard</h1>
+            <p>Welcome back, <strong>{{ user.first_name }}</strong>! Here is your daily operations summary.</p>
         </div>
         <div class="date-display" id="currentDate">
             <i class="far fa-calendar-alt"></i>
@@ -33,154 +43,2128 @@
         </div>
     </div>
 
-    <!-- Stats Overview -->
+    <!-- Quick Stats Overview -->
     <div class="stats-container">
-        <div class="stat-card">
-            <div class="stat-icon tasks">
-                <i class="fas fa-list-check"></i>
-            </div>
+        <div class="stat-card" onclick="openModal('dutyModal')" style="cursor:pointer;">
+            <div class="stat-icon duty"><i class="fas fa-clock"></i></div>
             <div class="stat-info">
-                <h3>8</h3>
-                <p>Pending Tasks</p>
-            </div>
-            <div class="stat-trend negative">
-                High Priority
+                <h3>08:00 - 16:00</h3>
+                <p>Today's Duty</p>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon attendance">
-                <i class="fas fa-calendar-day"></i>
-            </div>
+        <div class="stat-card" onclick="openModal('noticeModal')" style="cursor:pointer;">
+            <div class="stat-icon notice"><i class="fas fa-bullhorn"></i></div>
             <div class="stat-info">
-                <h3>22/24</h3>
-                <p>Days Present</p>
-            </div>
-            <div class="stat-trend positive">
-                This Month
+                <h3>{{ notices.count }}</h3>
+                <p>New Notices</p>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon payroll">
-                <i class="fas fa-wallet"></i>
-            </div>
+        <div class="stat-card" onclick="openModal('attendanceModal')" style="cursor:pointer;">
+            <div class="stat-icon attendance"><i class="fas fa-user-check"></i></div>
             <div class="stat-info">
-                <h3>Released</h3>
-                <p>Last Salary</p>
+                <h3>{{ attendance_present }}/{{ attendance_total }}</h3>
+                <p>Present Days</p>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon leave">
-                <i class="fas fa-calendar-minus"></i>
-            </div>
+        <div class="stat-card" onclick="openModal('leaveModal')" style="cursor:pointer;">
+            <div class="stat-icon leave"><i class="fas fa-bed"></i></div>
             <div class="stat-info">
-                <h3>5</h3>
-                <p>Leaves Left</p>
+                <h3>{{ leave_requests.count }}</h3>
+                <p>Leave Requests</p>
+            </div>
+        </div>
+        <div class="stat-card" onclick="openModal('messageModal')" style="cursor:pointer;">
+            <div class="stat-icon message"><i class="fas fa-comments"></i></div>
+            <div class="stat-info">
+                <h3>{{ messages_received.count }}</h3>
+                <p>New Messages</p>
             </div>
         </div>
     </div>
+    <!-- 1. Dashboard Wrapper End -->
 
-    <!-- Staff Modules -->
-    <h2 class="section-title">Operations & Management</h2>
+    <h2 class="section-title"><i class="fas fa-th-large"></i> Staff Operations &amp; Management</h2>
     <div class="modules-grid">
-        <!-- Task Management -->
+
+        <!-- 2. Notice Board Start -->
         <div class="module-card">
-            <div class="module-header work">
+            <div class="module-header color-1">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Notice Board</h3>
+                <span class="mod-badge">{{ notices.count }}</span>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('noticeModal'); switchTabById('noticeMeeting')">
+                            <i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>
+                            Urgent Staff Meeting
+                            <span class="status-badge status-pending">Urgent</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('noticeModal'); switchTabById('noticeExam')">
+                            <i class="fas fa-book-open" style="color:#f59e0b;"></i>
+                            Annual Exam Routine
+                            <span class="status-badge status-ongoing">Active</span>
+                        </a>
+                    </li>
+                    {% for notice in notices|slice:":2" %}
+                    <li>
+                        <a href="#" onclick="openModal('noticeModal')">
+                            <i class="fas {% if 'Urgent' in notice.title %}fa-exclamation-triangle{% else %}fa-file-alt{% endif %}"></i>
+                            {{ notice.title|truncatechars:28 }}
+                            <span class="status-badge {% if 'Urgent' in notice.title %}status-pending{% else %}status-approved{% endif %}">
+                                {% if 'Urgent' in notice.title %}Urgent{% else %}Notice{% endif %}
+                            </span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('noticeModal')"><i class="fas fa-eye"></i> View All Notices</button>
+            </div>
+        </div>
+        <!-- 2. Notice Board End -->
+
+        <!-- 3. Duty Schedule Start -->
+        <div class="module-card">
+            <div class="module-header color-2">
+                <i class="fas fa-calendar-day"></i>
+                <h3>Duty Schedule</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('dutyModal'); showDutyTab('dutyWeekly')">
+                            <i class="fas fa-calendar-week" style="color:#ffa502;"></i>
+                            Regular: Weekly Roster
+                            <span class="status-badge status-ongoing">Regular</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('dutyModal'); showDutyTab('dutyMonthly')">
+                            <i class="fas fa-calendar-alt" style="color:#ffa502;"></i>
+                            Regular: Monthly Roster
+                            <span class="status-badge status-ongoing">Regular</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('dutyModal'); showDutyTab('dutySpecial')">
+                            <i class="fas fa-star" style="color:#fbbf24;"></i>
+                            Special Duty (Exam/Event)
+                            <span class="status-badge status-pending">Special</span>
+                        </a>
+                    </li>
+                    {% for duty in duties|slice:":2" %}
+                    <li>
+                        <a href="#" onclick="openModal('dutyModal')">
+                            <i class="fas fa-clock"></i>
+                            {{ duty.title|truncatechars:22 }}
+                            <span style="font-size:11px; color:#cbd5e1; margin-left:auto;">{{ duty.start_time|time:"H:i" }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('dutyModal')"><i class="fas fa-list-alt"></i> Full Schedule</button>
+            </div>
+        </div>
+        <!-- 3. Duty Schedule End -->
+
+        <!-- 4. Attendance Management Start -->
+        <div class="module-card">
+            <div class="module-header color-3">
+                <i class="fas fa-fingerprint"></i>
+                <h3>Attendance Management</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('attendanceModal'); switchTab(event, 'attnSummary')" onclick="void(0)">
+                            <i class="fas fa-check-double" style="color:#34d399;"></i>
+                            Daily Log
+                            <span class="attn-mini">Present: <strong style="color:#34d399;">{{ attendance_present }}</strong> &nbsp; Absent: <strong style="color:#f87171;">{{ attendance_absent }}</strong></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('attendanceModal'); switchTabDirect('attnMonthly')">
+                            <i class="fas fa-file-invoice" style="color:#60a5fa;"></i>
+                            Monthly Report
+                            <span class="status-badge status-ongoing">View</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('attendanceModal'); switchTabDirect('attnLate')">
+                            <i class="fas fa-running" style="color:#fbbf24;"></i>
+                            Late Entry Report
+                            <span class="status-badge status-pending">{{ late_entry_report.count }} Late</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('attendanceModal')"><i class="fas fa-chart-bar"></i> View Reports</button>
+            </div>
+        </div>
+        <!-- 4. Attendance Management End -->
+
+        <!-- 5. Leave Application Start -->
+        <div class="module-card">
+            <div class="module-header color-4">
+                <i class="fas fa-calendar-minus"></i>
+                <h3>Leave Application</h3>
+                <span class="mod-badge">{{ leave_requests.count }}</span>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('leaveModal'); switchTabDirect('applyLeave')">
+                            <i class="fas fa-plus-circle" style="color:#7bed9f;"></i>
+                            Apply for Leave
+                            <span class="status-badge status-approved">Apply</span>
+                        </a>
+                    </li>
+                    {% for leave in leave_requests|slice:":2" %}
+                    <li>
+                        <a href="#" onclick="openModal('leaveModal'); switchTabDirect('historyLeave')">
+                            <i class="fas fa-history"></i>
+                            {{ leave.leave_type }} ({{ leave.start_date|date:"d M" }})
+                            <span class="status-badge status-{{ leave.status|lower }}">{{ leave.status }}</span>
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li>
+                        <a href="#" onclick="openModal('leaveModal')">
+                            <i class="fas fa-info-circle"></i>
+                            No active leave requests
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('leaveModal')"><i class="fas fa-plus"></i> Apply / View Requests</button>
+            </div>
+        </div>
+        <!-- 5. Leave Application End -->
+
+        <!-- 6. Problem Report Start -->
+        <div class="module-card">
+            <div class="module-header color-5">
+                <i class="fas fa-tools"></i>
+                <h3>Problem Report</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('problemModal'); switchTabDirect('reportProblem')">
+                            <i class="fas fa-bolt" style="color:#2ed573;"></i>
+                            Report New Issue
+                            <span class="status-badge status-pending">Report</span>
+                        </a>
+                    </li>
+                    {% for report in problem_reports|slice:":2" %}
+                    <li>
+                        <a href="#" onclick="openModal('problemModal'); switchTabDirect('historyProblem')">
+                            <i class="fas fa-wrench"></i>
+                            {{ report.category }}
+                            <span class="status-badge status-{% if report.status == 'Solved' %}approved{% else %}pending{% endif %}">{{ report.status }}</span>
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li>
+                        <a href="#" onclick="openModal('problemModal')">
+                            <i class="fas fa-check-circle"></i>
+                            No open issues
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('problemModal')"><i class="fas fa-exclamation-triangle"></i> Report / View Issues</button>
+            </div>
+        </div>
+        <!-- 6. Problem Report End -->
+
+        <!-- 7. Direct Messaging Start -->
+        <div class="module-card">
+            <div class="module-header color-6">
+                <i class="fas fa-comments"></i>
+                <h3>Direct Messaging</h3>
+                <span class="mod-badge">{{ messages_received.count }}</span>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('messageModal'); selectDMRecipient('admin', 'I am preparing the files you requested.')">
+                            <i class="fas fa-user-shield" style="color:#1e90ff;"></i>
+                            Admin: Need Files
+                            <span class="status-badge status-pending">New</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('messageModal'); selectDMRecipient('rahim', 'I will bring the chalk boxes to your classroom shortly.')">
+                            <i class="fas fa-chalkboard-teacher" style="color:#60a5fa;"></i>
+                            Mr. Rahim: Bring Chalk
+                            <span class="status-badge status-ongoing">Read</span>
+                        </a>
+                    </li>
+                    {% for msg in messages_received|slice:":1" %}
+                    <li>
+                        <a href="#" onclick="openModal('messageModal')">
+                            <i class="fas fa-envelope-open-text"></i>
+                            {{ msg.sender.first_name }}: {{ msg.message|truncatechars:18 }}
+                            {% if not msg.is_read %}<span class="status-badge status-pending">New</span>{% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('messageModal')"><i class="fas fa-paper-plane"></i> Inbox / Send Message</button>
+            </div>
+        </div>
+        <!-- 7. Direct Messaging End -->
+
+        <!-- 8. Task Assignment Start -->
+        <div class="module-card">
+            <div class="module-header color-7">
                 <i class="fas fa-tasks"></i>
-                <h3>Task Management</h3>
+                <h3>Task Assignment</h3>
+                <span class="mod-badge">{{ tasks.count }}</span>
             </div>
-            <ul class="module-links">
-                <li><a href="#"><i class="fas fa-clipboard-list"></i> Daily Task List</a></li>
-                <li><a href="#"><i class="fas fa-check-circle"></i> Completed Tasks</a></li>
-                <li><a href="#"><i class="fas fa-clock"></i> Upcoming Work</a></li>
-            </ul>
-        </div>
-
-        <!-- Attendance -->
-        <div class="module-card">
-            <div class="module-header attendance">
-                <i class="fas fa-user-clock"></i>
-                <h3>My Attendance</h3>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('taskModal')">
+                            <i class="fas fa-folder-open" style="color:#60a5fa;"></i>
+                            Deliver Office Files
+                            <span class="status-badge status-ongoing">Ongoing</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('taskModal')">
+                            <i class="fas fa-check-circle" style="color:#34d399;"></i>
+                            Meeting Preparation
+                            <span class="status-badge status-approved">Completed</span>
+                        </a>
+                    </li>
+                    {% for task in tasks|slice:":1" %}
+                    <li>
+                        <a href="#" onclick="openModal('taskModal')">
+                            <i class="fas {% if task.status == 'Completed' %}fa-check-double{% else %}fa-circle-notch{% endif %}"></i>
+                            {{ task.title|truncatechars:24 }}
+                            <span class="status-badge status-{% if task.status == 'Completed' %}approved{% elif task.status == 'Ongoing' %}ongoing{% else %}pending{% endif %}">{{ task.status }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('taskModal')"><i class="fas fa-tasks"></i> View All Tasks</button>
             </div>
-            <ul class="module-links">
-                <li><a href="#"><i class="fas fa-sign-in-alt"></i> Mark Check-in</a></li>
-                <li><a href="#"><i class="fas fa-history"></i> Attendance Logs</a></li>
-                <li><a href="#"><i class="fas fa-calendar-alt"></i> Leave History</a></li>
-            </ul>
         </div>
+        <!-- 8. Task Assignment End -->
 
-        <!-- HR & Payroll -->
+        <!-- 9. Profile Management Start -->
         <div class="module-card">
-            <div class="module-header hr">
-                <i class="fas fa-id-card"></i>
-                <h3>HR & Payroll</h3>
+            <div class="module-header color-8">
+                <i class="fas fa-user-edit"></i>
+                <h3>Profile Management</h3>
             </div>
-            <ul class="module-links">
-                <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Salary Slips</a></li>
-                <li><a href="#"><i class="fas fa-envelope-open-text"></i> Apply for Leave</a></li>
-                <li><a href="#"><i class="fas fa-user-tag"></i> View My Profile</a></li>
-            </ul>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('profileModal'); switchTabDirect('profView')">
+                            <i class="fas fa-id-card" style="color:#5352ed;"></i>
+                            View Information
+                            <span class="status-badge status-ongoing">Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('profileModal'); switchTabDirect('profUpdate')">
+                            <i class="fas fa-mobile-alt" style="color:#818cf8;"></i>
+                            Update Phone / Address
+                            <span class="status-badge status-ongoing">Edit</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('profileModal'); switchTabDirect('profPass')">
+                            <i class="fas fa-key" style="color:#fbbf24;"></i>
+                            Change Password
+                            <span class="status-badge status-pending">Security</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('profileModal')"><i class="fas fa-user-cog"></i> Manage Profile</button>
+            </div>
         </div>
+        <!-- 9. Profile Management End -->
 
-        <!-- Inventory & Assets -->
+        <!-- 10. Salary Information Start -->
         <div class="module-card">
-            <div class="module-header assets">
+            <div class="module-header color-9">
+                <i class="fas fa-money-check-alt"></i>
+                <h3>Salary Information</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('salaryModal'); switchTabDirect('salaryHistory')">
+                            <i class="fas fa-calendar-check" style="color:#00d8d6;"></i>
+                            {% for salary in salaries|slice:":1" %}
+                            Nov Salary Paid: {{ salary.payment_date|date:"d M"|default:"01 Dec" }}
+                            <span class="status-badge status-approved">Paid</span>
+                            {% empty %}
+                            Nov Salary Paid: 01 Dec
+                            <span class="status-badge status-approved">Paid</span>
+                            {% endfor %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('salaryModal'); switchTabDirect('salarySlip')">
+                            <i class="fas fa-file-download" style="color:#818cf8;"></i>
+                            Download Pay Slip
+                            <span class="status-badge status-ongoing">PDF</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('salaryModal'); switchTabDirect('salaryDues')">
+                            <i class="fas fa-exclamation-circle" style="color:#f87171;"></i>
+                            View Dues
+                            <span class="status-badge status-{% if dues_count > 0 %}pending{% else %}approved{% endif %}">{% if dues_count > 0 %}Pending{% else %}Clear{% endif %}</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('salaryModal')"><i class="fas fa-file-invoice-dollar"></i> Salary Details</button>
+            </div>
+        </div>
+        <!-- 10. Salary Information End -->
+
+        <!-- 11. Holiday Calendar Start -->
+        <div class="module-card">
+            <div class="module-header color-10">
+                <i class="fas fa-tree"></i>
+                <h3>Holiday Calendar</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('holidayModal'); filterHoliday('Government')">
+                            <i class="fas fa-landmark" style="color:#0fb9b1;"></i>
+                            Government Holidays
+                            <span class="status-badge status-approved">Govt</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('holidayModal'); filterHoliday('School')">
+                            <i class="fas fa-school" style="color:#60a5fa;"></i>
+                            School Holidays
+                            <span class="status-badge status-ongoing">School</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('holidayModal'); filterHoliday('Special')">
+                            <i class="fas fa-graduation-cap" style="color:#fbbf24;"></i>
+                            Exam / Special Days
+                            <span class="status-badge status-pending">Special</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('holidayModal')"><i class="fas fa-calendar-check"></i> View Calendar</button>
+            </div>
+        </div>
+        <!-- 11. Holiday Calendar End -->
+
+        <!-- 12. Emergency Request Start -->
+        <div class="module-card">
+            <div class="module-header color-11">
+                <i class="fas fa-ambulance"></i>
+                <h3>Emergency Request</h3>
+                {% if emergencies %}<span class="mod-badge" style="background:#ef4444;">{{ emergencies.count }}</span>{% endif %}
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" class="highlight-text" onclick="openModal('emergencyModal'); switchTabDirect('emergView')">
+                            <i class="fas fa-walking"></i>
+                            Come to Office Quickly!
+                            <span class="status-badge status-pending">Alert</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="highlight-text" onclick="openModal('emergencyModal'); switchTabDirect('emergView')">
+                            <i class="fas fa-projector"></i>
+                            Bring Projector to Room 5
+                            <span class="status-badge status-pending">Urgent</span>
+                        </a>
+                    </li>
+                    {% for emergency in emergencies|slice:":1" %}
+                    <li>
+                        <a href="#" class="highlight-text" onclick="openModal('emergencyModal')">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ emergency.title|truncatechars:26 }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" style="background:linear-gradient(135deg, rgba(239,68,68,0.15), rgba(185,28,28,0.15)); border-color:rgba(239,68,68,0.4); color:#fca5a5;" onclick="openModal('emergencyModal'); switchTabDirect('emergCreate')">
+                    <i class="fas fa-bell"></i> Send Alert
+                </button>
+            </div>
+        </div>
+        <!-- 12. Emergency Request End -->
+
+        <!-- 13. Document Center Start -->
+        <div class="module-card">
+            <div class="module-header color-12">
+                <i class="fas fa-folder-open"></i>
+                <h3>Document Center</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('documentModal'); filterDoc('Joining Letter')">
+                            <i class="fas fa-file-signature" style="color:#ff6b81;"></i>
+                            Offer / Joining Letter
+                            <span class="status-badge status-approved">View</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('documentModal'); filterDoc('Instruction')">
+                            <i class="fas fa-file-alt" style="color:#818cf8;"></i>
+                            Duty / Instruction Docs
+                            <span class="status-badge status-ongoing">Docs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('documentModal'); filterDoc('Form')">
+                            <i class="fas fa-file-download" style="color:#34d399;"></i>
+                            Download Forms
+                            <span class="status-badge status-ongoing">Forms</span>
+                        </a>
+                    </li>
+                    {% for doc in documents|slice:":1" %}
+                    <li>
+                        <a href="#" onclick="openModal('documentModal')">
+                            <i class="fas fa-paperclip"></i>
+                            {{ doc.title|truncatechars:26 }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('documentModal')"><i class="fas fa-archive"></i> Open Document Center</button>
+            </div>
+        </div>
+        <!-- 13. Document Center End -->
+
+        <!-- 14. Event Duty Start -->
+        <div class="module-card">
+            <div class="module-header color-13">
+                <i class="fas fa-glass-cheers"></i>
+                <h3>Event Duty</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('eventModal'); filterEvent('Annual Sports')">
+                            <i class="fas fa-running" style="color:#ff6348;"></i>
+                            Annual Sports
+                            <span class="status-badge status-ongoing">Event</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('eventModal'); filterEvent('Cultural Program')">
+                            <i class="fas fa-music" style="color:#a855f7;"></i>
+                            Cultural Program
+                            <span class="status-badge status-ongoing">Event</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('eventModal'); filterEvent('Parents Meeting Duty')">
+                            <i class="fas fa-users" style="color:#60a5fa;"></i>
+                            Parents Meeting Duty
+                            <span class="status-badge status-pending">Duty</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('eventModal')"><i class="fas fa-calendar-star"></i> View Event Duties</button>
+            </div>
+        </div>
+        <!-- 14. Event Duty End -->
+
+        <!-- 15. Performance Record Start -->
+        <div class="module-card">
+            <div class="module-header color-14">
+                <i class="fas fa-chart-line"></i>
+                <h3>Performance Record</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('performanceModal'); filterPerformance('Evaluation')">
+                            <i class="fas fa-star" style="color:#fbbf24;"></i>
+                            Work Evaluation
+                            <span class="status-badge status-ongoing">View</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('performanceModal'); filterPerformance('Award')">
+                            <i class="fas fa-award" style="color:#34d399;"></i>
+                            Staff of the Month
+                            <span class="status-badge status-approved">Award</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('performanceModal'); filterPerformance('Warning')">
+                            <i class="fas fa-exclamation-triangle" style="color:#f87171;"></i>
+                            Warnings / Notices
+                            <span class="status-badge status-rejected">Warn</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="btn-action" onclick="openModal('performanceModal')"><i class="fas fa-poll"></i> View Performance</button>
+            </div>
+        </div>
+        <!-- 15. Performance Record End -->
+
+        <!-- 16. Visitor Management Start -->
+        <div class="module-card">
+            <div class="module-header color-15">
+                <i class="fas fa-id-badge"></i>
+                <h3>Visitor Management</h3>
+            </div>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('visitorModal'); switchTabDirect('visitorList')">
+                            <i class="fas fa-user-friends" style="color:#9b59b6;"></i>
+                            Today's Visitors
+                            <span class="status-badge status-ongoing">{{ visitors.count }} Today</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('visitorModal'); switchTabDirect('visitorLog')">
+                            <i class="fas fa-sign-in-alt" style="color:#34d399;"></i>
+                            Entry / Exit Log
+                            <span class="status-badge status-approved">Log</span>
+                        </a>
+                    </li>
+                    {% for visitor in visitors|slice:":1" %}
+                    <li>
+                        <a href="#" onclick="openModal('visitorModal')">
+                            <i class="fas fa-user-check"></i>
+                            {{ visitor.visitor_name }} ({{ visitor.purpose|truncatechars:15 }})
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('visitorModal'); switchTabDirect('visitorAdd')"><i class="fas fa-plus"></i> Log Visitor Entry</button>
+            </div>
+        </div>
+        <!-- 16. Visitor Management End -->
+
+        <!-- 17. Inventory Request Start -->
+        <div class="module-card">
+            <div class="module-header color-16">
                 <i class="fas fa-boxes"></i>
-                <h3>Assets & Inventory</h3>
+                <h3>Inventory Request</h3>
             </div>
-            <ul class="module-links">
-                <li><a href="#"><i class="fas fa-tools"></i> Report Maintenance</a></li>
-                <li><a href="#"><i class="fas fa-archive"></i> Request Supplies</a></li>
-                <li><a href="#"><i class="fas fa-clipboard-check"></i> Asset Assignment</a></li>
-            </ul>
+            <div class="module-content">
+                <ul class="module-links">
+                    <li>
+                        <a href="#" onclick="openModal('inventoryModal'); selectInventoryItem('Markers')">
+                            <i class="fas fa-pen" style="color:#f39c12;"></i>
+                            Marker &amp; Chalks
+                            <span class="status-badge status-ongoing">Request</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('inventoryModal'); selectInventoryItem('Cleaning Liquid')">
+                            <i class="fas fa-spray-can" style="color:#60a5fa;"></i>
+                            Cleaning Supplies
+                            <span class="status-badge status-ongoing">Request</span>
+                        </a>
+                    </li>
+                    {% for inv in inventory_requests|slice:":2" %}
+                    <li>
+                        <a href="#" onclick="openModal('inventoryModal'); switchTabDirect('invHistory')">
+                            <i class="fas fa-box"></i>
+                            {{ inv.items|truncatechars:22 }} (Qty: {{ inv.quantity }})
+                            <span class="status-badge status-{{ inv.status|lower }}">{{ inv.status }}</span>
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li>
+                        <a href="#" onclick="openModal('inventoryModal')">
+                            <i class="fas fa-info-circle"></i>
+                            No pending requests
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn-action" onclick="openModal('inventoryModal')"><i class="fas fa-cart-plus"></i> Request Items</button>
+            </div>
+        </div>
+        <!-- 17. Inventory Request End -->
+
+    </div>
+</div>
+
+<!-- ========================= MODALS SECTION START ========================= -->
+
+<!-- 2. Notice Board Modal -->
+<div class="modal-overlay" id="noticeModal">
+    <div class="modal-container" style="max-width:680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-clipboard-list" style="color:#ff4757; margin-right:10px;"></i> School Notice Board</h3>
+            <button class="btn-close" onclick="closeModal('noticeModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-noticeAll" onclick="switchTab(event, 'noticeAll')">All Notices</button>
+            <button class="modal-tab-btn" id="tab-noticeMeeting" onclick="switchTab(event, 'noticeMeeting')">Urgent Meeting</button>
+            <button class="modal-tab-btn" id="tab-noticeExam" onclick="switchTab(event, 'noticeExam')">Exam Routine</button>
         </div>
 
-        <!-- Communication -->
-        <div class="module-card">
-            <div class="module-header communication">
-                <i class="fas fa-bullhorn"></i>
-                <h3>Announcements</h3>
+        <!-- All Notices Tab -->
+        <div id="noticeAll" class="tab-panel" style="max-height:420px; overflow-y:auto;">
+            {% for notice in notices %}
+            <div class="info-card {% if 'Urgent' in notice.title %}urgent-card{% endif %}">
+                <div class="info-card-top">
+                    <h4><i class="fas {% if 'Urgent' in notice.title %}fa-exclamation-circle{% else %}fa-file-alt{% endif %}"></i> {{ notice.title }}</h4>
+                    <span class="status-badge {% if 'Urgent' in notice.title %}status-pending{% else %}status-approved{% endif %}">
+                        {% if 'Urgent' in notice.title %}Urgent{% else %}Notice{% endif %}
+                    </span>
+                </div>
+                <p class="info-card-body">{{ notice.content }}</p>
+                <div class="info-card-footer">
+                    <span><i class="far fa-user"></i> Posted by Admin</span>
+                    <span><i class="far fa-clock"></i> {{ notice.created_at|date:"d M Y, h:i A" }}</span>
+                </div>
             </div>
-            <ul class="module-links">
-                {% for notice in notices %}
-                <li>
-                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-sticky-note"></i> {{ notice.title|truncatechars:20 }}</a>
-                    {% if notice.attachment %}
-                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
-                    {% endif %}
-                </li>
-                {% empty %}
-                <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
-                {% endfor %}
-                <hr style="opacity: 0.1; margin: 10px 0;">
-                <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
-            </ul>
+            {% empty %}
+            <div class="empty-state"><i class="fas fa-clipboard"></i><p>No notices posted yet.</p></div>
+            {% endfor %}
+        </div>
+
+        <!-- Urgent Meeting Tab -->
+        <div id="noticeMeeting" class="tab-panel" style="display:none;">
+            <div class="info-card urgent-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-exclamation-circle"></i> Urgent Staff Meeting</h4>
+                    <span class="status-badge status-pending">Urgent</span>
+                </div>
+                <p class="info-card-body">All staff members are required to attend an urgent meeting in the conference hall on <strong>Monday, 16 June 2026 at 10:00 AM</strong>. Please be present on time. Topic: Annual Exam Final Preparation and Student Results Discussion.</p>
+                <div class="info-card-footer">
+                    <span><i class="far fa-user"></i> Posted by: Headmaster</span>
+                    <span><i class="far fa-clock"></i> 13 Jun 2026, 09:00 AM</span>
+                </div>
+            </div>
+            {% for notice in notices %}
+            {% if 'Urgent' in notice.title or 'Meeting' in notice.title %}
+            <div class="info-card urgent-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-exclamation-circle"></i> {{ notice.title }}</h4>
+                    <span class="status-badge status-pending">Urgent</span>
+                </div>
+                <p class="info-card-body">{{ notice.content }}</p>
+                <div class="info-card-footer">
+                    <span><i class="far fa-clock"></i> {{ notice.created_at|date:"d M Y, h:i A" }}</span>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Exam Routine Tab -->
+        <div id="noticeExam" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-book-open" style="color:#f59e0b;"></i> Annual Exam Routine – 2026</h4>
+                    <span class="status-badge status-ongoing">Active</span>
+                </div>
+                <table class="info-table" style="margin-top:10px;">
+                    <thead><tr><th>Class</th><th>Subject</th><th>Date</th><th>Time</th></tr></thead>
+                    <tbody>
+                        <tr><td>Class 6</td><td>Bangla</td><td>20 Jun 2026</td><td>10:00 AM</td></tr>
+                        <tr><td>Class 7</td><td>English</td><td>21 Jun 2026</td><td>10:00 AM</td></tr>
+                        <tr><td>Class 8</td><td>Mathematics</td><td>22 Jun 2026</td><td>10:00 AM</td></tr>
+                        <tr><td>Class 9</td><td>Science</td><td>23 Jun 2026</td><td>10:00 AM</td></tr>
+                        <tr><td>Class 10</td><td>Social Science</td><td>24 Jun 2026</td><td>10:00 AM</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-card-footer" style="margin-top:12px;">
+                    <span><i class="fas fa-info-circle"></i> Invigilators must report 30 minutes early</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<!-- END: STAFF_DASHBOARD_SECTION -->
+
+<!-- 3. Duty Schedule Modal -->
+<div class="modal-overlay" id="dutyModal">
+    <div class="modal-container" style="max-width:680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-calendar-day" style="color:#ffa502; margin-right:10px;"></i> My Duty Schedule</h3>
+            <button class="btn-close" onclick="closeModal('dutyModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-dutyAll" onclick="switchTab(event, 'dutyAll')">All Duties</button>
+            <button class="modal-tab-btn" id="tab-dutyWeekly" onclick="switchTab(event, 'dutyWeekly')">Weekly Roster</button>
+            <button class="modal-tab-btn" id="tab-dutyMonthly" onclick="switchTab(event, 'dutyMonthly')">Monthly Roster</button>
+            <button class="modal-tab-btn" id="tab-dutySpecial" onclick="switchTab(event, 'dutySpecial')">Special Duty</button>
+        </div>
+
+        <!-- All Duties -->
+        <div id="dutyAll" class="tab-panel">
+            <table class="info-table">
+                <thead><tr><th>Type</th><th>Duty Name</th><th>Shift Hours</th><th>Date</th></tr></thead>
+                <tbody>
+                    {% for duty in duties %}
+                    <tr>
+                        <td><span class="status-badge {% if duty.duty_type == 'Special' %}status-pending{% elif duty.duty_type == 'Roster' %}status-ongoing{% else %}status-approved{% endif %}">{{ duty.duty_type }}</span></td>
+                        <td><strong>{{ duty.title }}</strong><br><small style="color:#94a3b8;">{{ duty.description }}</small></td>
+                        <td>{{ duty.start_time|time:"H:i" }} - {{ duty.end_time|time:"H:i" }}</td>
+                        <td>{% if duty.date %}{{ duty.date|date:"d M Y" }}{% else %}Weekly / Recurring{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align:center; color:#cbd5e1;">No duties assigned yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Weekly Roster -->
+        <div id="dutyWeekly" class="tab-panel" style="display:none;">
+            <div class="duty-roster-grid">
+                <div class="roster-day"><span class="day-label">Monday</span><span class="duty-item"><i class="fas fa-chalkboard-teacher"></i> Class Supervision 08:00–10:00</span></div>
+                <div class="roster-day"><span class="day-label">Tuesday</span><span class="duty-item"><i class="fas fa-door-open"></i> Gate Duty 07:30–09:00</span></div>
+                <div class="roster-day"><span class="day-label">Wednesday</span><span class="duty-item"><i class="fas fa-book"></i> Library Supervision 10:00–12:00</span></div>
+                <div class="roster-day"><span class="day-label">Thursday</span><span class="duty-item"><i class="fas fa-chalkboard-teacher"></i> Class Supervision 08:00–10:00</span></div>
+                <div class="roster-day"><span class="day-label">Friday</span><span class="duty-item"><i class="fas fa-mosque"></i> Jumu'ah Duty 12:00–13:00</span></div>
+                <div class="roster-day"><span class="day-label">Saturday</span><span class="duty-item"><i class="fas fa-flask"></i> Lab Supervision 09:00–11:00</span></div>
+            </div>
+            <table class="info-table" style="margin-top:15px;">
+                <thead><tr><th>Day</th><th>Duty</th><th>Time</th></tr></thead>
+                <tbody>
+                    {% for duty in duties %}{% if duty.duty_type == 'Regular' %}
+                    <tr>
+                        <td>{% if duty.date %}{{ duty.date|date:"l" }}{% else %}Recurring{% endif %}</td>
+                        <td>{{ duty.title }}</td>
+                        <td>{{ duty.start_time|time:"H:i" }} – {{ duty.end_time|time:"H:i" }}</td>
+                    </tr>
+                    {% endif %}{% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Monthly Roster -->
+        <div id="dutyMonthly" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-calendar-alt"></i> Monthly Roster – June 2026</h4>
+                    <span class="status-badge status-ongoing">Active</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Week</th><th>Duty Assignment</th><th>Shift</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Week 1 (1–7 Jun)</td><td>Morning Gate Duty</td><td>07:30–09:00</td><td><span class="status-badge status-approved">Done</span></td></tr>
+                        <tr><td>Week 2 (8–14 Jun)</td><td>Class Supervision</td><td>08:00–10:00</td><td><span class="status-badge status-approved">Done</span></td></tr>
+                        <tr><td>Week 3 (15–21 Jun)</td><td>Exam Invigilation</td><td>10:00–13:00</td><td><span class="status-badge status-ongoing">Upcoming</span></td></tr>
+                        <tr><td>Week 4 (22–30 Jun)</td><td>Library Supervision</td><td>09:00–11:00</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Special Duty (Exam/Event) -->
+        <div id="dutySpecial" class="tab-panel" style="display:none;">
+            <div class="info-card urgent-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-star"></i> Special Duty – Exam Period</h4>
+                    <span class="status-badge status-pending">Special</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Event</th><th>Role</th><th>Date</th><th>Time</th></tr></thead>
+                    <tbody>
+                        {% for duty in duties %}
+                        {% if duty.duty_type == 'Special' %}
+                        <tr>
+                            <td>{{ duty.title }}</td>
+                            <td>{{ duty.description|default:"Exam Invigilation" }}</td>
+                            <td>{% if duty.date %}{{ duty.date|date:"d M Y" }}{% else %}TBD{% endif %}</td>
+                            <td>{{ duty.start_time|time:"H:i" }} – {{ duty.end_time|time:"H:i" }}</td>
+                        </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr><td>Annual Exam Invigilation</td><td>Hall Supervisor</td><td>20-24 Jun 2026</td><td>09:30 AM</td></tr>
+                        <tr><td>Sports Day</td><td>Field Coordinator</td><td>28 Jun 2026</td><td>08:00 AM</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Attendance Management Modal -->
+<div class="modal-overlay" id="attendanceModal">
+    <div class="modal-container" style="max-width:680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-fingerprint" style="color:#eccc68; margin-right:10px;"></i> Attendance Management</h3>
+            <button class="btn-close" onclick="closeModal('attendanceModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-attnSummary" onclick="switchTab(event, 'attnSummary')">Daily Log</button>
+            <button class="modal-tab-btn" id="tab-attnMonthly" onclick="switchTab(event, 'attnMonthly')">Monthly Report</button>
+            <button class="modal-tab-btn" id="tab-attnLate" onclick="switchTab(event, 'attnLate')">Late Entry Report</button>
+            <button class="modal-tab-btn" id="tab-attnLogs" onclick="switchTab(event, 'attnLogs')">Log Details</button>
+        </div>
+
+        <!-- Daily Log / Summary -->
+        <div id="attnSummary" class="tab-panel">
+            <div class="attn-summary-grid">
+                <div class="attn-box present">
+                    <h4>{{ attendance_present }}</h4>
+                    <p>Present Days</p>
+                </div>
+                <div class="attn-box absent">
+                    <h4>{{ attendance_absent }}</h4>
+                    <p>Absent Days</p>
+                </div>
+                <div class="attn-box total">
+                    <h4>{{ attendance_total }}</h4>
+                    <p>Total Logged</p>
+                </div>
+                <div class="attn-box late">
+                    <h4>{{ late_entry_report.count }}</h4>
+                    <p>Late Entries</p>
+                </div>
+            </div>
+            <p style="color:#94a3b8; font-size:12.5px; text-align:center; margin-top:15px;">
+                <i class="fas fa-info-circle"></i> Statistics calculated from main gate check-in records.
+            </p>
+        </div>
+
+        <!-- Monthly Report -->
+        <div id="attnMonthly" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-file-invoice"></i> Monthly Attendance Report – June 2026</h4>
+                    <span class="status-badge status-ongoing">This Month</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Month</th><th>Present</th><th>Absent</th><th>Late</th><th>Total Days</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>June 2026</td>
+                            <td style="color:#34d399;"><strong>{{ attendance_present }}</strong></td>
+                            <td style="color:#f87171;"><strong>{{ attendance_absent }}</strong></td>
+                            <td style="color:#fbbf24;"><strong>{{ late_entry_report.count }}</strong></td>
+                            <td>{{ attendance_total }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="attn-bar-wrap" style="margin-top:15px;">
+                    <div class="attn-bar-label">Attendance Rate</div>
+                    <div class="attn-progress-bar">
+                        {% if attendance_total > 0 %}
+                        <div class="attn-progress-fill" style="width: {% widthratio attendance_present attendance_total 100 %}%;"></div>
+                        {% else %}
+                        <div class="attn-progress-fill" style="width:0%;"></div>
+                        {% endif %}
+                    </div>
+                    <span class="attn-bar-percent">
+                        {% if attendance_total > 0 %}{% widthratio attendance_present attendance_total 100 %}%{% else %}0%{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Late Entry Report -->
+        <div id="attnLate" class="tab-panel" style="display:none;">
+            <table class="info-table">
+                <thead><tr><th>Date</th><th>In Time</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for log in late_entry_report %}
+                    <tr>
+                        <td>{{ log.date|date:"d M Y" }}</td>
+                        <td class="highlight-text">{{ log.check_in_time|time:"H:i A" }}</td>
+                        <td><span class="status-badge status-pending">Late</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#34d399; padding:20px;"><i class="fas fa-trophy"></i> No late entries recorded! Great job.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Log Details -->
+        <div id="attnLogs" class="tab-panel" style="display:none; max-height:250px; overflow-y:auto;">
+            <table class="info-table">
+                <thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for log in recent_attendance %}
+                    <tr>
+                        <td>{{ log.date|date:"d M Y" }}</td>
+                        <td>{{ log.check_in_time|time:"H:i A"|default:"--" }}</td>
+                        <td>{{ log.check_out_time|time:"H:i A"|default:"--" }}</td>
+                        <td>
+                            <span class="status-badge {% if log.status == 'Present' %}status-approved{% elif log.status == 'Late' %}status-pending{% else %}status-rejected{% endif %}">{{ log.status }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align:center; color:#cbd5e1;">No attendance logs found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Leave Application Modal -->
+<div class="modal-overlay" id="leaveModal">
+    <div class="modal-container" style="max-width:620px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-calendar-minus" style="color:#7bed9f; margin-right:10px;"></i> Leave Application</h3>
+            <button class="btn-close" onclick="closeModal('leaveModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-applyLeave" onclick="switchTab(event, 'applyLeave')">Apply Now</button>
+            <button class="modal-tab-btn" id="tab-historyLeave" onclick="switchTab(event, 'historyLeave')">History &amp; Status</button>
+        </div>
+
+        <div id="applyLeave" class="tab-panel">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="leave_request">
+                <div class="form-group">
+                    <label>Applicant Name</label>
+                    <input type="text" class="form-control" value="{{ user.first_name }} {{ user.last_name }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Leave Type</label>
+                    <select name="leave_type" class="form-control" id="leaveTypeSelect" onchange="updateLeaveInfo()">
+                        <option value="Sick Leave">🏥 Sick Leave</option>
+                        <option value="Casual Leave">🌴 Casual Leave</option>
+                        <option value="Emergency Leave">🚨 Emergency Leave</option>
+                        <option value="Annual Leave">📅 Annual Leave</option>
+                        <option value="Maternity Leave">👶 Maternity Leave</option>
+                    </select>
+                </div>
+                <div id="leaveInfoBox" class="leave-info-box"></div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea name="reason" class="form-control" rows="3" required placeholder="Describe your leave reason..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Attachment (Optional)</label>
+                    <input type="file" name="attachment" class="form-control" style="padding:6px;">
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Application</button>
+            </form>
+        </div>
+
+        <div id="historyLeave" class="tab-panel" style="display:none; max-height:320px; overflow-y:auto;">
+            <table class="info-table">
+                <thead><tr><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for leave in leave_requests %}
+                    <tr>
+                        <td><strong>{{ leave.leave_type }}</strong><br><small style="color:#94a3b8;">{{ leave.reason|truncatechars:20 }}</small></td>
+                        <td>{{ leave.start_date|date:"d M" }} – {{ leave.end_date|date:"d M" }}</td>
+                        <td><span class="status-badge status-{{ leave.status|lower }}">{{ leave.status }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#cbd5e1;">No leave applications found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Problem Report Modal -->
+<div class="modal-overlay" id="problemModal">
+    <div class="modal-container" style="max-width:600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-tools" style="color:#2ed573; margin-right:10px;"></i> Problem / Complaint Report</h3>
+            <button class="btn-close" onclick="closeModal('problemModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-reportProblem" onclick="switchTab(event, 'reportProblem')">Report Issue</button>
+            <button class="modal-tab-btn" id="tab-historyProblem" onclick="switchTab(event, 'historyProblem')">My Complaints</button>
+        </div>
+
+        <div id="reportProblem" class="tab-panel">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="problem_report">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" class="form-control">
+                        <option value="Classroom Issue">🏫 Classroom Issue</option>
+                        <option value="Electricity">⚡ Electricity / Power</option>
+                        <option value="Security">🔒 Security</option>
+                        <option value="Cleaning">🧹 Cleaning / Sanitation</option>
+                        <option value="Broken Equipment">🔧 Broken Equipment</option>
+                        <option value="Internet / IT">💻 Internet / IT</option>
+                        <option value="Plumbing">🚰 Plumbing / Water</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <div class="priority-selector">
+                        <label class="priority-option">
+                            <input type="radio" name="priority" value="Low"> <span class="priority-low">Low</span>
+                        </label>
+                        <label class="priority-option">
+                            <input type="radio" name="priority" value="Medium" checked> <span class="priority-medium">Medium</span>
+                        </label>
+                        <label class="priority-option">
+                            <input type="radio" name="priority" value="High"> <span class="priority-high">High</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Describe the issue in detail..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Send Report</button>
+            </form>
+        </div>
+
+        <div id="historyProblem" class="tab-panel" style="display:none; max-height:300px; overflow-y:auto;">
+            <table class="info-table">
+                <thead><tr><th>Category</th><th>Description</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for report in problem_reports %}
+                    <tr>
+                        <td><strong>{{ report.category }}</strong></td>
+                        <td>{{ report.description|truncatechars:40 }}</td>
+                        <td><span class="status-badge status-{% if report.status == 'Solved' %}approved{% else %}pending{% endif %}">{{ report.status }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#34d399; padding:15px;"><i class="fas fa-check-circle"></i> No complaints recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Direct Messaging Modal -->
+<div class="modal-overlay" id="messageModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-comments" style="color:#1e90ff; margin-right:10px;"></i> Direct Messaging</h3>
+            <button class="btn-close" onclick="closeModal('messageModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-msgInbox" onclick="switchTab(event, 'msgInbox')">Inbox</button>
+            <button class="modal-tab-btn" id="tab-msgCompose" onclick="switchTab(event, 'msgCompose')">Compose</button>
+        </div>
+
+        <div id="msgInbox" class="tab-panel">
+            <!-- Pinned Messages -->
+            <div class="pinned-msg-header"><i class="fas fa-thumbtack"></i> Pinned / Recent Messages</div>
+            <div class="pinned-messages">
+                <div class="msg-bubble msg-received">
+                    <div class="msg-sender"><i class="fas fa-user-shield"></i> Admin</div>
+                    <p>Need Files – Please submit all student attendance files to the main office by today 3:00 PM.</p>
+                    <span class="msg-meta">Today, 09:15 AM &nbsp;·&nbsp; <span class="status-badge status-pending" style="font-size:9px; padding:2px 6px;">Unread</span></span>
+                </div>
+                <div class="msg-bubble msg-received">
+                    <div class="msg-sender"><i class="fas fa-chalkboard-teacher"></i> Mr. Rahim</div>
+                    <p>Bring chalk – Please bring chalk boxes from the store room before Period 3 starts.</p>
+                    <span class="msg-meta">Today, 08:30 AM &nbsp;·&nbsp; <span class="status-badge status-approved" style="font-size:9px; padding:2px 6px;">Read</span></span>
+                </div>
+            </div>
+            <div class="message-container">
+                {% for msg in messages_received %}
+                <div class="msg-bubble msg-received">
+                    <div class="msg-sender"><i class="fas fa-user"></i> {{ msg.sender.first_name }} {{ msg.sender.last_name }}</div>
+                    <p>{{ msg.message }}</p>
+                    <span class="msg-meta">{{ msg.created_at|date:"d M, h:i A" }}</span>
+                </div>
+                {% endfor %}
+                {% for msg in messages_sent %}
+                <div class="msg-bubble msg-sent">
+                    <div class="msg-sender" style="text-align:right;">To: {{ msg.receiver.first_name }} {{ msg.receiver.last_name }}</div>
+                    <p>{{ msg.message }}</p>
+                    <span class="msg-meta">{{ msg.created_at|date:"d M, h:i A" }}</span>
+                </div>
+                {% endfor %}
+                {% if not messages_received and not messages_sent %}
+                <p style="color:#cbd5e1; text-align:center; padding:20px;">No messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="msgCompose" class="tab-panel" style="display:none;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="send_message">
+                <div class="form-group">
+                    <label>Send To</label>
+                    <select name="receiver_id" class="form-control" required>
+                        <option value="">-- Choose Recipient --</option>
+                        {% for usr in all_users %}
+                        <option value="{{ usr.id }}">{{ usr.first_name }} {{ usr.last_name }} ({{ usr.username }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="quick-msg-label">Quick Messages:</div>
+                <div class="quick-messages">
+                    <button type="button" class="quick-msg-btn" onclick="setMessage('Need Files – Please provide the required files.')">Need Files</button>
+                    <button type="button" class="quick-msg-btn" onclick="setMessage('Bring chalk boxes from the store room.')">Bring Chalk</button>
+                    <button type="button" class="quick-msg-btn" onclick="setMessage('Please report to the office immediately.')">Report to Office</button>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="message" id="msgTextarea" class="form-control" rows="4" placeholder="Write your message..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 8. Task Assignment Modal -->
+<div class="modal-overlay" id="taskModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-tasks" style="color:#3742fa; margin-right:10px;"></i> My Task Assignments</h3>
+            <button class="btn-close" onclick="closeModal('taskModal')"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- Static Demo Tasks -->
+        <div class="task-card">
+            <div class="task-card-top">
+                <div>
+                    <h4><i class="fas fa-folder-open"></i> Deliver Office Files</h4>
+                    <p>Submit all pending staff files to the administrative office.</p>
+                </div>
+                <span class="status-badge status-ongoing">ONGOING</span>
+            </div>
+            <div class="task-card-footer">
+                <span><i class="far fa-calendar"></i> Due: 14 Jun 2026</span>
+                <div class="task-action-btns">
+                    <button class="task-btn task-btn-done" onclick="markTaskDone(this)"><i class="fas fa-check"></i> Mark Done</button>
+                </div>
+            </div>
+        </div>
+        <div class="task-card task-completed">
+            <div class="task-card-top">
+                <div>
+                    <h4><i class="fas fa-check-circle"></i> Meeting Preparation</h4>
+                    <p>Prepare agenda and attendee list for the staff meeting.</p>
+                </div>
+                <span class="status-badge status-approved">COMPLETED</span>
+            </div>
+            <div class="task-card-footer">
+                <span><i class="far fa-calendar"></i> Completed: 12 Jun 2026</span>
+            </div>
+        </div>
+
+        <!-- Dynamic Tasks from DB -->
+        <div style="max-height:250px; overflow-y:auto;">
+            {% for task in tasks %}
+            <div class="task-card {% if task.status == 'Completed' %}task-completed{% endif %}">
+                <div class="task-card-top">
+                    <div>
+                        <h4><i class="fas {% if task.status == 'Completed' %}fa-check-circle{% else %}fa-folder-open{% endif %}"></i> {{ task.title }}</h4>
+                        <p>{{ task.description }}</p>
+                    </div>
+                    <span class="status-badge status-{% if task.status == 'Completed' %}approved{% elif task.status == 'Ongoing' %}ongoing{% else %}pending{% endif %}">{{ task.status }}</span>
+                </div>
+                <div class="task-card-footer">
+                    <span><i class="far fa-calendar"></i> Due: {{ task.due_date|date:"d M Y" }}</span>
+                    <form method="POST" style="margin:0; display:flex; gap:5px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_task_status">
+                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                        <select name="status" class="form-control" style="padding:4px 8px !important; font-size:11px !important; width:auto !important;" onchange="this.form.submit()">
+                            <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Ongoing" {% if task.status == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 9. Profile Management Modal -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-container" style="max-width:620px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-edit" style="color:#5352ed; margin-right:10px;"></i> Profile Management</h3>
+            <button class="btn-close" onclick="closeModal('profileModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-profView" onclick="switchTab(event, 'profView')">View Information</button>
+            <button class="modal-tab-btn" id="tab-profUpdate" onclick="switchTab(event, 'profUpdate')">Update Phone/Address</button>
+            <button class="modal-tab-btn" id="tab-profPass" onclick="switchTab(event, 'profPass')">Change Password</button>
+        </div>
+
+        <!-- View Profile -->
+        <div id="profView" class="tab-panel">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {% if staff_profile.profile_image %}
+                    <img src="{{ staff_profile.profile_image.url }}" alt="Profile">
+                    {% else %}
+                    <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <p class="profile-designation">{{ staff_profile.designation }}</p>
+                    <p class="profile-id">ID: {{ staff_profile.staff_id }}</p>
+                </div>
+            </div>
+            <table class="info-table" style="margin-top:0;">
+                <tr><td style="color:#94a3b8; font-weight:500;">Department:</td><td>{{ staff_profile.department }}</td></tr>
+                <tr><td style="color:#94a3b8; font-weight:500;">Work Shift:</td><td>{{ staff_profile.work_shift }}</td></tr>
+                <tr><td style="color:#94a3b8; font-weight:500;">Date of Joining:</td><td>{{ staff_profile.joining_date|date:"d M Y" }}</td></tr>
+                <tr><td style="color:#94a3b8; font-weight:500;">Phone:</td><td>{{ staff_profile.phone_number }}</td></tr>
+                <tr><td style="color:#94a3b8; font-weight:500;">Address:</td><td>{{ staff_profile.address }}</td></tr>
+                <tr><td style="color:#94a3b8; font-weight:500;">Email:</td><td>{{ user.email }}</td></tr>
+            </table>
+        </div>
+
+        <!-- Update Contact -->
+        <div id="profUpdate" class="tab-panel" style="display:none;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone_number" class="form-control" value="{{ staff_profile.phone_number }}" required placeholder="+880 1XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea name="address" class="form-control" rows="3" required>{{ staff_profile.address }}</textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Update Contact Info</button>
+            </form>
+        </div>
+
+        <!-- Change Password -->
+        <div id="profPass" class="tab-panel" style="display:none;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <div class="password-input-wrap">
+                        <input type="password" name="old_password" class="form-control" id="oldPass" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass('oldPass')"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <div class="password-input-wrap">
+                        <input type="password" name="new_password" class="form-control" id="newPass" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass('newPass')"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <div class="password-input-wrap">
+                        <input type="password" name="confirm_password" class="form-control" id="confirmPass" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass('confirmPass')"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-shield-alt"></i> Change Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 10. Salary Information Modal -->
+<div class="modal-overlay" id="salaryModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-money-check-alt" style="color:#00d8d6; margin-right:10px;"></i> Salary &amp; Pay Information</h3>
+            <button class="btn-close" onclick="closeModal('salaryModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-salaryHistory" onclick="switchTab(event, 'salaryHistory')">Salary History</button>
+            <button class="modal-tab-btn" id="tab-salarySlip" onclick="switchTab(event, 'salarySlip')">Download Pay Slip</button>
+            <button class="modal-tab-btn" id="tab-salaryDues" onclick="switchTab(event, 'salaryDues')">View Dues</button>
+            <button class="modal-tab-btn" id="tab-salaryWithdraw" onclick="switchTab(event, 'salaryWithdraw')" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;"><i class="fas fa-hand-holding-usd"></i> টাকা তুলুন</button>
+        </div>
+
+        <!-- Salary History -->
+        <div id="salaryHistory" class="tab-panel">
+            <div class="salary-highlight">
+                <div class="salary-hl-item">
+                    <i class="fas fa-calendar-check" style="color:#34d399;"></i>
+                    <div>
+                        <span class="salary-hl-label">Nov Salary Paid</span>
+                        <span class="salary-hl-value">01 Dec 2026</span>
+                    </div>
+                </div>
+                <div class="salary-hl-item">
+                    <i class="fas fa-money-bill-wave" style="color:#818cf8;"></i>
+                    <div>
+                        <span class="salary-hl-label">Last Amount</span>
+                        <span class="salary-hl-value">{% for salary in salaries|slice:":1" %}BDT {{ salary.amount }}{% empty %}BDT --{% endfor %}</span>
+                    </div>
+                </div>
+            </div>
+            <table class="info-table">
+                <thead><tr><th>Month</th><th>Gross</th><th>Payment Date</th><th>Dues</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for salary in salaries %}
+                    <tr>
+                        <td><strong>{{ salary.month }}</strong></td>
+                        <td>BDT {{ salary.amount }}</td>
+                        <td>{{ salary.payment_date|date:"d M Y"|default:"Pending" }}</td>
+                        <td>{% if salary.dues > 0 %}<span class="highlight-text">BDT {{ salary.dues }}</span>{% else %}None{% endif %}</td>
+                        <td><span class="status-badge {% if salary.status == 'Paid' %}status-approved{% else %}status-pending{% endif %}">{{ salary.status }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" style="text-align:center; color:#cbd5e1;">No salary history found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Download Pay Slip -->
+        <div id="salarySlip" class="tab-panel" style="display:none;">
+            <div class="payslip-card">
+                <div class="payslip-header">
+                    <h4><i class="fas fa-school"></i> Dhalua Bohumukhi High School</h4>
+                    <p>Pay Slip – November 2026</p>
+                </div>
+                <table class="info-table">
+                    <tr><td>Employee:</td><td><strong>{{ user.first_name }} {{ user.last_name }}</strong></td></tr>
+                    <tr><td>Designation:</td><td>{{ staff_profile.designation }}</td></tr>
+                    <tr><td>Department:</td><td>{{ staff_profile.department }}</td></tr>
+                    <tr><td>Staff ID:</td><td>{{ staff_profile.staff_id }}</td></tr>
+                    {% for salary in salaries|slice:":1" %}
+                    <tr><td>Gross Salary:</td><td><strong>BDT {{ salary.amount }}</strong></td></tr>
+                    <tr><td>Payment Date:</td><td>{{ salary.payment_date|date:"d M Y"|default:"01 Dec 2026" }}</td></tr>
+                    <tr><td>Status:</td><td><span class="status-badge {% if salary.status == 'Paid' %}status-approved{% else %}status-pending{% endif %}">{{ salary.status }}</span></td></tr>
+                    {% endfor %}
+                </table>
+                <button class="btn-submit" style="margin-top:20px;" onclick="printPaySlip()"><i class="fas fa-download"></i> Download / Print Pay Slip</button>
+            </div>
+        </div>
+
+        <!-- Withdraw Money -->
+        <div id="salaryWithdraw" class="tab-panel" style="display:none;">
+            <div style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:12px; padding:14px 18px; color:#a78bfa; font-size:0.84rem; margin-bottom:18px;">
+                <i class="fas fa-info-circle"></i> আবেদন করলে অ্যাডমিন অনুমোদন দেবেন। অনুমোদনের পর বিকাশ বা ব্যাংকে টাকা পাঠানো হবে।
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="payout_request">
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; color:#94a3b8; font-size:0.82rem; margin-bottom:7px;">পরিমাণ (৳) *</label>
+                    <input type="number" name="amount" min="100" step="0.01" placeholder="যেমন: 5000" required style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px 14px; color:#fff; font-size:0.93rem; box-sizing:border-box;">
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; color:#94a3b8; font-size:0.82rem; margin-bottom:7px;">পেমেন্ট পদ্ধতি *</label>
+                    <select name="payment_method" required style="width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px 14px; color:#fff; font-size:0.93rem; box-sizing:border-box;">
+                        <option value="">— বেছে নিন —</option>
+                        <option value="bKash">বিকাশ (bKash)</option>
+                        <option value="Bank Transfer">ব্যাংক ট্রান্সফার</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; color:#94a3b8; font-size:0.82rem; margin-bottom:7px;">অ্যাকাউন্ট বিবরণ *</label>
+                    <textarea name="account_details" rows="3" required placeholder="বিকাশ নম্বর বা ব্যাংক অ্যাকাউন্ট নম্বর ও ব্যাংকের নাম লিখুন..." style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px 14px; color:#fff; font-size:0.93rem; box-sizing:border-box; resize:vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="width:100%;">
+                    <i class="fas fa-paper-plane"></i> আবেদন পাঠান
+                </button>
+            </form>
+            {% if payout_requests %}
+            <div style="margin-top:22px;">
+                <h4 style="color:#94a3b8; font-size:0.88rem; margin-bottom:12px;">আবেদনের ইতিহাস</h4>
+                <table class="info-table">
+                    <thead><tr><th>তারিখ</th><th>পরিমাণ</th><th>পদ্ধতি</th><th>অবস্থা</th></tr></thead>
+                    <tbody>
+                        {% for pr in payout_requests %}
+                        <tr>
+                            <td>{{ pr.requested_at|date:"d M Y" }}</td>
+                            <td>৳{{ pr.amount }}</td>
+                            <td>{{ pr.payment_method }}</td>
+                            <td>
+                                {% if pr.status == 'Approved' %}<span class="status-badge status-approved">Approved</span>
+                                {% elif pr.status == 'Rejected' %}<span class="status-badge status-rejected">Rejected</span>
+                                {% else %}<span class="status-badge status-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- View Dues -->
+        <div id="salaryDues" class="tab-panel" style="display:none;">
+            {% if dues_count > 0 %}
+            <div class="info-card urgent-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-exclamation-circle"></i> Pending Dues Alert</h4>
+                    <span class="status-badge status-pending">{{ dues_count }} Month(s)</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Month</th><th>Due Amount</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for salary in salaries %}
+                        {% if salary.status == 'Unpaid' %}
+                        <tr>
+                            <td>{{ salary.month }}</td>
+                            <td class="highlight-text">BDT {{ salary.dues }}</td>
+                            <td><span class="status-badge status-pending">Unpaid</span></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state" style="color:#34d399;">
+                <i class="fas fa-check-circle" style="font-size:48px; margin-bottom:15px;"></i>
+                <p>No pending dues. Your salary account is clear!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 11. Holiday Calendar Modal -->
+<div class="modal-overlay" id="holidayModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-tree" style="color:#0fb9b1; margin-right:10px;"></i> Holiday Calendar</h3>
+            <button class="btn-close" onclick="closeModal('holidayModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-holAll" onclick="switchTab(event, 'holAll'); filterHoliday('')">All Holidays</button>
+            <button class="modal-tab-btn" id="tab-holGovt" onclick="switchTab(event, 'holGovt'); filterHoliday('Government')">Government</button>
+            <button class="modal-tab-btn" id="tab-holSchool" onclick="switchTab(event, 'holSchool'); filterHoliday('School')">School</button>
+            <button class="modal-tab-btn" id="tab-holSpecial" onclick="switchTab(event, 'holSpecial'); filterHoliday('Special')">Exam/Special</button>
+        </div>
+        <div id="holAll" class="tab-panel" style="max-height:420px; overflow-y:auto;">
+            <div id="holidayList">
+                {% for hol in holidays %}
+                <div class="holiday-card" data-type="{{ hol.holiday_type }}">
+                    <div class="holiday-date-box">
+                        <span class="hol-month">{{ hol.start_date|date:"M"|upper }}</span>
+                        <span class="hol-day">{{ hol.start_date|date:"d" }}</span>
+                    </div>
+                    <div class="holiday-info">
+                        <h4>{{ hol.title }}</h4>
+                        <span class="status-badge {% if hol.holiday_type == 'Government' %}status-approved{% elif hol.holiday_type == 'School' %}status-ongoing{% else %}status-pending{% endif %}">{{ hol.holiday_type }} Holiday</span>
+                        <p>{{ hol.description }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <!-- Demo holidays when no data -->
+                <div class="holiday-card" data-type="Government">
+                    <div class="holiday-date-box"><span class="hol-month">MAR</span><span class="hol-day">26</span></div>
+                    <div class="holiday-info"><h4>Independence Day</h4><span class="status-badge status-approved">Government Holiday</span><p>National public holiday – Bangladesh Independence Day</p></div>
+                </div>
+                <div class="holiday-card" data-type="Government">
+                    <div class="holiday-date-box"><span class="hol-month">DEC</span><span class="hol-day">16</span></div>
+                    <div class="holiday-info"><h4>Victory Day</h4><span class="status-badge status-approved">Government Holiday</span><p>National holiday – Bangladesh Victory Day celebration</p></div>
+                </div>
+                <div class="holiday-card" data-type="School">
+                    <div class="holiday-date-box"><span class="hol-month">JUL</span><span class="hol-day">01</span></div>
+                    <div class="holiday-info"><h4>Summer Vacation</h4><span class="status-badge status-ongoing">School Holiday</span><p>School summer vacation – 1 Jul to 15 Jul 2026</p></div>
+                </div>
+                <div class="holiday-card" data-type="Special">
+                    <div class="holiday-date-box"><span class="hol-month">JUN</span><span class="hol-day">20</span></div>
+                    <div class="holiday-info"><h4>Annual Exam Week</h4><span class="status-badge status-pending">Exam/Special</span><p>Annual examination period – 20 to 24 Jun 2026</p></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="holGovt" class="tab-panel" style="display:none;"></div>
+        <div id="holSchool" class="tab-panel" style="display:none;"></div>
+        <div id="holSpecial" class="tab-panel" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- 12. Emergency Request Modal -->
+<div class="modal-overlay" id="emergencyModal">
+    <div class="modal-container" style="max-width:620px;">
+        <div class="modal-header" style="border-color:rgba(239,68,68,0.2);">
+            <h3 style="background:linear-gradient(to right, #f87171, #fca5a5); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"><i class="fas fa-ambulance" style="-webkit-text-fill-color:#ef4444; margin-right:10px;"></i> Emergency Alert Request</h3>
+            <button class="btn-close" onclick="closeModal('emergencyModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-emergView" onclick="switchTab(event, 'emergView')">Alerts (Inbox)</button>
+            <button class="modal-tab-btn" id="tab-emergCreate" onclick="switchTab(event, 'emergCreate')">Send Alert</button>
+        </div>
+
+        <div id="emergView" class="tab-panel" style="max-height:320px; overflow-y:auto;">
+            <!-- Static Demo Alerts -->
+            <div class="emergency-alert-card">
+                <div class="emergency-alert-top">
+                    <h4><i class="fas fa-walking"></i> Come to Office Quickly!</h4>
+                    <span style="font-size:10px; color:#cbd5e1;">09:30 AM</span>
+                </div>
+                <p>All staff members are requested to report to the main office immediately for an urgent announcement from the Headmaster.</p>
+                <small>Triggered by: Headmaster</small>
+            </div>
+            <div class="emergency-alert-card">
+                <div class="emergency-alert-top">
+                    <h4><i class="fas fa-projector"></i> Bring Projector to Room 5</h4>
+                    <span style="font-size:10px; color:#cbd5e1;">10:15 AM</span>
+                </div>
+                <p>The projector from the AV room needs to be brought to Classroom 5 for the departmental presentation session.</p>
+                <small>Triggered by: Admin Office</small>
+            </div>
+            {% for emergency in emergencies %}
+            <div class="emergency-alert-card">
+                <div class="emergency-alert-top">
+                    <h4><i class="fas fa-exclamation-triangle"></i> {{ emergency.title }}</h4>
+                    <span style="font-size:10px; color:#cbd5e1;">{{ emergency.created_at|date:"h:i A" }}</span>
+                </div>
+                <p>{{ emergency.description }}</p>
+                <small>Triggered by: {{ emergency.sender.first_name }} {{ emergency.sender.last_name }}</small>
+            </div>
+            {% empty %}{% endfor %}
+        </div>
+
+        <div id="emergCreate" class="tab-panel" style="display:none;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="emergency_request">
+                <div class="form-group">
+                    <label>Emergency Title</label>
+                    <select class="form-control" onchange="this.nextElementSibling.value=this.value; " style="margin-bottom:8px;">
+                        <option value="">-- Quick Select --</option>
+                        <option value="Come to Office Quickly!">Come to Office Quickly!</option>
+                        <option value="Bring projector to Room 5">Bring projector to Room 5</option>
+                        <option value="Report to Headmaster's Office">Report to Headmaster's Office</option>
+                        <option value="Security Alert">Security Alert</option>
+                    </select>
+                    <input type="text" name="title" class="form-control" placeholder="Or type custom title..." required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Provide context..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="background:linear-gradient(135deg, #ef4444, #b91c1c); box-shadow:0 10px 20px rgba(239,68,68,0.3);">
+                    <i class="fas fa-broadcast-tower"></i> Broadcast Emergency Alert
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 13. Document Center Modal -->
+<div class="modal-overlay" id="documentModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-folder-open" style="color:#ff6b81; margin-right:10px;"></i> Document Center</h3>
+            <button class="btn-close" onclick="closeModal('documentModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-docAll" onclick="switchTab(event, 'docAll')">All Documents</button>
+            <button class="modal-tab-btn" id="tab-docJoining" onclick="switchTab(event, 'docJoining')">Offer / Joining Letter</button>
+            <button class="modal-tab-btn" id="tab-docInstruction" onclick="switchTab(event, 'docInstruction')">Instruction Docs</button>
+            <button class="modal-tab-btn" id="tab-docForms" onclick="switchTab(event, 'docForms')">Download Forms</button>
+        </div>
+
+        <div id="docAll" class="tab-panel" style="max-height:400px; overflow-y:auto;">
+            <!-- Static Demo Documents -->
+            <div class="doc-item">
+                <div class="doc-icon joining"><i class="fas fa-file-signature"></i></div>
+                <div class="doc-info"><h4>Offer / Joining Letter</h4><span class="status-badge status-approved">Joining Letter</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Offer Letter')"><i class="fas fa-download"></i></button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon instruction"><i class="fas fa-file-alt"></i></div>
+                <div class="doc-info"><h4>Duty / Instruction Docs</h4><span class="status-badge status-ongoing">Instructions</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Duty Instructions')"><i class="fas fa-download"></i></button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon form"><i class="fas fa-file-download"></i></div>
+                <div class="doc-info"><h4>Leave Application Form</h4><span class="status-badge status-pending">Form</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Leave Form')"><i class="fas fa-download"></i></button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon form"><i class="fas fa-file-download"></i></div>
+                <div class="doc-info"><h4>Inventory Request Form</h4><span class="status-badge status-pending">Form</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Inventory Form')"><i class="fas fa-download"></i></button>
+            </div>
+            {% for doc in documents %}
+            <div class="doc-item">
+                <div class="doc-icon instruction"><i class="fas fa-paperclip"></i></div>
+                <div class="doc-info"><h4>{{ doc.title }}</h4><span class="status-badge status-ongoing">{{ doc.doc_type }}</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: {{ doc.title }}')"><i class="fas fa-download"></i></button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="docJoining" class="tab-panel" style="display:none;">
+            <div class="doc-item">
+                <div class="doc-icon joining"><i class="fas fa-file-signature"></i></div>
+                <div class="doc-info"><h4>Offer Letter – {{ user.first_name }} {{ user.last_name }}</h4><span class="status-badge status-approved">Joining Letter</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Offer Letter')"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+
+        <div id="docInstruction" class="tab-panel" style="display:none;">
+            <div class="doc-item">
+                <div class="doc-icon instruction"><i class="fas fa-file-alt"></i></div>
+                <div class="doc-info"><h4>Staff Duty Manual</h4><span class="status-badge status-ongoing">Instructions</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Duty Manual')"><i class="fas fa-download"></i> Download</button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon instruction"><i class="fas fa-scroll"></i></div>
+                <div class="doc-info"><h4>Code of Conduct</h4><span class="status-badge status-ongoing">Policy Doc</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Code of Conduct')"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+
+        <div id="docForms" class="tab-panel" style="display:none;">
+            <div class="doc-item">
+                <div class="doc-icon form"><i class="fas fa-file-download"></i></div>
+                <div class="doc-info"><h4>Leave Application Form</h4><span class="status-badge status-pending">Form</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Leave Form')"><i class="fas fa-download"></i> Download</button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon form"><i class="fas fa-file-download"></i></div>
+                <div class="doc-info"><h4>Inventory Request Form</h4><span class="status-badge status-pending">Form</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Inventory Form')"><i class="fas fa-download"></i> Download</button>
+            </div>
+            <div class="doc-item">
+                <div class="doc-icon form"><i class="fas fa-file-download"></i></div>
+                <div class="doc-info"><h4>Problem Report Form</h4><span class="status-badge status-pending">Form</span></div>
+                <button class="btn-action" style="width:auto; padding:8px 15px;" onclick="alert('Downloading: Problem Report Form')"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 14. Event Duty Modal -->
+<div class="modal-overlay" id="eventModal">
+    <div class="modal-container" style="max-width:680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-glass-cheers" style="color:#ff6348; margin-right:10px;"></i> Event Duty Roster</h3>
+            <button class="btn-close" onclick="closeModal('eventModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-evAll" onclick="switchTab(event, 'evAll')">All Events</button>
+            <button class="modal-tab-btn" id="tab-evSports" onclick="switchTab(event, 'evSports')">Annual Sports</button>
+            <button class="modal-tab-btn" id="tab-evCultural" onclick="switchTab(event, 'evCultural')">Cultural Program</button>
+            <button class="modal-tab-btn" id="tab-evParents" onclick="switchTab(event, 'evParents')">Parents Meeting</button>
+        </div>
+
+        <div id="evAll" class="tab-panel">
+            <table class="info-table">
+                <thead><tr><th>Event</th><th>Role</th><th>Date</th><th>Time Slot</th></tr></thead>
+                <tbody>
+                    <!-- Static demos -->
+                    <tr>
+                        <td><span class="status-badge status-ongoing">Annual Sports</span></td>
+                        <td>Field Coordinator</td>
+                        <td>28 Jun 2026</td>
+                        <td>08:00 AM – 04:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td><span class="status-badge status-approved">Cultural Program</span></td>
+                        <td>Stage Management</td>
+                        <td>15 Jul 2026</td>
+                        <td>10:00 AM – 06:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td><span class="status-badge status-pending">Parents Meeting</span></td>
+                        <td>Class Representative</td>
+                        <td>25 Jul 2026</td>
+                        <td>09:00 AM – 01:00 PM</td>
+                    </tr>
+                    {% for duty in event_duties %}
+                    <tr>
+                        <td><span class="status-badge status-ongoing">{{ duty.event_name }}</span></td>
+                        <td>{{ duty.role_description }}</td>
+                        <td>{{ duty.event_date|date:"d M Y" }}</td>
+                        <td>{{ duty.time_slot }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="evSports" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-running"></i> Annual Sports Day – 2026</h4>
+                    <span class="status-badge status-ongoing">Upcoming</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Time</th><th>Activity</th><th>Your Role</th></tr></thead>
+                    <tbody>
+                        <tr><td>08:00 AM</td><td>Opening Ceremony</td><td>Guard of Honor</td></tr>
+                        <tr><td>09:00 AM</td><td>Track Events</td><td>Field Coordinator</td></tr>
+                        <tr><td>12:00 PM</td><td>Lunch Break</td><td>Food Distribution</td></tr>
+                        <tr><td>01:00 PM</td><td>Field Events</td><td>Supervision</td></tr>
+                        <tr><td>04:00 PM</td><td>Prize Distribution</td><td>Assistance</td></tr>
+                    </tbody>
+                </table>
+                <p style="color:#94a3b8; font-size:12px; margin-top:10px;"><i class="fas fa-info-circle"></i> Date: 28 June 2026 | Venue: School Ground</p>
+            </div>
+        </div>
+
+        <div id="evCultural" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-music"></i> Annual Cultural Program – 2026</h4>
+                    <span class="status-badge status-approved">Upcoming</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Time</th><th>Program</th><th>Your Role</th></tr></thead>
+                    <tbody>
+                        <tr><td>10:00 AM</td><td>Opening Dance</td><td>Stage Setup</td></tr>
+                        <tr><td>11:00 AM</td><td>Singing Competition</td><td>Audience Management</td></tr>
+                        <tr><td>01:00 PM</td><td>Drama Performance</td><td>Back-Stage Support</td></tr>
+                        <tr><td>04:00 PM</td><td>Closing Ceremony</td><td>Stage Management</td></tr>
+                    </tbody>
+                </table>
+                <p style="color:#94a3b8; font-size:12px; margin-top:10px;"><i class="fas fa-info-circle"></i> Date: 15 July 2026 | Venue: School Auditorium</p>
+            </div>
+        </div>
+
+        <div id="evParents" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-users"></i> Parents Meeting Day – 2026</h4>
+                    <span class="status-badge status-pending">Scheduled</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Time</th><th>Activity</th><th>Your Role</th></tr></thead>
+                    <tbody>
+                        <tr><td>09:00 AM</td><td>Parents Registration</td><td>Reception Desk</td></tr>
+                        <tr><td>10:00 AM</td><td>Class-wise Meeting</td><td>Class Representative</td></tr>
+                        <tr><td>12:00 PM</td><td>Result Distribution</td><td>Document Handling</td></tr>
+                        <tr><td>01:00 PM</td><td>Wrap Up &amp; Feedback</td><td>Feedback Collection</td></tr>
+                    </tbody>
+                </table>
+                <p style="color:#94a3b8; font-size:12px; margin-top:10px;"><i class="fas fa-info-circle"></i> Date: 25 July 2026 | Venue: Classrooms</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 15. Performance Record Modal -->
+<div class="modal-overlay" id="performanceModal">
+    <div class="modal-container" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-chart-line" style="color:#8e44ad; margin-right:10px;"></i> Performance Record</h3>
+            <button class="btn-close" onclick="closeModal('performanceModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-perfAll" onclick="switchTab(event, 'perfAll')">All Records</button>
+            <button class="modal-tab-btn" id="tab-perfEval" onclick="switchTab(event, 'perfEval')">Work Evaluation</button>
+            <button class="modal-tab-btn" id="tab-perfAward" onclick="switchTab(event, 'perfAward')">Staff of Month</button>
+            <button class="modal-tab-btn" id="tab-perfWarn" onclick="switchTab(event, 'perfWarn')">Warnings</button>
+        </div>
+
+        <div id="perfAll" class="tab-panel" style="max-height:380px; overflow-y:auto;">
+            <!-- Static Demo Records -->
+            <div class="perf-card award">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-award"></i> Staff of the Month – May 2026</h4>
+                    <span class="status-badge status-approved">Award</span>
+                </div>
+                <p>Recognized for exceptional dedication, punctuality, and contribution to student welfare activities.</p>
+                <small>Issued: 01 Jun 2026</small>
+            </div>
+            <div class="perf-card eval">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-star"></i> Work Evaluation – Q1 2026</h4>
+                    <span class="status-badge status-ongoing">Evaluation</span>
+                </div>
+                <p>Overall performance rating: <strong>Excellent (4.5/5.0)</strong>. Areas of improvement: administrative reporting.</p>
+                <small>Issued: 15 Apr 2026</small>
+            </div>
+            {% for record in performance_records %}
+            <div class="perf-card {% if record.record_type == 'Warning' %}warning{% elif record.record_type == 'Award' %}award{% else %}eval{% endif %}">
+                <div class="perf-card-top">
+                    <h4><i class="fas {% if record.record_type == 'Award' %}fa-award{% elif record.record_type == 'Warning' %}fa-exclamation-triangle{% else %}fa-star{% endif %}"></i> {{ record.title }}</h4>
+                    <span class="status-badge {% if record.record_type == 'Warning' %}status-rejected{% elif record.record_type == 'Award' %}status-approved{% else %}status-ongoing{% endif %}">{{ record.record_type }}</span>
+                </div>
+                <p>{{ record.description }}</p>
+                <small>Issued: {{ record.date_issued|date:"d M Y" }}</small>
+            </div>
+            {% empty %}{% endfor %}
+        </div>
+
+        <div id="perfEval" class="tab-panel" style="display:none;">
+            <div class="perf-card eval">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-star"></i> Work Evaluation – Q1 2026</h4>
+                    <span class="status-badge status-ongoing">Evaluation</span>
+                </div>
+                <p>Overall performance rating: <strong>Excellent (4.5/5.0)</strong>. Areas of improvement: administrative reporting.</p>
+                <small>Issued: 15 Apr 2026</small>
+            </div>
+            {% for record in performance_records %}{% if record.record_type == 'Evaluation' %}
+            <div class="perf-card eval">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-star"></i> {{ record.title }}</h4>
+                    <span class="status-badge status-ongoing">Evaluation</span>
+                </div>
+                <p>{{ record.description }}</p>
+                <small>Issued: {{ record.date_issued|date:"d M Y" }}</small>
+            </div>
+            {% endif %}{% endfor %}
+        </div>
+
+        <div id="perfAward" class="tab-panel" style="display:none;">
+            <div class="perf-card award">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-award"></i> Staff of the Month – May 2026</h4>
+                    <span class="status-badge status-approved">Award</span>
+                </div>
+                <p>Recognized for exceptional dedication, punctuality, and contribution to student welfare activities.</p>
+                <small>Issued: 01 Jun 2026</small>
+            </div>
+            {% for record in performance_records %}{% if record.record_type == 'Award' %}
+            <div class="perf-card award">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-award"></i> {{ record.title }}</h4>
+                    <span class="status-badge status-approved">Award</span>
+                </div>
+                <p>{{ record.description }}</p>
+                <small>Issued: {{ record.date_issued|date:"d M Y" }}</small>
+            </div>
+            {% endif %}{% endfor %}
+        </div>
+
+        <div id="perfWarn" class="tab-panel" style="display:none;">
+            {% for record in performance_records %}
+            {% if record.record_type == 'Warning' %}
+            <div class="perf-card warning">
+                <div class="perf-card-top">
+                    <h4><i class="fas fa-exclamation-triangle"></i> {{ record.title }}</h4>
+                    <span class="status-badge status-rejected">Warning</span>
+                </div>
+                <p>{{ record.description }}</p>
+                <small>Issued: {{ record.date_issued|date:"d M Y" }}</small>
+            </div>
+            {% endif %}
+            {% empty %}
+            <div class="empty-state" style="color:#34d399;">
+                <i class="fas fa-check-shield" style="font-size:40px; margin-bottom:15px;"></i>
+                <p>No warnings or notices on your record. Keep it up!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 16. Visitor Management Modal -->
+<div class="modal-overlay" id="visitorModal">
+    <div class="modal-container" style="max-width:680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-id-badge" style="color:#9b59b6; margin-right:10px;"></i> Visitor Management</h3>
+            <button class="btn-close" onclick="closeModal('visitorModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-visitorList" onclick="switchTab(event, 'visitorList')">Today's Visitors</button>
+            <button class="modal-tab-btn" id="tab-visitorLog" onclick="switchTab(event, 'visitorLog')">Entry / Exit Log</button>
+            <button class="modal-tab-btn" id="tab-visitorAdd" onclick="switchTab(event, 'visitorAdd')">Log New Visitor</button>
+        </div>
+
+        <!-- Today's Visitors -->
+        <div id="visitorList" class="tab-panel">
+            <table class="info-table">
+                <thead><tr><th>Visitor</th><th>Purpose</th><th>In / Out Time</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for visitor in visitors %}
+                    <tr>
+                        <td><strong>{{ visitor.visitor_name }}</strong><br><small style="color:#94a3b8;">{{ visitor.contact_number }}</small></td>
+                        <td>{{ visitor.purpose }}</td>
+                        <td>
+                            In: {{ visitor.entry_time|date:"h:i A" }}<br>
+                            Out: {% if visitor.exit_time %}{{ visitor.exit_time|date:"h:i A" }}{% else %}<span style="color:#fbbf24;">On Site</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if not visitor.exit_time %}
+                            <form method="POST" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="exit_visitor">
+                                <input type="hidden" name="visitor_id" value="{{ visitor.id }}">
+                                <button type="submit" class="btn-action" style="padding:6px 12px; font-size:11px; width:auto;">Check Out</button>
+                            </form>
+                            {% else %}
+                            <span style="color:#34d399; font-size:12px;">✓ Out</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align:center; color:#cbd5e1; padding:20px;">No visitors logged today.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Entry / Exit Log -->
+        <div id="visitorLog" class="tab-panel" style="display:none;">
+            <div class="info-card">
+                <div class="info-card-top">
+                    <h4><i class="fas fa-sign-in-alt"></i> Entry / Exit Log</h4>
+                    <span class="status-badge status-ongoing">Today</span>
+                </div>
+                <table class="info-table">
+                    <thead><tr><th>Visitor</th><th>Entry</th><th>Exit</th><th>Duration</th></tr></thead>
+                    <tbody>
+                        {% for visitor in visitors %}
+                        <tr>
+                            <td>{{ visitor.visitor_name }}</td>
+                            <td style="color:#34d399;">{{ visitor.entry_time|date:"h:i A" }}</td>
+                            <td>{% if visitor.exit_time %}<span style="color:#f87171;">{{ visitor.exit_time|date:"h:i A" }}</span>{% else %}<span style="color:#fbbf24;">Active</span>{% endif %}</td>
+                            <td>{{ visitor.purpose|truncatechars:15 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" style="text-align:center; color:#cbd5e1;">No entries logged.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add Visitor -->
+        <div id="visitorAdd" class="tab-panel" style="display:none;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="log_visitor">
+                <div class="form-group">
+                    <label>Visitor Name</label>
+                    <input type="text" name="visitor_name" class="form-control" placeholder="Full name of visitor" required>
+                </div>
+                <div class="form-group">
+                    <label>Purpose of Visit</label>
+                    <select name="purpose" class="form-control" required>
+                        <option value="">-- Select Purpose --</option>
+                        <option value="Admission Query">Admission Query</option>
+                        <option value="Guardian Meeting">Guardian Meeting</option>
+                        <option value="Official Audit">Official Audit</option>
+                        <option value="Vendor / Supplier">Vendor / Supplier</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" name="contact_number" class="form-control" placeholder="+880 1XXXXXXXXX" required>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-sign-in-alt"></i> Log Entry</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 17. Inventory Request Modal -->
+<div class="modal-overlay" id="inventoryModal">
+    <div class="modal-container" style="max-width:620px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-boxes" style="color:#f39c12; margin-right:10px;"></i> Inventory Request</h3>
+            <button class="btn-close" onclick="closeModal('inventoryModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" id="tab-invRequest" onclick="switchTab(event, 'invRequest')">New Request</button>
+            <button class="modal-tab-btn" id="tab-invHistory" onclick="switchTab(event, 'invHistory')">My Requests</button>
+        </div>
+
+        <div id="invRequest" class="tab-panel">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="inventory_request">
+                <div class="form-group">
+                    <label>Quick Select Items</label>
+                    <div class="inventory-quick-select">
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Markers" onchange="syncInventorySelect()"> <i class="fas fa-pen"></i> Markers
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Chalk Box" onchange="syncInventorySelect()"> <i class="fas fa-chalkboard"></i> Chalk Box
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Cleaning Liquid" onchange="syncInventorySelect()"> <i class="fas fa-spray-can"></i> Cleaning Liquid
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Broom / Mop" onchange="syncInventorySelect()"> <i class="fas fa-broom"></i> Broom / Mop
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Register File" onchange="syncInventorySelect()"> <i class="fas fa-folder"></i> Register File
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="A4 Paper Rim" onchange="syncInventorySelect()"> <i class="fas fa-file"></i> A4 Paper Rim
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Dusting Cloth" onchange="syncInventorySelect()"> <i class="fas fa-tshirt"></i> Dusting Cloth
+                        </label>
+                        <label class="inv-checkbox-label">
+                            <input type="checkbox" class="inv-check" value="Printer Ink" onchange="syncInventorySelect()"> <i class="fas fa-print"></i> Printer Ink
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Selected Items (editable)</label>
+                    <select name="items" class="form-control" multiple id="inventorySelect" style="height:90px; display:none;" required>
+                        <option value="Markers">Markers</option>
+                        <option value="Chalk Box">Chalk Box</option>
+                        <option value="Cleaning Liquid">Cleaning Liquid</option>
+                        <option value="Broom / Mop">Broom / Mop</option>
+                        <option value="Register File">Register File</option>
+                        <option value="A4 Paper Rim">A4 Paper Rim</option>
+                        <option value="Dusting Cloth">Dusting Cloth</option>
+                        <option value="Printer Ink">Printer Ink</option>
+                    </select>
+                    <input type="text" id="inventoryDisplayInput" class="form-control" placeholder="Select items above..." readonly>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" class="form-control" min="1" value="1" required>
+                </div>
+                <button type="submit" class="btn-submit" id="invSubmitBtn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+            </form>
+        </div>
+
+        <div id="invHistory" class="tab-panel" style="display:none; max-height:300px; overflow-y:auto;">
+            <table class="info-table">
+                <thead><tr><th>Items</th><th>Qty</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for inv in inventory_requests %}
+                    <tr>
+                        <td>{{ inv.items }}</td>
+                        <td>{{ inv.quantity }}</td>
+                        <td>{{ inv.created_at|date:"d M Y" }}</td>
+                        <td><span class="status-badge status-{{ inv.status|lower }}">{{ inv.status }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align:center; color:#cbd5e1;">No request history found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= MODALS SECTION END ========================= -->
+
 {% endblock %}
 
 {% block js %}
-<script>
-    // START: DASHBOARD_SCRIPT
-    document.addEventListener('DOMContentLoaded', () => {
-        // Set current date
-        const dateSpan = document.getElementById('dateText');
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
-
-        // Animation for cards
-        const cards = document.querySelectorAll('.stat-card, .module-card');
-        cards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-    // END: DASHBOARD_SCRIPT
-</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
+
+<!-- STAFF_DASHBOARD_TEMPLATE_END -->

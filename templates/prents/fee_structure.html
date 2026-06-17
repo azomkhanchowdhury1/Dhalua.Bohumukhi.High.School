@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: FEE_STRUCTURE -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-list-alt"></i> Fee Structure</h2>
+    <div class="module-content">
+        <p>Detailed breakdown of tuition, transport, and other fees.</p>
+        <div class="placeholder-text">
+            Fee breakdown details will be populated based on the enrolled class.
+        </div>
+    </div>
+</div>
+<!-- END: FEE_STRUCTURE -->
+{% endblock %}

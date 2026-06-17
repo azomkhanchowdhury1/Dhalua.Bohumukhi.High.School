@@ -14,19 +14,22 @@
 <section class="hero-slider-section">
     <div class="slider-container">
         <div class="slide active">
-            <img src="{% static 'image/school1.jpg' %}" alt="School Image 1" onerror="this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1920&auto=format&fit=crop'">
+            <img src="{% static 'image/school1.jpg' %}" alt="School Image 1"
+                onerror="this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1920&auto=format&fit=crop'">
         </div>
         <div class="slide">
-            <img src="{% static 'image/school2.jpg' %}" alt="School Image 2" onerror="this.src='https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1920&auto=format&fit=crop'">
+            <img src="{% static 'image/school2.jpg' %}" alt="School Image 2"
+                onerror="this.src='https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1920&auto=format&fit=crop'">
         </div>
         <div class="slide">
-            <img src="{% static 'image/school3.jpg' %}" alt="School Image 3" onerror="this.src='https://images.unsplash.com/photo-1546410531-bea5aad6228d?q=80&w=1920&auto=format&fit=crop'">
+            <img src="{% static 'image/school3.jpg' %}" alt="School Image 3"
+                onerror="this.src='https://images.unsplash.com/photo-1546410531-bea5aad6228d?q=80&w=1920&auto=format&fit=crop'">
         </div>
-        
+
         <!-- Navigation Controls -->
         <button class="slider-btn prev-btn" onclick="changeSlide(-1)">&#10094;</button>
         <button class="slider-btn next-btn" onclick="changeSlide(1)">&#10095;</button>
-        
+
         <div class="slider-dots">
             <span class="dot active" onclick="currentSlide(0)"></span>
             <span class="dot" onclick="currentSlide(1)"></span>
@@ -36,7 +39,9 @@
     <div class="hero-text-overlay">
         <h1 class="welcome-title">Welcome to Dhula High School</h1>
         <p class="animate-fade-up">Empowering the next generation with knowledge and values.</p>
+        {% if not request.user.is_authenticated %}
         <a href="{% url 'accounts:login' %}" class="btn-home-primary animate-fade-up">Access Portal</a>
+        {% endif %}
     </div>
 </section>
 <!-- END: HERO_SLIDER_SECTION -->
@@ -113,7 +118,8 @@
                             <i class="far fa-calendar-alt"></i> {{ notice.created_at|date:"d M, Y" }}
                         </div>
                         {% if notice.attachment %}
-                        <a href="{{ notice.attachment.url }}" class="home-notice-download" download title="Download Notice">
+                        <a href="{{ notice.attachment.url }}" class="home-notice-download" download
+                            title="Download Notice">
                             <i class="fas fa-file-download"></i>
                         </a>
                         {% endif %}
@@ -144,16 +150,20 @@
                     {% if event.image %}
                     <img src="{{ event.image.url }}" alt="{{ event.title }}">
                     {% else %}
-                    <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=100&auto=format&fit=crop" alt="Event">
+                    <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=400&auto=format&fit=crop"
+                        alt="Event">
                     {% endif %}
+                    <span class="event-date-badge">
+                        <i class="far fa-calendar-alt"></i> {{ event.date|date:"d M, Y" }}
+                    </span>
                     <div class="event-info">
                         <h4>{{ event.title }}</h4>
-                        <p><i class="far fa-clock"></i> {{ event.date|date:"d M, Y" }} | {{ event.time|time:"h:i A" }}</p>
+                        <p><i class="far fa-clock"></i> {{ event.time|time:"h:i A" }}</p>
                         <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
                     </div>
                 </div>
                 {% empty %}
-                <p>No upcoming events.</p>
+                <p style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:40px 0;">No upcoming events.</p>
                 {% endfor %}
             </div>
             <a href="{% url 'events:event_list' %}" class="view-all-btn">View All Events</a>
@@ -169,7 +179,8 @@
         <div class="testimonial-grid">
             <div class="testimonial-card animate-slide-up">
                 <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                <p>Dhula High School has provided my children with an exceptional learning environment. The teachers are dedicated and the management system is very transparent.</p>
+                <p>Dhula High School has provided my children with an exceptional learning environment. The teachers are
+                    dedicated and the management system is very transparent.</p>
                 <div class="testimonial-footer">
                     <div class="user-avatar">AK</div>
                     <div class="user-meta">
@@ -178,10 +189,11 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="testimonial-card animate-slide-up" style="animation-delay: 0.2s;">
                 <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                <p>The new digital management system makes it so easy to track my student's progress and stay updated with school notices and events.</p>
+                <p>The new digital management system makes it so easy to track my student's progress and stay updated
+                    with school notices and events.</p>
                 <div class="testimonial-footer">
                     <div class="user-avatar">SC</div>
                     <div class="user-meta">
@@ -193,7 +205,8 @@
 
             <div class="testimonial-card animate-slide-up" style="animation-delay: 0.4s;">
                 <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                <p>As a teacher, this system has reduced my administrative workload significantly, allowing me to focus more on teaching and student engagement.</p>
+                <p>As a teacher, this system has reduced my administrative workload significantly, allowing me to focus
+                    more on teaching and student engagement.</p>
                 <div class="testimonial-footer">
                     <div class="user-avatar">RT</div>
                     <div class="user-meta">

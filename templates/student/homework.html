@@ -90,22 +90,31 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Assignment Title *</label>
-                    <input type="text" name="title" placeholder="e.g. Math Chapter 3 Exercise" required>
+                    <input type="text" name="title" placeholder="e.g. Math Chapter 3 Exercise" required style="width:100%; box-sizing:border-box;">
                 </div>
                 <div class="form-group">
                     <label>Subject *</label>
-                    <input type="text" name="subject" placeholder="e.g. Mathematics" required>
+                    <input type="text" name="subject" placeholder="e.g. Mathematics" required style="width:100%; box-sizing:border-box;">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="description" placeholder="Brief notes about this assignment..."></textarea>
+                    <label>Select Teacher *</label>
+                    <select name="teacher_id" required style="width:100%; box-sizing:border-box;">
+                        <option value="" disabled selected>— Choose a teacher —</option>
+                        {% for t in teachers %}
+                        <option value="{{ t.id }}">{{ t.user.get_full_name }} ({{ t.department }} Department)</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Attach File (PDF, DOC, IMG)</label>
-                    <input type="file" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <input type="file" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="width:100%; box-sizing:border-box;">
                 </div>
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Description</label>
+                <textarea name="description" placeholder="Brief notes about this assignment..." style="width:100%; box-sizing:border-box;"></textarea>
             </div>
             <button type="submit" class="view-all-btn"><i class="fas fa-paper-plane"></i> Submit Homework</button>
         </form>
@@ -114,18 +123,30 @@
     <!-- Submitted Homeworks List -->
     <h2 style="color:#fff; margin-bottom:20px;">Submitted Assignments</h2>
     {% for hw in homeworks %}
-    <div class="homework-card">
+    <div class="homework-card" style="flex-wrap:wrap;">
         <div class="hw-icon"><i class="fas fa-file-alt"></i></div>
-        <div style="flex:1;">
+        <div style="flex:1; min-width:200px;">
             <h3 style="color:#fff; margin-bottom:4px;">{{ hw.title }}</h3>
-            <p style="color:#94a3b8; font-size:0.85rem;">{{ hw.subject }} &bull; {{ hw.submitted_at|date:"d M, Y H:i" }}</p>
+            <p style="color:#94a3b8; font-size:0.85rem;">
+                {{ hw.subject }} &bull; {{ hw.submitted_at|date:"d M, Y H:i" }}<br>
+                <span style="color:#8b5cf6;">Assigned to: {% if hw.teacher %}{{ hw.teacher.user.get_full_name }}{% else %}None{% endif %}</span>
+            </p>
+            {% if hw.feedback %}
+            <p style="color:#f59e0b; font-size:0.82rem; margin-top:6px; font-style:italic;">Feedback: {{ hw.feedback }}</p>
+            {% endif %}
         </div>
         {% if hw.file %}
         <a href="{{ hw.file.url }}" download class="view-all-btn" style="padding:10px 20px; font-size:0.85rem;">
             <i class="fas fa-download"></i> Download
         </a>
         {% endif %}
-        <span style="color:#10b981; font-size:0.85rem;"><i class="fas fa-check-circle"></i> Submitted</span>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            {% if hw.graded %}
+            <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700;"><i class="fas fa-star"></i> Graded: {{ hw.marks|floatformat:0 }}/100</span>
+            {% else %}
+            <span style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700;"><i class="fas fa-hourglass-half"></i> Pending Grade</span>
+            {% endif %}
+        </div>
     </div>
     {% empty %}
     <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">

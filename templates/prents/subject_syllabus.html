@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: SUBJECT_SYLLABUS -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-book-open"></i> Subject Syllabus</h2>
+    <div class="module-content">
+        <p>Access the current syllabus for all enrolled subjects.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Teacher</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No syllabus available currently.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: SUBJECT_SYLLABUS -->
+{% endblock %}

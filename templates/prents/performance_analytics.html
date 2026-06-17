@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: PERFORMANCE_ANALYTICS -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-chart-pie"></i> Performance Analytics</h2>
+    <div class="module-content">
+        <p>Detailed breakdown of your child's academic performance across subjects.</p>
+        <div class="placeholder-text">
+            Performance analytics graphs and metrics will be generated here.
+        </div>
+    </div>
+</div>
+<!-- END: PERFORMANCE_ANALYTICS -->
+{% endblock %}

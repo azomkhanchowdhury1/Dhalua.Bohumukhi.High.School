@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: LEAVE_NOTIFICATION -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-envelope-open-text"></i> Leave Notification</h2>
+    <div class="module-content">
+        <p>Submit and track leave applications for your child.</p>
+        <button class="btn-primary" style="margin-bottom: 20px;">+ New Leave Request</button>
+        <div class="placeholder-text">
+            Past leave notifications will be listed here.
+        </div>
+    </div>
+</div>
+<!-- END: LEAVE_NOTIFICATION -->
+{% endblock %}

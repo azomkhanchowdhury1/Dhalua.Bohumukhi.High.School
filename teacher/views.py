@@ -497,7 +497,26 @@ def create_assignment(request):
 
 @login_required
 def review_submissions(request):
-    return render(request, 'teacher/review_submissions.html')
+    teacher = Teacher.objects.filter(user=request.user).first()
+    submissions = StudentHomework.objects.filter(teacher=teacher).select_related('student').order_by('-submitted_at') if teacher else StudentHomework.objects.none()
+
+    if request.method == 'POST':
+        hw_id = request.POST.get('homework_id')
+        marks_val = request.POST.get('marks', '').strip()
+        feedback_val = request.POST.get('feedback', '').strip()
+        hw = get_object_or_404(StudentHomework, id=hw_id, teacher=teacher)
+        if marks_val:
+            hw.marks = marks_val
+            hw.graded = True
+        if feedback_val:
+            hw.feedback = feedback_val
+        hw.save()
+        messages.success(request, f"Graded homework '{hw.title}' successfully!")
+        return redirect('teacher:review_submissions')
+
+    return render(request, 'teacher/review_submissions.html', {
+        'submissions': submissions,
+    })
 
 @login_required
 def study_material(request):
@@ -506,7 +525,32 @@ def study_material(request):
 # --- Payroll & HR Views ---
 @login_required
 def salary_slips(request):
-    return render(request, 'teacher/salary_slips.html')
+    from finance.models import PayoutRequest
+    teacher = Teacher.objects.filter(user=request.user).first()
+    salaries = SalaryPayment.objects.filter(teacher=teacher).order_by('-payment_date') if teacher else []
+    payout_requests = PayoutRequest.objects.filter(user=request.user).order_by('-requested_at')
+
+    if request.method == 'POST':
+        amount = request.POST.get('amount', '').strip()
+        method = request.POST.get('payment_method', '').strip()
+        account = request.POST.get('account_details', '').strip()
+        if amount and method and account:
+            PayoutRequest.objects.create(
+                user=request.user,
+                amount=amount,
+                payment_method=method,
+                account_details=account
+            )
+            messages.success(request, 'পেআউট রিকোয়েস্ট সাবমিট হয়েছে! অ্যাডমিন অনুমোদন করলে টাকা পাঠানো হবে।')
+        else:
+            messages.error(request, 'সব তথ্য পূরণ করুন।')
+        return redirect('teacher:salary_slips')
+
+    return render(request, 'teacher/salary_slips.html', {
+        'salaries': salaries,
+        'payout_requests': payout_requests,
+        'teacher': teacher,
+    })
 
 @login_required
 def leave_request(request):
@@ -535,6 +579,74 @@ def online_classes(request):
         'scheduled_classes': scheduled_classes,
         'recorded_classes': recorded_classes,
         'is_teacher': True
+    })
+
+@login_required
+def student_messages(request):
+    # Get all students to list in sidebar
+    students = Student.objects.select_related('user').all().order_by('user__first_name')
+    return render(request, 'teacher/student_messages.html', {'students': students})
+
+@login_required
+def chat_student(request):
+    from django.http import JsonResponse
+    from staff.models import DirectMessage
+    student_id = request.GET.get('student_id') or request.POST.get('student_id')
+    student = get_object_or_404(Student, id=student_id)
+    student_user = student.user
+
+    if request.method == 'POST':
+        import json
+        msg_text = ""
+        try:
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                msg_text = data.get('message', '').strip()
+            else:
+                msg_text = request.POST.get('message', '').strip()
+        except Exception:
+            msg_text = request.POST.get('message', '').strip()
+
+        if msg_text:
+            msg = DirectMessage.objects.create(
+                sender=request.user,
+                receiver=student_user,
+                message=msg_text
+            )
+            return JsonResponse({
+                'status': 'success',
+                'message': {
+                    'id': msg.id,
+                    'sender': msg.sender.username,
+                    'sender_name': msg.sender.get_full_name() or msg.sender.username,
+                    'message': msg.message,
+                    'created_at': msg.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            })
+        return JsonResponse({'status': 'error', 'message': 'Empty message'}, status=400)
+
+    # GET: fetch messages
+    messages = DirectMessage.objects.filter(
+        Q(sender=request.user, receiver=student_user) |
+        Q(sender=student_user, receiver=request.user)
+    ).order_by('created_at')
+
+    msg_list = []
+    for msg in messages:
+        msg_list.append({
+            'sender_id': msg.sender.id,
+            'sender_name': msg.sender.get_full_name() or msg.sender.username,
+            'message': msg.message,
+            'created_at': msg.created_at.strftime('%d %b %Y, %I:%M %p')
+        })
+
+    # Mark as read
+    DirectMessage.objects.filter(sender=student_user, receiver=request.user, is_read=False).update(is_read=True)
+
+    return JsonResponse({
+        'status': 'success',
+        'messages': msg_list,
+        'current_user_id': request.user.id
     })
 
 # END: TEACHER_VIEWS

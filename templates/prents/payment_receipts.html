@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+<style>
+/* START: PAYMENT_RECEIPTS_CSS */
+.receipt-table { width:100%; border-collapse:collapse; margin-top:14px; }
+.receipt-table th { background:rgba(255,255,255,0.05); color:#94a3b8; font-size:0.82rem; padding:12px 14px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.08); }
+.receipt-table td { padding:12px 14px; color:#e2e8f0; font-size:0.88rem; border-bottom:1px solid rgba(255,255,255,0.05); }
+.receipt-table tr:hover td { background:rgba(255,255,255,0.03); }
+.badge-paid { background:rgba(52,211,153,0.15); color:#34d399; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
+.btn-print { background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:5px 12px; border-radius:7px; cursor:pointer; font-size:0.78rem; }
+.btn-print:hover { background:rgba(56,189,248,0.25); }
+.txn-id { font-family:monospace; font-size:0.78rem; color:#a78bfa; }
+.total-box { display:flex; justify-content:flex-end; margin-top:18px; }
+.total-inner { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:14px 22px; text-align:right; }
+.total-inner .tot-label { color:#94a3b8; font-size:0.82rem; }
+.total-inner .tot-val { color:#34d399; font-size:1.4rem; font-weight:800; }
+/* Print receipt modal */
+.print-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; }
+.print-ov.active { display:flex; }
+.print-card {
+    background:#fff;
+    border-radius:16px;
+    padding:30px;
+    width:340px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    color:#222;
+}
+.print-card .school-name { text-align:center; font-size:1.15rem; font-weight:900; color:#1e40af; border-bottom:2px solid #1e40af; padding-bottom:10px; margin-bottom:16px; }
+.print-card .rc-row { display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.88rem; }
+.print-card .rc-lbl { color:#666; }
+.print-card .rc-val { color:#222; font-weight:700; }
+.print-card .rc-divider { border:none; border-top:1px dashed #ccc; margin:12px 0; }
+.print-card .rc-total { display:flex; justify-content:space-between; font-size:1.05rem; font-weight:900; color:#1e40af; margin-bottom:16px; }
+.btn-print-go { width:100%; background:#1e40af; color:#fff; border:none; padding:11px; border-radius:10px; font-size:0.95rem; cursor:pointer; margin-bottom:8px; }
+.btn-print-close { width:100%; background:none; border:1.5px solid #ddd; color:#888; padding:10px; border-radius:10px; cursor:pointer; font-size:0.88rem; }
+@media print {
+    body * { visibility: hidden; }
+    .print-card, .print-card * { visibility: visible; }
+    .print-card { position: fixed; top: 0; left: 0; width: 100%; }
+    .btn-print-go, .btn-print-close { display: none; }
+}
+/* END: PAYMENT_RECEIPTS_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: PAYMENT_RECEIPTS -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-file-invoice"></i> Payment Receipts</h2>
+    <div class="module-content">
+        <p style="color:#94a3b8; font-size:0.88rem; margin-bottom:14px;">আপনার সন্তানের ফি পেমেন্টের ইতিহাস এবং রিসিট নিচে দেওয়া আছে।</p>
+
+        {% if payments %}
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ফি ধরন</th>
+                    <th>পরিমাণ</th>
+                    <th>তারিখ</th>
+                    <th>ট্র্যানজেকশন আইডি</th>
+                    <th>অবস্থা</th>
+                    <th>রিসিট</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in payments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ p.fee_type.name }}</td>
+                    <td><strong>৳{{ p.amount_paid }}</strong></td>
+                    <td>{{ p.payment_date|date:"d M Y" }}</td>
+                    <td class="txn-id">{{ p.transaction_id }}</td>
+                    <td><span class="badge-paid">Paid</span></td>
+                    <td>
+                        <button class="btn-print" onclick="openReceipt('{{ p.fee_type.name|escapejs }}', '{{ p.amount_paid }}', '{{ p.payment_date|date:"d M Y" }}', '{{ p.transaction_id|escapejs }}')">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            <div class="total-inner">
+                <div class="tot-label">মোট পরিশোধিত</div>
+                <div class="tot-val">৳{% for p in payments %}{% if forloop.first %}{{ p.amount_paid }}{% endif %}{% endfor %}
+                    {# Total calculated in template via reduction #}
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div style="text-align:center; padding:50px 20px; color:#64748b;">
+            <i class="fas fa-receipt" style="font-size:2.5rem; margin-bottom:12px; display:block;"></i>
+            <p>কোনো পেমেন্ট ইতিহাস পাওয়া যায়নি।</p>
+            <a href="{% url 'prents:pay_online' %}" style="color:#10b981; text-decoration:none; font-size:0.88rem;">
+                <i class="fas fa-plus-circle"></i> এখনই ফি পরিশোধ করুন
+            </a>
+        </div>
+        {% endif %}
+
+        <div style="margin-top:20px;">
+            <a href="{% url 'prents:pay_online' %}" style="color:#10b981; text-decoration:none; font-size:0.88rem;">
+                <i class="fas fa-credit-card"></i> নতুন পেমেন্ট করুন
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Receipt Print Modal -->
+<div class="print-ov" id="printOv">
+    <div class="print-card" id="printCard">
+        <div class="school-name">🏫 Dhalua Bohumukhi High School</div>
+        <div class="rc-row"><span class="rc-lbl">ছাত্র/ছাত্রী</span><span class="rc-val">{{ parent.linked_student.user.get_full_name|default:parent.linked_student.student_id }}</span></div>
+        <div class="rc-row"><span class="rc-lbl">ক্লাস</span><span class="rc-val">{{ parent.linked_student.current_class }}</span></div>
+        <hr class="rc-divider">
+        <div class="rc-row"><span class="rc-lbl">ফি ধরন</span><span class="rc-val" id="rcFeeType">—</span></div>
+        <div class="rc-row"><span class="rc-lbl">তারিখ</span><span class="rc-val" id="rcDate">—</span></div>
+        <div class="rc-row"><span class="rc-lbl">ট্র্যানজেকশন আইডি</span><span class="rc-val" id="rcTxn" style="font-family:monospace; font-size:0.78rem;">—</span></div>
+        <hr class="rc-divider">
+        <div class="rc-total"><span>মোট পরিশোধ</span><span id="rcAmt">৳0</span></div>
+        <div style="text-align:center; color:#888; font-size:0.72rem; margin-bottom:16px;">এই রিসিটটি স্বয়ংক্রিয়ভাবে তৈরি হয়েছে।</div>
+        <button class="btn-print-go" onclick="window.print()"><i class="fas fa-print"></i> প্রিন্ট করুন</button>
+        <button class="btn-print-close" onclick="document.getElementById('printOv').classList.remove('active')">বন্ধ করুন</button>
+    </div>
+</div>
+
+<script>
+function openReceipt(feeType, amount, date, txn) {
+    document.getElementById('rcFeeType').textContent = feeType;
+    document.getElementById('rcAmt').textContent = '৳' + amount;
+    document.getElementById('rcDate').textContent = date;
+    document.getElementById('rcTxn').textContent = txn;
+    document.getElementById('printOv').classList.add('active');
+}
+</script>
+<!-- END: PAYMENT_RECEIPTS -->
+{% endblock %}

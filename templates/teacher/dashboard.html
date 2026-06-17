@@ -191,6 +191,8 @@
                 <h3>Communication</h3>
             </div>
             <ul class="module-links">
+                <li><a href="{% url 'teacher:student_messages' %}" style="font-weight:600; color:#ec4899;"><i class="fas fa-comments"></i> Student Messages</a></li>
+                <hr style="opacity: 0.1; margin: 10px 0;">
                 {% for notice in notices %}
                 <li>
                     <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{ notice.title|truncatechars:20 }}</a>

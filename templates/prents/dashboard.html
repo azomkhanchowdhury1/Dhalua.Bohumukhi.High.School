@@ -93,9 +93,9 @@
                 <h3>Academic Progress</h3>
             </div>
             <ul class="module-links">
-                <li><a href="#"><i class="fas fa-poll"></i> View Report Cards</a></li>
-                <li><a href="#"><i class="fas fa-chart-pie"></i> Performance Analytics</a></li>
-                <li><a href="#"><i class="fas fa-book-open"></i> Subject Syllabus</a></li>
+                <li><a href="{% url 'prents:report_cards' %}"><i class="fas fa-poll"></i> View Report Cards</a></li>
+                <li><a href="{% url 'prents:performance_analytics' %}"><i class="fas fa-chart-pie"></i> Performance Analytics</a></li>
+                <li><a href="{% url 'prents:subject_syllabus' %}"><i class="fas fa-book-open"></i> Subject Syllabus</a></li>
             </ul>
         </div>
 
@@ -106,9 +106,9 @@
                 <h3>Attendance</h3>
             </div>
             <ul class="module-links">
-                <li><a href="#"><i class="fas fa-calendar-day"></i> Monthly Summary</a></li>
-                <li><a href="#"><i class="fas fa-history"></i> Detailed Absence Log</a></li>
-                <li><a href="#"><i class="fas fa-envelope-open-text"></i> Leave Notification</a></li>
+                <li><a href="{% url 'prents:monthly_summary' %}"><i class="fas fa-calendar-day"></i> Monthly Summary</a></li>
+                <li><a href="{% url 'prents:detailed_absence_log' %}"><i class="fas fa-history"></i> Detailed Absence Log</a></li>
+                <li><a href="{% url 'prents:leave_notification' %}"><i class="fas fa-envelope-open-text"></i> Leave Notification</a></li>
             </ul>
         </div>
 
@@ -119,9 +119,9 @@
                 <h3>Fees & Payments</h3>
             </div>
             <ul class="module-links">
-                <li><a href="#"><i class="fas fa-credit-card"></i> Pay Online Now</a></li>
-                <li><a href="#"><i class="fas fa-file-invoice"></i> Payment Receipts</a></li>
-                <li><a href="#"><i class="fas fa-list-alt"></i> Fee Structure</a></li>
+                <li><a href="{% url 'prents:pay_online' %}"><i class="fas fa-credit-card"></i> Pay Online Now</a></li>
+                <li><a href="{% url 'prents:payment_receipts' %}"><i class="fas fa-file-invoice"></i> Payment Receipts</a></li>
+                <li><a href="{% url 'prents:fee_structure' %}"><i class="fas fa-list-alt"></i> Fee Structure</a></li>
             </ul>
         </div>
 
@@ -132,9 +132,9 @@
                 <h3>Exams & Routine</h3>
             </div>
             <ul class="module-links">
-                <li><a href="#"><i class="fas fa-calendar-day"></i> Exam Schedule</a></li>
-                <li><a href="#"><i class="fas fa-table"></i> Class Timetable</a></li>
-                <li><a href="#"><i class="fas fa-id-badge"></i> Download Admit Card</a></li>
+                <li><a href="{% url 'prents:exam_schedule' %}"><i class="fas fa-calendar-day"></i> Exam Schedule</a></li>
+                <li><a href="{% url 'prents:class_timetable' %}"><i class="fas fa-table"></i> Class Timetable</a></li>
+                <li><a href="{% url 'prents:download_admit_card' %}"><i class="fas fa-id-badge"></i> Download Admit Card</a></li>
             </ul>
         </div>
 
@@ -145,9 +145,9 @@
                 <h3>School Info</h3>
             </div>
             <ul class="module-links">
-                <li><a href="#"><i class="fas fa-calendar-star"></i> Academic Calendar</a></li>
-                <li><a href="#"><i class="fas fa-bus"></i> Transport Status</a></li>
-                <li><a href="#"><i class="fas fa-utensils"></i> Canteen Menu</a></li>
+                <li><a href="{% url 'prents:academic_calendar' %}"><i class="fas fa-calendar-star"></i> Academic Calendar</a></li>
+                <li><a href="{% url 'prents:transport_status' %}"><i class="fas fa-bus"></i> Transport Status</a></li>
+                <li><a href="{% url 'prents:canteen_menu' %}"><i class="fas fa-utensils"></i> Canteen Menu</a></li>
             </ul>
         </div>
 

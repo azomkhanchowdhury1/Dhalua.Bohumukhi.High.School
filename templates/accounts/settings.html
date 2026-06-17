@@ -493,10 +493,12 @@
                 <a href="{% url 'accounts:profile' %}" class="st-nav-btn">
                     <i class="fas fa-id-card"></i> View Profile
                 </a>
+                {% if request.user.is_superuser %}
                 <div class="st-nav-divider"></div>
                 <button class="st-nav-btn danger" onclick="stSwitch(event,'st-danger')" id="nav-danger">
                     <i class="fas fa-exclamation-triangle"></i> Danger Zone
                 </button>
+                {% endif %}
             </nav>
             <!-- End: Sidebar Nav -->
         </aside>
@@ -588,20 +590,20 @@
 
                         <!-- Start: Role Specific Fields -->
                         {% if role == 'Student' %}
-                        <div class="st-section-title">Academic Details</div>
+                        <div class="st-section-title">Academic Details (Read-Only)</div>
                         <div class="st-grid-2">
                             <div class="st-form-group">
                                 <label>Roll Number</label>
-                                <input type="text" name="roll_number" value="{{ profile.roll_number|default:'' }}">
+                                <input type="text" name="roll_number" value="{{ profile.roll_number|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
                             </div>
                             <div class="st-form-group">
                                 <label>Current Class</label>
-                                <input type="text" name="current_class" value="{{ profile.current_class|default:'' }}">
+                                <input type="text" name="current_class" value="{{ profile.current_class|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
                             </div>
                         </div>
                         <div class="st-form-group">
                             <label>Section</label>
-                            <input type="text" name="section" value="{{ profile.section|default:'' }}">
+                            <input type="text" name="section" value="{{ profile.section|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
                         </div>
 
                         {% elif role == 'Teacher' %}
@@ -727,6 +729,7 @@
             </div>
             <!-- End: Preferences Panel -->
 
+            {% if request.user.is_superuser %}
             <!-- Start: Danger Zone Panel -->
             <div class="st-panel" id="st-danger">
                 <div class="st-panel-header">
@@ -751,6 +754,7 @@
                 </div>
             </div>
             <!-- End: Danger Zone Panel -->
+            {% endif %}
 
         </div>
         <!-- End: Main Panels -->

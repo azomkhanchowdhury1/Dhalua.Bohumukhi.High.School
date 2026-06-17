@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: EXAM_SCHEDULE -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-calendar-day"></i> Exam Schedule</h2>
+    <div class="module-content">
+        <p>Upcoming examination dates and times.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                    <th>Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align: center;">No upcoming exams scheduled.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END: EXAM_SCHEDULE -->
+{% endblock %}

@@ -14,6 +14,7 @@ urlpatterns = [
     path('academic/timetable/', views.academic_timetable, name='academic_timetable'),
     path('academic/syllabus/', views.academic_syllabus, name='academic_syllabus'),
     path('academic/teachers/', views.academic_teachers, name='academic_teachers'),
+    path('academic/teachers/message/', views.message_teacher, name='message_teacher'),
     path('academic/calendar/', views.academic_calendar, name='academic_calendar'),
     
     # Exams & Results

@@ -48,4 +48,26 @@ class StaffAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" />', obj.profile_image.url)
         return "No Image"
     image_preview.short_description = 'Profile Image'
+
+from .models import (
+    LeaveRequest, ProblemReport, InventoryRequest, DutySchedule,
+    AttendanceLog, DirectMessage, TaskAssignment, SalaryPayment,
+    Holiday, EmergencyRequest, Document, EventDuty, PerformanceRecord, VisitorLog
+)
+
+admin.site.register(LeaveRequest)
+admin.site.register(ProblemReport)
+admin.site.register(InventoryRequest)
+admin.site.register(DutySchedule)
+admin.site.register(AttendanceLog)
+admin.site.register(DirectMessage)
+admin.site.register(TaskAssignment)
+admin.site.register(SalaryPayment)
+admin.site.register(Holiday)
+admin.site.register(EmergencyRequest)
+admin.site.register(Document)
+admin.site.register(EventDuty)
+admin.site.register(PerformanceRecord)
+admin.site.register(VisitorLog)
+
 # END: STAFF_ADMIN

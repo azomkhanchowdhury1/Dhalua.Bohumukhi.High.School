@@ -35,6 +35,10 @@ urlpatterns = [
     # Online Classes
     path('online-classes/', views.online_classes, name='online_classes'),
 
+    # Student Messages
+    path('messages/', views.student_messages, name='student_messages'),
+    path('messages/chat/', views.chat_student, name='chat_student'),
+
     # Payroll & HR
     path('hr/salary-slips/', views.salary_slips, name='salary_slips'),
     path('hr/leave-request/', views.leave_request, name='leave_request'),

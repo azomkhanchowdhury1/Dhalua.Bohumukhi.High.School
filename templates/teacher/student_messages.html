@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    /* START: TEACHER_MESSAGES_CSS */
+    .chat-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        overflow: hidden;
+        height: 600px;
+    }
+    
+    .chat-sidebar {
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
+        background: rgba(0,0,0,0.15);
+    }
+    
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .student-list {
+        flex: 1;
+        overflow-y: auto;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .student-item {
+        padding: 14px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        cursor: pointer;
+        transition: background 0.2s, padding-left 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .student-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        padding-left: 24px;
+    }
+    
+    .student-item.active {
+        background: rgba(99, 102, 241, 0.15);
+        border-left: 4px solid #6366f1;
+        padding-left: 20px;
+    }
+    
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: rgba(0,0,0,0.05);
+    }
+    
+    .chat-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
+    }
+    
+    .chat-body {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    
+    .chat-footer {
+        padding: 1.2rem;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.01);
+        display: flex;
+        gap: 10px;
+    }
+    
+    .chat-bubble {
+        padding: 10px 15px;
+        border-radius: 16px;
+        max-width: 70%;
+        font-size: 0.92rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+    
+    .chat-bubble.sent {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .chat-bubble.received {
+        background: rgba(255,255,255,0.08);
+        color: #f1f5f9;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .chat-time {
+        font-size: 0.72rem;
+        color: #64748b;
+        margin-top: 4px;
+        display: block;
+        text-align: right;
+    }
+    
+    .chat-bubble.received .chat-time {
+        text-align: left;
+    }
+    
+    .search-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        color: #fff;
+        font-size: 0.88rem;
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: #6366f1;
+    }
+    /* END: TEACHER_MESSAGES_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: TEACHER_MESSAGES_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h1>Student Messages</h1>
+            <p>Exchange messages and interact with students dynamically.</p>
+        </div>
+        <a href="{% url 'teacher:teacher_dashboard' %}" class="view-all-btn" style="text-decoration:none;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <div class="chat-layout">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <input type="text" id="studentSearch" class="search-input" placeholder="Search student name..." onkeyup="filterStudents()">
+            </div>
+            <ul class="student-list" id="studentList">
+                {% for s in students %}
+                <li class="student-item" onclick="selectStudent('{{ s.id }}', '{{ s.user.get_full_name|escapejs }}', this)">
+                    <div class="student-avatar">{{ s.user.first_name|slice:":1" }}{{ s.user.last_name|slice:":1" }}</div>
+                    <div style="flex:1;">
+                        <h4 style="color:#fff; font-size:0.92rem; margin:0 0 2px;">{{ s.user.get_full_name }}</h4>
+                        <p style="color:#94a3b8; font-size:0.75rem; margin:0;">Class {{ s.current_class }} | Roll {{ s.roll_number }}</p>
+                    </div>
+                </li>
+                {% empty %}
+                <li style="padding:20px; text-align:center; color:#64748b;">No students found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-main">
+            <!-- Default Welcome -->
+            <div id="chatWelcome" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b; padding:2rem; text-align:center;">
+                <i class="fas fa-comments" style="font-size:4rem; margin-bottom:20px; opacity:0.15;"></i>
+                <h3>Select a student to start chatting</h3>
+                <p>Chat logs and history will be loaded here dynamically.</p>
+            </div>
+
+            <!-- Active Chat -->
+            <div id="chatContent" style="display:none; flex-direction:column; height:100%;">
+                <div class="chat-header">
+                    <h3 style="color:#fff; margin:0;" id="activeStudentName">Student Name</h3>
+                </div>
+                <div class="chat-body" id="chatBody">
+                    <!-- Messages render here -->
+                </div>
+                <div class="chat-footer">
+                    <input type="text" id="chatInput" placeholder="Type your reply here..." style="flex:1; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 16px; outline:none; font-size:0.95rem;">
+                    <button onclick="sendChatMessage()" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color:#fff; border:none; border-radius:12px; padding:0 20px; font-weight:600; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // START: TEACHER_CHAT_SCRIPT
+    let activeStudentId = null;
+    let pollInterval = null;
+
+    function selectStudent(studentId, studentName, element) {
+        activeStudentId = studentId;
+        
+        // Update active class in sidebar
+        document.querySelectorAll('.student-item').forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+
+        // Toggle visibility
+        document.getElementById('chatWelcome').style.display = 'none';
+        document.getElementById('chatContent').style.display = 'flex';
+        document.getElementById('activeStudentName').innerText = studentName;
+        document.getElementById('chatBody').innerHTML = '<div style="text-align:center; color:#64748b; margin-top:50px;">Loading conversation history...</div>';
+
+        loadChatHistory();
+
+        // Setup polling
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(loadChatHistory, 5000);
+
+        // Handle Input Enter Key
+        document.getElementById('chatInput').removeEventListener('keypress', handleKeyPress);
+        document.getElementById('chatInput').addEventListener('keypress', handleKeyPress);
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+
+    function loadChatHistory() {
+        if (!activeStudentId) return;
+
+        fetch(`/teachers/messages/chat/?student_id=${activeStudentId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const chatBody = document.getElementById('chatBody');
+                    const isAtBottom = chatBody.scrollHeight - chatBody.clientHeight <= chatBody.scrollTop + 50;
+
+                    chatBody.innerHTML = '';
+                    if (data.messages.length === 0) {
+                        chatBody.innerHTML = '<div style="text-align:center; color:#64748b; margin-top:50px;">No messages yet. Send a message to start conversation!</div>';
+                        return;
+                    }
+
+                    data.messages.forEach(msg => {
+                        const isSentByMe = msg.sender_id === data.current_user_id;
+                        const bubble = document.createElement('div');
+                        bubble.className = `chat-bubble ${isSentByMe ? 'sent' : 'received'}`;
+                        bubble.innerHTML = `
+                            <div>${escapeHTML(msg.message)}</div>
+                            <span class="chat-time">${msg.created_at}</span>
+                        `;
+                        chatBody.appendChild(bubble);
+                    });
+
+                    if (isAtBottom) {
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+                }
+            })
+            .catch(err => console.error("Error loading chat history:", err));
+    }
+
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text || !activeStudentId) return;
+
+        input.value = '';
+
+        fetch('/teachers/messages/chat/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                student_id: activeStudentId,
+                message: text
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadChatHistory();
+            }
+        })
+        .catch(err => console.error("Error sending message:", err));
+    }
+
+    function filterStudents() {
+        const q = document.getElementById('studentSearch').value.toLowerCase();
+        const items = document.querySelectorAll('.student-item');
+        items.forEach(item => {
+            const name = item.querySelector('h4').innerText.toLowerCase();
+            item.style.display = name.includes(q) ? 'flex' : 'none';
+        });
+    }
+
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    // END: TEACHER_CHAT_SCRIPT
+</script>
+<!-- END: TEACHER_MESSAGES_SECTION -->
+{% endblock %}

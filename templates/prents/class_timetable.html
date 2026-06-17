@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: CLASS_TIMETABLE -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-table"></i> Class Timetable</h2>
+    <div class="module-content">
+        <p>Weekly schedule of classes for your child.</p>
+        <div class="placeholder-text">
+            Class timetable matrix will be displayed here.
+        </div>
+    </div>
+</div>
+<!-- END: CLASS_TIMETABLE -->
+{% endblock %}

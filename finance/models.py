@@ -43,3 +43,16 @@ class Expense(models.Model):
     
     def __str__(self):
         return f"{self.title} - {self.amount}"
+
+class PayoutRequest(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='payouts')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=50, choices=[('bKash', 'bKash'), ('Bank Transfer', 'Bank Transfer')])
+    account_details = models.TextField()
+    status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], default='Pending')
+    requested_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"Payout for {self.user.username} - {self.amount} ({self.status})"

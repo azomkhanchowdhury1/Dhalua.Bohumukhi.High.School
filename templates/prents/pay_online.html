@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+<style>
+/* START: PAY_ONLINE_CSS */
+.payment-card {
+    background: rgba(15,23,42,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    overflow: hidden;
+    max-width: 720px;
+    margin: 0 auto;
+}
+.pay-header {
+    padding: 28px 32px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.05));
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.pay-header h2 { color:#fff; margin:0 0 6px; font-size:1.5rem; }
+.pay-header p { color:#94a3b8; margin:0; font-size:0.88rem; }
+.pay-body { padding: 28px 32px; }
+.pf { margin-bottom:20px; }
+.pf label { display:block; color:#94a3b8; font-size:0.82rem; margin-bottom:7px; }
+.pf select, .pf input {
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px;
+    padding:13px 16px;
+    color:#fff;
+    font-size:0.95rem;
+    box-sizing:border-box;
+}
+.pf select:focus, .pf input:focus { outline:none; border-color:#10b981; }
+.pf select option { background:#0f172a; }
+.gw-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+.gw-card {
+    border:2px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    cursor:pointer;
+    transition:all 0.2s;
+    background:rgba(255,255,255,0.02);
+}
+.gw-card:hover { border-color:rgba(255,255,255,0.25); }
+.gw-card.selected { border-color:#10b981; background:rgba(16,185,129,0.08); }
+.gw-card .gw-ico { font-size:1.6rem; margin-bottom:5px; }
+.gw-card .gw-nm { color:#fff; font-weight:700; font-size:0.95rem; }
+.gw-card .gw-sub { color:#64748b; font-size:0.75rem; }
+.gw-card.bkash .gw-ico { color:#e40c7b; }
+.gw-card.bank .gw-ico { color:#38bdf8; }
+
+.btn-pay { width:100%; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border:none; padding:14px; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; opacity:0.5; pointer-events:none; transition:opacity 0.2s; }
+.btn-pay.ready { opacity:1; pointer-events:auto; }
+
+/* modals */
+.gmo { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; }
+.gmo.active { display:flex; }
+.bkm { width:340px; background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.6); }
+.bkm-hdr { background:#e40c7b; padding:20px; text-align:center; }
+.bkm-hdr .bk-logo { font-size:1.8rem; color:#fff; font-weight:900; }
+.bkm-hdr p { color:rgba(255,255,255,0.8); font-size:0.8rem; margin:4px 0 0; }
+.bkm-body { padding:20px; }
+.bkm-amt { background:#fdf0f6; border:1px solid #f7b3d8; border-radius:10px; padding:12px; text-align:center; margin-bottom:14px; }
+.bkm-amt .bkm-amt-val { color:#e40c7b; font-size:1.5rem; font-weight:800; }
+.bkf { margin-bottom:14px; }
+.bkf label { color:#555; font-size:0.8rem; display:block; margin-bottom:5px; }
+.bkf input { width:100%; border:1.5px solid #ddd; border-radius:9px; padding:11px 13px; font-size:0.93rem; color:#222; box-sizing:border-box; background:#f9f9f9; }
+.pin-dots { display:flex; gap:7px; justify-content:center; margin-bottom:12px; }
+.pin-dot { width:11px; height:11px; border-radius:50%; background:#e40c7b; opacity:0; transition:opacity 0.2s; }
+.pin-dot.f { opacity:1; }
+.pin-row { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:14px; }
+.pin-key { background:#f4f4f4; border:none; border-radius:9px; padding:13px; font-size:1.1rem; font-weight:700; cursor:pointer; color:#222; }
+.pin-key:hover { background:#e8e8e8; }
+.pin-key.del { background:#fdf0f6; color:#e40c7b; }
+.btn-bk-go { width:100%; background:#e40c7b; color:#fff; border:none; padding:13px; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; margin-bottom:8px; }
+.btn-bk-go:disabled { opacity:0.5; }
+.btn-bk-cancel { width:100%; background:none; border:1.5px solid #ddd; color:#888; padding:10px; border-radius:10px; cursor:pointer; font-size:0.88rem; }
+
+.bnkm { width:380px; background:#0a1628; border:1px solid rgba(56,189,248,0.2); border-radius:22px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.6); }
+.bnkm-hdr { background:linear-gradient(135deg,#1e40af,#0369a1); padding:20px; text-align:center; }
+.bnkm-hdr .bnk-logo { color:#fff; font-size:1.1rem; font-weight:800; }
+.bnkm-hdr p { color:rgba(255,255,255,0.8); font-size:0.8rem; margin:4px 0 0; }
+.bnkm-body { padding:20px; }
+.bnk-info { background:rgba(56,189,248,0.07); border:1px solid rgba(56,189,248,0.2); border-radius:10px; padding:14px; margin-bottom:16px; }
+.bnk-row { display:flex; justify-content:space-between; margin-bottom:7px; }
+.bnk-row:last-child { margin-bottom:0; }
+.bnk-lbl { color:#64748b; font-size:0.78rem; }
+.bnk-val { color:#e2e8f0; font-size:0.86rem; font-weight:600; }
+.bnkf { margin-bottom:14px; }
+.bnkf label { color:#94a3b8; font-size:0.8rem; display:block; margin-bottom:5px; }
+.bnkf input, .bnkf select { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:9px; padding:11px 13px; color:#fff; font-size:0.93rem; box-sizing:border-box; }
+.bnkf select option { background:#0f172a; }
+.btn-bnk-go { width:100%; background:linear-gradient(135deg,#1e40af,#0369a1); color:#fff; border:none; padding:13px; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; margin-bottom:8px; }
+.btn-bnk-cancel { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; padding:10px; border-radius:10px; cursor:pointer; font-size:0.88rem; }
+
+.suc-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:4000; align-items:center; justify-content:center; }
+.suc-ov.active { display:flex; }
+.suc-box { background:#0f172a; border:1px solid rgba(52,211,153,0.4); border-radius:22px; padding:36px; text-align:center; max-width:360px; width:90%; }
+.suc-ico { font-size:3rem; color:#34d399; margin-bottom:14px; }
+.suc-box h3 { color:#fff; font-size:1.3rem; margin:0 0 8px; }
+.suc-box p { color:#94a3b8; font-size:0.87rem; margin:0 0 6px; }
+.txn-box { background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.2); border-radius:9px; padding:10px; margin:14px 0; color:#34d399; font-size:0.82rem; word-break:break-all; }
+.btn-suc { background:linear-gradient(135deg,#10b981,#059669); color:#fff; border:none; padding:13px 26px; border-radius:11px; font-size:0.97rem; cursor:pointer; font-weight:700; width:100%; }
+/* END: PAY_ONLINE_CSS */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- START: PAY_ONLINE -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-credit-card"></i> Pay Online Now</h2>
+
+    {% if messages %}
+    <div style="margin-bottom:16px;">
+        {% for msg in messages %}
+        <div style="background:rgba({% if 'error' in msg.tags %}239,68,68{% else %}52,211,153{% endif %},0.1); border:1px solid {% if 'error' in msg.tags %}#ef4444{% else %}#34d399{% endif %}; border-radius:10px; padding:12px 16px; color:{% if 'error' in msg.tags %}#ef4444{% else %}#34d399{% endif %}; margin-bottom:8px; font-size:0.88rem;">
+            <i class="fas fa-{% if 'error' in msg.tags %}exclamation-circle{% else %}check-circle{% endif %}"></i> {{ msg }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not parent.linked_student %}
+    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:20px; color:#f87171; text-align:center;">
+        <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+        <strong>কোনো ছাত্র/ছাত্রী লিঙ্ক নেই।</strong><br>
+        <small>অ্যাডমিনের সাথে যোগাযোগ করুন।</small>
+    </div>
+    {% else %}
+    <div class="payment-card">
+        <div class="pay-header">
+            <h2><i class="fas fa-shield-alt" style="color:#10b981; margin-right:8px;"></i> Secure Fee Payment</h2>
+            <p>ছাত্র: <strong style="color:#a78bfa;">{{ parent.linked_student.user.get_full_name|default:parent.linked_student.student_id }}</strong> | Class: {{ parent.linked_student.current_class }}</p>
+        </div>
+        <div class="pay-body">
+            <div class="pf">
+                <label>ফি ক্যাটাগরি *</label>
+                <select id="pfFeeType" onchange="pfUpdateAmt(this)">
+                    <option value="" data-amount="">— বেছে নিন —</option>
+                    {% for fee in fee_types %}
+                    <option value="{{ fee.id }}" data-amount="{{ fee.amount }}">{{ fee.name }} — ৳{{ fee.amount }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="pf">
+                <label>পরিমাণ (৳) *</label>
+                <input type="number" id="pfAmount" min="1" step="0.01" placeholder="ফি বেছে নিলে স্বয়ংক্রিয়ভাবে হবে" oninput="pfCheck()">
+            </div>
+            <div class="pf"><label>পেমেন্ট পদ্ধতি *</label></div>
+            <div class="gw-row">
+                <div class="gw-card bkash" id="pfGwBk" onclick="pfSelectGw('bkash')">
+                    <div class="gw-ico">📱</div>
+                    <div class="gw-nm">বিকাশ</div>
+                    <div class="gw-sub">bKash Mobile Banking</div>
+                </div>
+                <div class="gw-card bank" id="pfGwBnk" onclick="pfSelectGw('bank')">
+                    <div class="gw-ico">🏦</div>
+                    <div class="gw-nm">ব্যাংক ট্রান্সফার</div>
+                    <div class="gw-sub">NPSB / BEFTN</div>
+                </div>
+            </div>
+            <button class="btn-pay" id="pfBtnPay" onclick="pfProceed()">
+                <i class="fas fa-lock"></i> পেমেন্ট করুন
+            </button>
+            <div style="margin-top:16px; text-align:center;">
+                <a href="{% url 'prents:payment_receipts' %}" style="color:#94a3b8; font-size:0.85rem;">
+                    <i class="fas fa-receipt"></i> রিসিট দেখুন
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<form id="pfFinalForm" method="POST" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="fee_type" id="pfFinalFeeType">
+    <input type="hidden" name="amount" id="pfFinalAmount">
+    <input type="hidden" name="transaction_id" id="pfFinalTxnId">
+</form>
+
+<!-- bKash Modal -->
+<div class="gmo" id="pfBkOverlay">
+    <div class="bkm">
+        <div class="bkm-hdr"><div class="bk-logo">bKash</div><p>সিকিউর পেমেন্ট</p></div>
+        <div class="bkm-body">
+            <div class="bkm-amt"><div style="color:#888; font-size:0.75rem;">মোট</div><div class="bkm-amt-val" id="pfBkAmt">৳0</div></div>
+            <div class="bkf"><label>বিকাশ নম্বর</label><input type="tel" id="pfBkPhone" maxlength="11" placeholder="01XXXXXXXXX"></div>
+            <div style="color:#888; font-size:0.78rem; text-align:center; margin-bottom:10px;">PIN দিন</div>
+            <div class="pin-dots">
+                <div class="pin-dot" id="pd1"></div><div class="pin-dot" id="pd2"></div>
+                <div class="pin-dot" id="pd3"></div><div class="pin-dot" id="pd4"></div>
+                <div class="pin-dot" id="pd5"></div>
+            </div>
+            <div class="pin-row">
+                {% for n in "123456789" %}<button class="pin-key" onclick="pfBkPin('{{ n }}')">{{ n }}</button>{% endfor %}
+                <button class="pin-key del" onclick="pfBkDel()">⌫</button>
+                <button class="pin-key" onclick="pfBkPin('0')">0</button>
+                <button class="pin-key" style="background:#f4f4f4;"></button>
+            </div>
+            <button class="btn-bk-go" id="pfBkGoBtn" onclick="pfBkConfirm()" disabled>পেমেন্ট নিশ্চিত করুন</button>
+            <button class="btn-bk-cancel" onclick="pfCloseModals()">বাতিল</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bank Modal -->
+<div class="gmo" id="pfBnkOverlay">
+    <div class="bnkm">
+        <div class="bnkm-hdr"><div class="bnk-logo">🏦 Bank Transfer</div><p>NPSB / BEFTN</p></div>
+        <div class="bnkm-body">
+            <div style="background:rgba(56,189,248,0.07); border:1px solid rgba(56,189,248,0.2); border-radius:9px; padding:12px; text-align:center; margin-bottom:14px;">
+                <div style="color:#64748b; font-size:0.75rem;">পরিমাণ</div>
+                <div style="color:#38bdf8; font-size:1.4rem; font-weight:800;" id="pfBnkAmt">৳0</div>
+            </div>
+            <div class="bnk-info">
+                <div class="bnk-row"><span class="bnk-lbl">প্রাপক</span><span class="bnk-val">Dhalua School Fund</span></div>
+                <div class="bnk-row"><span class="bnk-lbl">অ্যাকাউন্ট</span><span class="bnk-val">2031 0012 4567 8</span></div>
+                <div class="bnk-row"><span class="bnk-lbl">ব্যাংক</span><span class="bnk-val">Sonali Bank Ltd.</span></div>
+            </div>
+            <div class="bnkf"><label>আপনার অ্যাকাউন্ট নম্বর</label><input type="text" id="pfBnkAcc" placeholder="অ্যাকাউন্ট নম্বর দিন"></div>
+            <div class="bnkf">
+                <label>ব্যাংকের নাম</label>
+                <select id="pfBnkName">
+                    <option value="">— বেছে নিন —</option>
+                    <option>Sonali Bank</option><option>Janata Bank</option>
+                    <option>Dutch Bangla Bank</option><option>Brac Bank</option>
+                    <option>Islami Bank</option><option>City Bank</option><option>Other</option>
+                </select>
+            </div>
+            <button class="btn-bnk-go" onclick="pfBnkConfirm()"><i class="fas fa-paper-plane"></i> ট্রান্সফার নিশ্চিত</button>
+            <button class="btn-bnk-cancel" onclick="pfCloseModals()">বাতিল</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success -->
+<div class="suc-ov" id="pfSucOv">
+    <div class="suc-box">
+        <div class="suc-ico"><i class="fas fa-check-circle"></i></div>
+        <h3>পেমেন্ট সফল!</h3>
+        <p>আপনার পেমেন্ট রেকর্ড হয়েছে।</p>
+        <p>ট্র্যানজেকশন আইডি:</p>
+        <div class="txn-box" id="pfTxnBox"></div>
+        <button class="btn-suc" onclick="pfSubmit()"><i class="fas fa-check"></i> সম্পন্ন করুন</button>
+    </div>
+</div>
+
+<script>
+/* START: PAY_ONLINE_JS */
+let pfGw = '';
+let pfPin = '';
+
+function pfUpdateAmt(sel) {
+    const opt = sel.selectedOptions[0];
+    document.getElementById('pfAmount').value = opt ? opt.getAttribute('data-amount') || '' : '';
+    pfCheck();
+}
+function pfSelectGw(gw) {
+    pfGw = gw;
+    document.getElementById('pfGwBk').classList.toggle('selected', gw==='bkash');
+    document.getElementById('pfGwBnk').classList.toggle('selected', gw==='bank');
+    pfCheck();
+}
+function pfCheck() {
+    const hasFee = document.getElementById('pfFeeType').value !== '';
+    const hasAmt = parseFloat(document.getElementById('pfAmount').value) > 0;
+    const hasGw = pfGw !== '';
+    const btn = document.getElementById('pfBtnPay');
+    btn.classList.toggle('ready', hasFee && hasAmt && hasGw);
+}
+function pfProceed() {
+    const amt = parseFloat(document.getElementById('pfAmount').value);
+    if (pfGw === 'bkash') {
+        document.getElementById('pfBkAmt').textContent = '৳' + amt.toFixed(2);
+        pfPin = '';
+        pfUpdatePinDots();
+        document.getElementById('pfBkGoBtn').disabled = true;
+        document.getElementById('pfBkOverlay').classList.add('active');
+    } else {
+        document.getElementById('pfBnkAmt').textContent = '৳' + amt.toFixed(2);
+        document.getElementById('pfBnkOverlay').classList.add('active');
+    }
+}
+function pfCloseModals() {
+    document.getElementById('pfBkOverlay').classList.remove('active');
+    document.getElementById('pfBnkOverlay').classList.remove('active');
+}
+function pfBkPin(d) {
+    if (pfPin.length < 5) {
+        pfPin += d;
+        pfUpdatePinDots();
+        if (pfPin.length === 5) document.getElementById('pfBkGoBtn').disabled = false;
+    }
+}
+function pfBkDel() {
+    pfPin = pfPin.slice(0,-1);
+    pfUpdatePinDots();
+    document.getElementById('pfBkGoBtn').disabled = true;
+}
+function pfUpdatePinDots() {
+    for (let i=1; i<=5; i++) document.getElementById('pd'+i).classList.toggle('f', i<=pfPin.length);
+}
+function pfGenTxn(pfx) {
+    const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id=pfx;
+    for(let i=0;i<12;i++) id+=c[Math.floor(Math.random()*c.length)];
+    return id;
+}
+function pfBkConfirm() {
+    const phone = document.getElementById('pfBkPhone').value.trim();
+    if (!phone || phone.length < 11) { alert('সঠিক বিকাশ নম্বর দিন।'); return; }
+    pfFinish(pfGenTxn('BKH'));
+}
+function pfBnkConfirm() {
+    const acc = document.getElementById('pfBnkAcc').value.trim();
+    const bank = document.getElementById('pfBnkName').value;
+    if (!acc || !bank) { alert('সব তথ্য পূরণ করুন।'); return; }
+    pfFinish(pfGenTxn('BNKT'));
+}
+function pfFinish(txn) {
+    pfCloseModals();
+    document.getElementById('pfTxnBox').textContent = txn;
+    document.getElementById('pfFinalFeeType').value = document.getElementById('pfFeeType').value;
+    document.getElementById('pfFinalAmount').value = document.getElementById('pfAmount').value;
+    document.getElementById('pfFinalTxnId').value = txn;
+    document.getElementById('pfSucOv').classList.add('active');
+}
+function pfSubmit() {
+    document.getElementById('pfFinalForm').submit();
+}
+/* END: PAY_ONLINE_JS */
+</script>
+<!-- END: PAY_ONLINE -->
+{% endblock %}

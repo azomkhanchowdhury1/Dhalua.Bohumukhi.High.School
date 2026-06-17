@@ -18,7 +18,7 @@ from gallery.models import Gallery
 # START: GLOBAL_SEARCH_VIEW
 @login_required
 def global_search(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()
     results = []
     
     if not query:
@@ -26,7 +26,7 @@ def global_search(request):
     
     user = request.user
     
-    # Check if user is Admin (Superuser)
+    # Check role and search
     if user.is_superuser:
         # Search Students
         students = Student.objects.filter(
@@ -60,47 +60,120 @@ def global_search(request):
             results.append({
                 'name': f"{s.user.first_name} {s.user.last_name}",
                 'role': f"Student ({s.student_id})",
-                'url': f"/students/profile/{s.id}/" # Placeholder
+                'url': f"/admin-dashboard/students/?search={s.student_id}"
             })
         for t in teachers:
             results.append({
                 'name': f"{t.user.first_name} {t.user.last_name}",
                 'role': f"Teacher ({t.teacher_id})",
-                'url': f"/teacher/profile/{t.id}/" # Placeholder
+                'url': f"/admin-dashboard/teachers/{t.id}/detail/"
             })
         for st in staffs:
             results.append({
                 'name': f"{st.user.first_name} {st.user.last_name}",
                 'role': f"Staff ({st.staff_id})",
-                'url': f"/staff/profile/{st.id}/" # Placeholder
+                'url': f"/admin-dashboard/staff/{st.id}/edit/"
             })
         for p in parents:
             results.append({
                 'name': f"{p.user.first_name} {p.user.last_name}",
                 'role': f"Parent ({p.parent_id})",
-                'url': f"/parents/profile/{p.id}/" # Placeholder
+                'url': f"/admin-dashboard/parents/{p.id}/edit/"
             })
             
-    else:
-        # Non-admin users can only search/find their own data
-        user_full_name = f"{user.first_name} {user.last_name}"
-        
-        if query.lower() in user_full_name.lower() or query.lower() in user.username.lower():
-            role_display = "Your Profile"
-            if hasattr(user, 'student_profile'):
-                role_display = f"My Student Profile ({user.student_profile.student_id})"
-            elif hasattr(user, 'teacher_profile'):
-                role_display = f"My Teacher Profile ({user.teacher_profile.teacher_id})"
-            elif hasattr(user, 'staff_profile'):
-                role_display = f"My Staff Profile ({user.staff_profile.staff_id})"
-            elif hasattr(user, 'parent_profile'):
-                role_display = f"My Parent Profile ({user.parent_profile.parent_id})"
-                
+    elif hasattr(user, 'teacher_profile'):
+        # Teachers can search students
+        students = Student.objects.filter(
+            Q(user__first_name__icontains=query) | 
+            Q(user__last_name__icontains=query) | 
+            Q(student_id__icontains=query)
+        ).select_related('user')[:5]
+        for s in students:
             results.append({
-                'name': user_full_name,
-                'role': role_display,
-                'url': '/accounts/profile/'
+                'name': f"{s.user.first_name} {s.user.last_name}",
+                'role': f"Student ({s.student_id})",
+                'url': f"/teachers/stats/total-students/?search={s.student_id}"
             })
+
+    elif hasattr(user, 'student_profile'):
+        # Students can search teachers
+        teachers = Teacher.objects.filter(
+            Q(user__first_name__icontains=query) | 
+            Q(user__last_name__icontains=query) | 
+            Q(teacher_id__icontains=query)
+        ).select_related('user')[:5]
+        for t in teachers:
+            results.append({
+                'name': f"{t.user.first_name} {t.user.last_name}",
+                'role': f"Teacher ({t.teacher_id})",
+                'url': "/students/academic/teachers/"
+            })
+        
+        # Search Library Books
+        from student.models import LibraryBook
+        books = LibraryBook.objects.filter(
+            Q(title__icontains=query) | Q(author__icontains=query) | Q(category__icontains=query)
+        )[:5]
+        for b in books:
+            results.append({
+                'name': b.title,
+                'role': f"Library Book ({b.author})",
+                'url': "/students/learning/library/"
+            })
+
+    # Search Notices for all logged in users based on targets
+    from notices.models import Notice
+    notices_query = Q(is_public=True)
+    if hasattr(user, 'student_profile'):
+        notices_query |= Q(target_student=True)
+    elif hasattr(user, 'teacher_profile'):
+        notices_query |= Q(target_teacher=True)
+    elif hasattr(user, 'staff_profile'):
+        notices_query |= Q(target_staff=True)
+    elif hasattr(user, 'parent_profile'):
+        notices_query |= Q(target_parent=True)
+
+    notices = Notice.objects.filter(
+        Q(title__icontains=query) | Q(content__icontains=query)
+    ).filter(notices_query).distinct()[:5]
+
+    for n in notices:
+        results.append({
+            'name': n.title,
+            'role': f"Notice ({n.created_at.strftime('%d %b')})",
+            'url': "/admin-dashboard/notices/" if user.is_superuser else "/notices/"
+        })
+
+    # Search Events for all logged in users
+    from events.models import Event
+    events = Event.objects.filter(
+        Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
+    )[:5]
+    for e in events:
+        results.append({
+            'name': e.title,
+            'role': f"Event ({e.date.strftime('%d %b')})",
+            'url': "/admin-dashboard/events/" if user.is_superuser else "/events/"
+        })
+
+    # Always return self profile option
+    user_full_name = f"{user.first_name} {user.last_name}"
+    if query.lower() in user_full_name.lower() or query.lower() in user.username.lower():
+        role_display = "Your Profile"
+        if hasattr(user, 'student_profile'):
+            role_display = f"My Student Profile ({user.student_profile.student_id})"
+        elif hasattr(user, 'teacher_profile'):
+            role_display = f"My Teacher Profile ({user.teacher_profile.teacher_id})"
+        elif hasattr(user, 'staff_profile'):
+            role_display = f"My Staff Profile ({user.staff_profile.staff_id})"
+        elif hasattr(user, 'parent_profile'):
+            role_display = f"My Parent Profile ({user.parent_profile.parent_id})"
+            
+        results.append({
+            'name': user_full_name,
+            'role': role_display,
+            'url': '/accounts/profile/'
+        })
 
     return JsonResponse({'results': results})
 # END: GLOBAL_SEARCH_VIEW
@@ -314,9 +387,8 @@ def settings_view(request):
                     profile_data.profile_image = request.FILES.get('profile_image')
 
                 if role == 'Student':
-                    profile_data.roll_number = request.POST.get('roll_number', getattr(profile_data, 'roll_number', '') or '').strip() or getattr(profile_data, 'roll_number', '')
-                    profile_data.current_class = request.POST.get('current_class', getattr(profile_data, 'current_class', '') or '').strip() or getattr(profile_data, 'current_class', '')
-                    profile_data.section = request.POST.get('section', getattr(profile_data, 'section', '') or '').strip() or getattr(profile_data, 'section', '')
+                    # Student's academic fields (roll_number, current_class, section) are read-only
+                    pass
                 elif role == 'Teacher':
                     dept = request.POST.get('department', '').strip()
                     if dept:
@@ -381,9 +453,13 @@ def settings_view(request):
             return redirect('accounts:settings')
 
         elif action == 'delete_account':
-            user.delete()
-            messages.success(request, "Your account has been deleted successfully.")
-            return redirect('accounts:login')
+            if user.is_superuser:
+                user.delete()
+                messages.success(request, "Your account has been deleted successfully.")
+                return redirect('accounts:login')
+            else:
+                messages.error(request, "Access Denied: Only administrators can delete accounts.")
+                return redirect('accounts:settings')
 
     return render(request, 'accounts/settings.html', {
         'role': role,

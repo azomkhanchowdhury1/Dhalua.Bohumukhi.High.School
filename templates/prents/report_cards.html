@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: REPORT_CARDS -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-poll"></i> Report Cards</h2>
+    <div class="module-content">
+        <p>View and download the latest report cards for your child.</p>
+        <div class="placeholder-text">
+            Report card data will be available after the examination grading period is complete.
+        </div>
+    </div>
+</div>
+<!-- END: REPORT_CARDS -->
+{% endblock %}

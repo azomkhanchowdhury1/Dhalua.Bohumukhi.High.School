@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/parent_modules.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: MONTHLY_SUMMARY -->
+<div class="parent-module-container">
+    <h2 class="module-header-title"><i class="fas fa-calendar-day"></i> Monthly Summary</h2>
+    <div class="module-content">
+        <p>Review your child's attendance summary on a monthly basis.</p>
+        <div class="placeholder-text">
+            Monthly summary statistics will appear here.
+        </div>
+    </div>
+</div>
+<!-- END: MONTHLY_SUMMARY -->
+{% endblock %}

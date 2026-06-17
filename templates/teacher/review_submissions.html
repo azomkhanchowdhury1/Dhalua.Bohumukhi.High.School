@@ -4,80 +4,206 @@
 {% block css %}
 <style>
     /* START: REVIEW_SUBMISSIONS */
-    .review-container {
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-top: 20px;
+    .review-wrapper { padding: 30px 20px; }
+    .review-header { margin-bottom: 28px; }
+    .review-header h1 { color: #fff; font-size: 1.8rem; margin: 0 0 6px; }
+    .review-header p { color: #94a3b8; margin: 0; }
+
+    .submissions-grid { display: grid; gap: 16px; }
+    .hw-card {
+        background: rgba(15,23,42,0.7);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 22px 26px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        transition: border-color 0.2s;
     }
-    .review-table {
+    .hw-card:hover { border-color: rgba(139,92,246,0.4); }
+    .hw-card.graded { border-left: 4px solid #34d399; }
+    .hw-card.pending { border-left: 4px solid #fbbf24; }
+
+    .hw-meta { flex: 1; min-width: 200px; }
+    .hw-meta .hw-title { color: #fff; font-size: 1.05rem; font-weight: 600; margin: 0 0 4px; }
+    .hw-meta .hw-student { color: #7c3aed; font-size: 0.88rem; margin: 0 0 4px; }
+    .hw-meta .hw-sub { color: #94a3b8; font-size: 0.82rem; margin: 0; }
+
+    .hw-status { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .badge { padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+    .badge-graded { background: rgba(52,211,153,0.15); color: #34d399; }
+    .badge-pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+    .marks-display { color: #a78bfa; font-size: 0.95rem; font-weight: 700; }
+
+    .btn-grade {
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #fff;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn-grade:hover { opacity: 0.85; }
+    .btn-view-file { color: #38bdf8; font-size: 0.82rem; text-decoration: none; }
+    .btn-view-file:hover { text-decoration: underline; }
+
+    /* Grade Modal */
+    .grade-modal-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.7);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+    .grade-modal-overlay.active { display: flex; }
+    .grade-modal {
+        background: #0f172a;
+        border: 1px solid rgba(139,92,246,0.4);
+        border-radius: 20px;
+        padding: 32px;
         width: 100%;
-        border-collapse: collapse;
+        max-width: 480px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
-    .review-table th, .review-table td {
-        padding: 12px 15px;
-        text-align: left;
-        border-bottom: 1px solid #e5e7eb;
+    .grade-modal h3 { color: #fff; margin: 0 0 8px; font-size: 1.2rem; }
+    .grade-modal .student-tag { color: #a78bfa; font-size: 0.9rem; margin: 0 0 22px; }
+    .grade-modal label { display: block; color: #94a3b8; font-size: 0.82rem; margin-bottom: 7px; }
+    .grade-modal input, .grade-modal textarea {
+        width: 100%;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        margin-bottom: 18px;
+        resize: vertical;
     }
-    .review-table th {
-        background-color: #f9fafb;
+    .grade-modal input:focus, .grade-modal textarea:focus { outline: none; border-color: #7c3aed; }
+    .modal-actions { display: flex; gap: 12px; }
+    .btn-submit-grade {
+        flex: 1;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 1rem;
+        cursor: pointer;
         font-weight: 600;
-        color: #4b5563;
     }
-    .badge-pending {
-        background-color: #fef3c7;
-        color: #b45309;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: bold;
+    .btn-cancel-grade {
+        background: rgba(255,255,255,0.08);
+        color: #94a3b8;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        cursor: pointer;
     }
-    .action-btn {
-        background: #8b5cf6;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 13px;
-    }
+    .empty-state { text-align: center; padding: 60px 20px; color: #64748b; }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; display: block; }
     /* END: REVIEW_SUBMISSIONS */
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- START: REVIEW_SUBMISSIONS_CONTENT -->
-<div class="review-container">
-    <h2><i class="fas fa-check-double" style="color: #8b5cf6;"></i> Review Submissions</h2>
-    <hr style="opacity: 0.2; margin: 15px 0;">
-    
-    <table class="review-table">
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                <th>Assignment Title</th>
-                <th>Submitted On</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>John Doe</td>
-                <td>Math Chapter 5 Exercise</td>
-                <td>June 03, 2026</td>
-                <td><span class="badge-pending">Pending Review</span></td>
-                <td><a href="#" class="action-btn">Grade</a></td>
-            </tr>
-            <tr>
-                <td>Jane Smith</td>
-                <td>Science Project</td>
-                <td>June 04, 2026</td>
-                <td><span class="badge-pending">Pending Review</span></td>
-                <td><a href="#" class="action-btn">Grade</a></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="review-wrapper">
+    <div class="review-header">
+        <h1><i class="fas fa-check-double" style="color:#7c3aed; margin-right:10px;"></i> Review Submissions</h1>
+        <p>আপনার কাছে জমা দেওয়া সব হোমওয়ার্ক এখানে দেখুন এবং নম্বর/ফিডব্যাক দিন।</p>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:16px;">
+        {% for msg in messages %}
+        <div style="background:rgba(52,211,153,0.1); border:1px solid #34d399; border-radius:10px; padding:12px 18px; color:#34d399; margin-bottom:8px;">
+            <i class="fas fa-check-circle"></i> {{ msg }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if submissions %}
+    <div class="submissions-grid">
+        {% for hw in submissions %}
+        <div class="hw-card {% if hw.graded %}graded{% else %}pending{% endif %}">
+            <div class="hw-meta">
+                <p class="hw-title">{{ hw.title }}</p>
+                <p class="hw-student"><i class="fas fa-user-graduate"></i> {{ hw.student.user.get_full_name|default:hw.student.student_id }}</p>
+                <p class="hw-sub">বিষয়: {{ hw.subject }} &nbsp;|&nbsp; জমা: {{ hw.submitted_at|date:"d M Y, H:i" }}</p>
+                {% if hw.feedback %}
+                <p class="hw-sub" style="color:#a78bfa; margin-top:4px;"><i class="fas fa-comment-dots"></i> {{ hw.feedback }}</p>
+                {% endif %}
+                {% if hw.file %}
+                <a href="{{ hw.file.url }}" target="_blank" class="btn-view-file"><i class="fas fa-paperclip"></i> ফাইল দেখুন</a>
+                {% endif %}
+            </div>
+            <div class="hw-status">
+                {% if hw.graded %}
+                <span class="badge badge-graded"><i class="fas fa-check"></i> Graded</span>
+                <span class="marks-display">{{ hw.marks }} নম্বর</span>
+                {% else %}
+                <span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                {% endif %}
+                <button class="btn-grade" onclick="openGradeModal('{{ hw.id }}', '{{ hw.title|escapejs }}', '{{ hw.student.user.get_full_name|default:hw.student.student_id|escapejs }}')">
+                    <i class="fas fa-star"></i> {% if hw.graded %}Update{% else %}Grade{% endif %}
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>আপনার কাছে এখনো কোনো হোমওয়ার্ক জমা পড়েনি।</p>
+        <p style="font-size:0.85rem;">ছাত্ররা যখন আপনাকে হোমওয়ার্ক পাঠাবে, এখানে দেখা যাবে।</p>
+    </div>
+    {% endif %}
 </div>
+
+<!-- Grade Modal -->
+<div class="grade-modal-overlay" id="gradeModalOverlay">
+    <div class="grade-modal">
+        <h3 id="gradeModalTitle">হোমওয়ার্ক গ্রেড করুন</h3>
+        <p class="student-tag" id="gradeModalStudent"></p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="homework_id" id="gradeHomeworkId">
+            <label>নম্বর (Marks) *</label>
+            <input type="number" name="marks" id="gradeMarks" min="0" max="100" step="0.5" placeholder="যেমন: 85" required>
+            <label>ফিডব্যাক / মন্তব্য</label>
+            <textarea name="feedback" id="gradeFeedback" rows="3" placeholder="ছাত্রকে মন্তব্য লিখুন (ঐচ্ছিক)..."></textarea>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-grade" onclick="closeGradeModal()">বাতিল</button>
+                <button type="submit" class="btn-submit-grade"><i class="fas fa-save"></i> সেভ করুন</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openGradeModal(hwId, title, student) {
+    document.getElementById('gradeHomeworkId').value = hwId;
+    document.getElementById('gradeModalTitle').textContent = title;
+    document.getElementById('gradeModalStudent').textContent = '🎓 ' + student;
+    document.getElementById('gradeMarks').value = '';
+    document.getElementById('gradeFeedback').value = '';
+    document.getElementById('gradeModalOverlay').classList.add('active');
+}
+function closeGradeModal() {
+    document.getElementById('gradeModalOverlay').classList.remove('active');
+}
+document.getElementById('gradeModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeGradeModal();
+});
+</script>
 <!-- END: REVIEW_SUBMISSIONS_CONTENT -->
 {% endblock %}
