@@ -1,236 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-/* Premium Event List Styles */
-@keyframes ev-fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.ev-wrapper {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 24px;
-    animation: ev-fadeUp 0.5s ease-out;
-}
-.ev-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 24px 30px;
-    border-radius: 20px;
-}
-.ev-title h1 {
-    font-size: 28px;
-    color: #fff;
-    margin-bottom: 6px;
-    background: linear-gradient(135deg, #fff, #a5b4fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.ev-title p {
-    color: #94a3b8;
-    font-size: 14px;
-}
-.ev-add-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-}
-.ev-add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
-}
-
-.ev-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-}
-
-.ev-card {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-.ev-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(99, 102, 241, 0.3);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-.ev-img {
-    height: 180px;
-    background: #0f172a;
-    position: relative;
-    overflow: hidden;
-}
-.ev-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-.ev-card:hover .ev-img img {
-    transform: scale(1.05);
-}
-.ev-date-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 12px;
-    text-align: center;
-    min-width: 50px;
-}
-.ev-date-badge .day { font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 4px; color: #818cf8; }
-.ev-date-badge .month { font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-
-.ev-content {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-.ev-content h3 {
-    color: #f8fafc;
-    font-size: 18px;
-    margin-bottom: 12px;
-    line-height: 1.4;
-}
-.ev-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-.ev-meta-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #94a3b8;
-    font-size: 13px;
-}
-.ev-meta-item i {
-    color: #6366f1;
-    width: 16px;
-    text-align: center;
-}
-
-.ev-desc {
-    color: #cbd5e1;
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.ev-actions {
-    margin-top: auto;
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 16px;
-}
-.ev-btn {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-}
-.ev-btn-edit {
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    border-color: rgba(99, 102, 241, 0.2);
-}
-.ev-btn-edit:hover { background: rgba(99, 102, 241, 0.2); }
-
-.ev-btn-del {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.2);
-}
-.ev-btn-del:hover { background: rgba(239, 68, 68, 0.2); }
-
-.ev-btn-remember {
-    background: rgba(245, 158, 11, 0.1);
-    color: #fbbf24;
-    border-color: rgba(245, 158, 11, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    flex: none;
-}
-.ev-btn-remember:hover { background: rgba(245, 158, 11, 0.2); }
-.ev-btn-remember.active {
-    background: #f59e0b;
-    color: #fff;
-    border-color: #f59e0b;
-}
-
-.ev-empty {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 60px 20px;
-    background: rgba(15, 23, 42, 0.4);
-    border: 1px dashed rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-}
-.ev-empty i { font-size: 48px; color: #475569; margin-bottom: 16px; }
-.ev-empty p { color: #94a3b8; font-size: 16px; }
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: EVENT_LIST_SECTION -->
 <div class="ev-wrapper">
-    
+
     {% if messages %}
-        <div style="margin-bottom: 24px;">
-            {% for message in messages %}
-            <div style="padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 500; display:flex; align-items:center; gap:10px;
-                background: {% if message.tags == 'error' %}rgba(239,68,68,0.1){% else %}rgba(16,185,129,0.1){% endif %};
-                color: {% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %};
-                border: 1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.2){% else %}rgba(16,185,129,0.2){% endif %};">
-                <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
-                {{ message }}
-            </div>
-            {% endfor %}
+    <div>
+        {% for message in messages %}
+        <div>
+            <i
+                class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+            {{ message }}
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
     <div class="ev-header">
@@ -248,22 +32,22 @@
         <div class="ev-card">
             <div class="ev-img">
                 {% if event.image %}
-                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                <img src="{{ event.image.url }}" alt="{{ event.title }}">
                 {% else %}
-                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1e293b, #0f172a);">
-                        <i class="fas fa-calendar-star" style="font-size:40px; color:#334155;"></i>
-                    </div>
+                <div>
+                    <i class="fas fa-calendar-star"></i>
+                </div>
                 {% endif %}
-                
+
                 <div class="ev-date-badge">
                     <div class="day">{{ event.date|date:"d" }}</div>
                     <div class="month">{{ event.date|date:"M" }}</div>
                 </div>
             </div>
-            
+
             <div class="ev-content">
                 <h3>{{ event.title }}</h3>
-                
+
                 <div class="ev-meta">
                     <div class="ev-meta-item">
                         <i class="far fa-clock"></i> {{ event.time|time:"h:i A" }}
@@ -272,23 +56,25 @@
                         <i class="fas fa-map-marker-alt"></i> {{ event.location }}
                     </div>
                 </div>
-                
+
                 <div class="ev-desc">
                     {{ event.description|truncatewords:20 }}
                 </div>
-                
+
                 <div class="ev-actions">
-                    <form method="POST" action="{% url 'admin_panel:event_toggle_remember' event.id %}" style="margin:0;">
+                    <form method="POST" action="{% url 'admin_panel:event_toggle_remember' event.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="ev-btn ev-btn-remember {% if event.is_remembered %}active{% endif %}" title="Toggle Reminder">
+                        <button type="submit"
+                            class="ev-btn ev-btn-remember {% if event.is_remembered %}active{% endif %}"
+                            title="Toggle Reminder">
                             <i class="fas fa-thumbtack"></i>
                         </button>
                     </form>
-                    
+
                     <a href="{% url 'admin_panel:event_edit' event.id %}" class="ev-btn ev-btn-edit">
                         <i class="fas fa-edit"></i> Edit
                     </a>
-                    
+
                     <a href="{% url 'admin_panel:event_delete' event.id %}" class="ev-btn ev-btn-del">
                         <i class="fas fa-trash-alt"></i> Delete
                     </a>

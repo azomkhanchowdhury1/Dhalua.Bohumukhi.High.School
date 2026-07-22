@@ -2,140 +2,185 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: ADMIT_CARD_CSS */
-    .admit-card-container {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 3rem;
-        border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    .admit-card {
-        background: #fff;
-        color: #000;
-        padding: 40px;
-        border-radius: 8px;
-        border: 2px solid #333;
-        position: relative;
-    }
-    .admit-header {
-        text-align: center;
-        border-bottom: 2px solid #333;
-        padding-bottom: 20px;
-        margin-bottom: 30px;
-    }
-    .admit-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    .admit-info p {
-        margin-bottom: 10px;
-        font-size: 1.1rem;
-    }
-    .admit-info span {
-        font-weight: 700;
-    }
-    .student-photo {
-        width: 120px;
-        height: 140px;
-        border: 1px solid #000;
-        position: absolute;
-        top: 40px;
-        right: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-    @media print {
-        body * { visibility: hidden; }
-        .admit-card, .admit-card * { visibility: visible; }
-        .admit-card { position: absolute; left: 0; top: 0; width: 100%; border: none; }
-        .view-all-btn { display: none; }
-    }
-    /* END: ADMIT_CARD_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/admit_card.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_ADMIT_CARD_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Examination Admit Card</h1>
-        <p>Download or print your admit card for active examinations.</p>
+<div class="dashboard-wrapper admit-page">
+    <div class="admit-header">
+        <h2><i class="fas fa-id-card"></i> Examination Admit Card</h2>
+        <p class="subtitle">Download or print your admit card for active examinations.</p>
     </div>
 
-    <div class="admit-card-container">
-        {% if active_exams %}
-        <div style="margin-bottom:30px; display:flex; justify-content:space-between; align-items:center;">
-            <select style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:10px 20px; border-radius:12px; font-size:1rem;">
+    {% if active_exams %}
+    <!-- Exam selector + print button -->
+    <div class="exam-row">
+        <div class="exam-name">
+            <i class="fas fa-calendar-alt"></i>
+            <select class="exam-select" id="examSelect">
                 {% for exam in active_exams %}
-                <option>{{ exam.name }}</option>
+                <option value="{{ exam.id }}">{{ exam.name }}</option>
                 {% endfor %}
             </select>
-            <button onclick="window.print()" class="view-all-btn"><i class="fas fa-print"></i> Print Admit Card</button>
         </div>
-
-        <div class="admit-card" id="printableAdmitCard">
-            <div class="admit-header">
-                <h1 style="margin:0; font-size:1.8rem;">DHULA HIGH SCHOOL</h1>
-                <p style="margin:5px 0;">Established 1985 | Nangulkot, Cumilla</p>
-                <h2 style="margin-top:15px; text-decoration:underline;">ADMIT CARD</h2>
-            </div>
-
-            <div class="student-photo">
-                {% if student.profile_image %}
-                <img src="{{ student.profile_image.url }}" style="width:100%; height:100%; object-fit:cover;">
-                {% else %}
-                <span style="font-size:0.8rem; color:#666;">PHOTO</span>
-                {% endif %}
-            </div>
-
-            <div class="admit-grid">
-                <div class="admit-info">
-                    <p>Student Name: <span>{{ student.user.get_full_name }}</span></p>
-                    <p>Student ID: <span>{{ student.student_id }}</span></p>
-                    <p>Class: <span>{{ student.current_class }}</span></p>
-                    <p>Roll No: <span>{{ student.roll_number }}</span></p>
-                </div>
-                <div class="admit-info" style="padding-top: 50px;">
-                    <p>Session: <span>2024</span></p>
-                    <p>Status: <span>Regular</span></p>
-                </div>
-            </div>
-
-            <div style="margin-top:50px; border-top:1px dashed #333; padding-top:20px;">
-                <h3>Instructions for Candidates:</h3>
-                <ol style="font-size:0.9rem; line-height:1.6;">
-                    <li>Candidates must bring this Admit Card to the examination hall.</li>
-                    <li>Entry without an Admit Card is strictly prohibited.</li>
-                    <li>No electronic devices (Mobile, Calculator) are allowed inside the hall.</li>
-                    <li>Candidates should report 30 minutes before the exam starts.</li>
-                </ol>
-            </div>
-
-            <div style="margin-top:80px; display:flex; justify-content:space-between;">
-                <div style="text-align:center;">
-                    <div style="width:150px; border-bottom:1px solid #000; margin-bottom:5px;"></div>
-                    <p>Headmaster Signature</p>
-                </div>
-                <div style="text-align:center;">
-                    <div style="width:150px; border-bottom:1px solid #000; margin-bottom:5px;"></div>
-                    <p>Controller of Exams</p>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div style="text-align:center; padding:50px; color:#94a3b8;">
-            <i class="fas fa-exclamation-triangle" style="font-size:3rem; margin-bottom:20px; opacity:0.5;"></i>
-            <h3>No active examinations found to generate admit card.</h3>
-        </div>
-        {% endif %}
+        <button class="print-btn" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Admit Card
+        </button>
     </div>
+
+    <!-- Admit Card -->
+    <div class="admit-card" id="printableAdmitCard">
+
+        <!-- Header with School Info (Left) + Photo (Right) -->
+        <div class="admit-card-header">
+            <div class="header-flex">
+                <!-- Left: School Info -->
+                <div class="school-info">
+                    <div class="institute-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <p class="school-name">DHALUA BOHUMUKHI HIGH SCHOOL</p>
+                    </div>
+                    <p class="school-meta">Established 1985 &nbsp;|&nbsp; Nangulkot, Cumilla</p>
+                    <span class="badge-title">ADMIT CARD</span>
+                </div>
+
+                <!-- Right: Student Photo -->
+                <div class="header-photo">
+                    <div class="admit-photo">
+                        {% if student.photo %}
+                        <img src="{{ student.photo.url }}" alt="{{ student.user.get_full_name }}">
+                        {% else %}
+                        <div class="photo-placeholder">
+                            <i class="fas fa-user-circle"></i>
+                            <span>No Photo</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="photo-label">Student Photo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="admit-details">
+            <div class="detail-item">
+                <p class="field-label">Student Name</p>
+                <p class="field-value"><i class="fas fa-user"></i> {{ student.user.get_full_name }}</p>
+            </div>
+            <div class="detail-item">
+                <p class="field-label">Student ID</p>
+                <p class="field-value"><i class="fas fa-id-badge"></i> {{ student.student_id }}</p>
+            </div>
+            <div class="detail-item">
+                <p class="field-label">Class</p>
+                <p class="field-value"><i class="fas fa-chalkboard-teacher"></i> {{ student.current_class }}</p>
+            </div>
+            <div class="detail-item">
+                <p class="field-label">Roll No</p>
+                <p class="field-value"><i class="fas fa-sort-numeric-up"></i> {{ student.roll_number }}</p>
+            </div>
+            <div class="detail-item">
+                <p class="field-label">Session</p>
+                <p class="field-value"><i class="fas fa-calendar"></i> 2024-2025</p>
+            </div>
+            <div class="detail-item">
+                <p class="field-label">Status</p>
+                <p class="field-value"><i class="fas fa-check-circle"></i> Regular</p>
+            </div>
+        </div>
+
+        <!-- Exam Schedule -->
+        <div class="exam-details-table">
+            <h4><i class="fas fa-clock"></i> Examination Schedule</h4>
+            <div class="exam-schedule-grid">
+                <div class="schedule-item">
+                    <span class="s-label">Subject</span>
+                    <span class="s-value">Mathematics</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="s-label">Date</span>
+                    <span class="s-value">15 Jan 2025</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="s-label">Time</span>
+                    <span class="s-value">10:00 AM</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="s-label">Room</span>
+                    <span class="s-value">Hall-01</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-box">
+            <p class="instructions-title"><i class="fas fa-info-circle"></i> Instructions for Candidates</p>
+            <ol>
+                <li>Candidates must bring this Admit Card to the examination hall.</li>
+                <li>Entry without an Admit Card is strictly prohibited.</li>
+                <li>No electronic devices (Mobile, Calculator) are allowed inside the hall.</li>
+                <li>Candidates should report 30 minutes before the exam starts.</li>
+                <li>Bring your own pen, pencil, and other required stationery.</li>
+            </ol>
+        </div>
+
+        <!-- Signatures -->
+        <div class="signature-row">
+            <div class="signature-box">
+                <div class="signature-line">
+                    <p>Headmaster</p>
+                    <p>Signature</p>
+                </div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line">
+                    <p>Controller of Exams</p>
+                    <p>Signature</p>
+                </div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line">
+                    <p>Class Teacher</p>
+                    <p>Signature</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="admit-card-footer">
+            <i class="fas fa-check-circle"></i> This is a system-generated admit card. Verify the information before the
+            examination.
+        </div>
+
+    </div><!-- /admit-card -->
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="admit-empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>No active examinations found.</p>
+        <span>An admit card will be available once an examination is activated by your school.</span>
+    </div>
+    {% endif %}
 </div>
 <!-- END: STUDENT_ADMIT_CARD_SECTION -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // Exam select change handler
+    document.addEventListener('DOMContentLoaded', function () {
+        const examSelect = document.getElementById('examSelect');
+        if (examSelect) {
+            examSelect.addEventListener('change', function () {
+                console.log('Selected exam:', this.value);
+            });
+        }
+    });
+</script>
 {% endblock %}

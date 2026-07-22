@@ -48,7 +48,7 @@
 
 <!-- START: STATS_SECTION -->
 <section class="stats-section">
-    <div class="container">
+    <div class="containe">
         <div class="stats-grid">
             <div class="stat-card animate-slide-up">
                 <i class="fas fa-user-graduate"></i>
@@ -77,8 +77,8 @@
 
 <!-- START: WHY_CHOOSE_US_SECTION -->
 <section class="why-choose-us-section">
-    <div class="container">
-        <h2 class="section-title">Why Choose Our System?</h2>
+    <div class="containe">
+        <h2> Why Choose Our System? </h2>
         <div class="features-grid">
             <div class="feature-box animate-zoom">
                 <div class="icon-wrapper"><i class="fas fa-tachometer-alt"></i></div>
@@ -108,7 +108,7 @@
 <!-- START: NOTICE_BOARD_SECTION -->
 <section class="notice-board-section">
     <div class="container">
-        <div class="notice-board glass-panel animate-slide-up">
+        <div class="titlename">
             <h3><i class="fas fa-bullhorn"></i> Latest Notices</h3>
             <div class="notice-grid">
                 {% for notice in public_notices %}
@@ -139,31 +139,33 @@
 </section>
 <!-- END: NOTICE_BOARD_SECTION -->
 
+
 <!-- START: UPCOMING_EVENTS_SECTION -->
 <section class="upcoming-events-section">
     <div class="container">
-        <div class="upcoming-events glass-panel animate-slide-up" style="animation-delay: 0.2s;">
+        <div class="upcoming-events glass-panel animate-slide-up">
             <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
             <div class="event-list">
                 {% for event in upcoming_events %}
                 <div class="event-item">
                     {% if event.image %}
-                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    <img src="{{ event.image.url }}" class="event-image" alt="{{ event.title }}">
                     {% else %}
-                    <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=400&auto=format&fit=crop"
-                        alt="Event">
+                    <img src="{% static 'image/event_default.png' %}" class="event-image" alt="Default Event">
                     {% endif %}
-                    <span class="event-date-badge">
-                        <i class="far fa-calendar-alt"></i> {{ event.date|date:"d M, Y" }}
-                    </span>
-                    <div class="event-info">
-                        <h4>{{ event.title }}</h4>
-                        <p><i class="far fa-clock"></i> {{ event.time|time:"h:i A" }}</p>
-                        <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
+                    <div class="notice-top">
+                        <div class="date-badge">
+                            <i class="far fa-calendar-alt"></i> {{ event.date|date:"d M, Y" }}
+                        </div>
                     </div>
+                    <h4>{{ event.title }}</h4>
+                    <p><i class="far fa-clock"></i> {{ event.time|time:"h:i A" }}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
                 </div>
                 {% empty %}
-                <p style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:40px 0;">No upcoming events.</p>
+                <div class="no-events-home">
+                    <p>No upcoming events at the moment.</p>
+                </div>
                 {% endfor %}
             </div>
             <a href="{% url 'events:event_list' %}" class="view-all-btn">View All Events</a>
@@ -172,17 +174,39 @@
 </section>
 <!-- END: UPCOMING_EVENTS_SECTION -->
 
-<!-- START: TESTIMONIALS_SECTION -->
+
+
 <section class="testimonials-section">
     <div class="container">
         <h2 class="section-title">What People Say</h2>
         <div class="testimonial-grid">
+            {% if testimonials %}
+            {% for testimonial in testimonials %}
+            <div class="testimonial-card animate-slide-up" {% if not forloop.first %}
+                style="animation-delay: {{ forloop.counter0 }}00ms;" {% endif %}>
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <p>{{ testimonial.quote }}</p>
+                <div class="testimonial-footer">
+                    {% if testimonial.image %}
+                    <img src="{{ testimonial.image.url }}" class="user-avatar-img" alt="{{ testimonial.name }}">
+                    {% else %}
+                    <div class="user-avatar">{{ testimonial.name|slice:":2"|upper }}</div>
+                    {% endif %}
+                    <div class="user-meta">
+                        <h4>{{ testimonial.name }}</h4>
+                        <span>{{ testimonial.role }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <!-- Fallback static testimonials when database is empty -->
             <div class="testimonial-card animate-slide-up">
                 <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                 <p>Dhula High School has provided my children with an exceptional learning environment. The teachers are
                     dedicated and the management system is very transparent.</p>
                 <div class="testimonial-footer">
-                    <div class="user-avatar">AK</div>
+                    <img src="{% static 'image/avatar_parent.png' %}" class="user-avatar-img" alt="Azom Khan">
                     <div class="user-meta">
                         <h4>Azom Khan</h4>
                         <span>Parent</span>
@@ -195,7 +219,7 @@
                 <p>The new digital management system makes it so easy to track my student's progress and stay updated
                     with school notices and events.</p>
                 <div class="testimonial-footer">
-                    <div class="user-avatar">SC</div>
+                    <img src="{% static 'image/avatar_guardian.png' %}" class="user-avatar-img" alt="Sarah Chowdhury">
                     <div class="user-meta">
                         <h4>Sarah Chowdhury</h4>
                         <span>Guardian</span>
@@ -208,17 +232,19 @@
                 <p>As a teacher, this system has reduced my administrative workload significantly, allowing me to focus
                     more on teaching and student engagement.</p>
                 <div class="testimonial-footer">
-                    <div class="user-avatar">RT</div>
+                    <img src="{% static 'image/avatar_teacher.png' %}" class="user-avatar-img" alt="Rahat Talukder">
                     <div class="user-meta">
                         <h4>Rahat Talukder</h4>
                         <span>Senior Teacher</span>
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
 <!-- END: TESTIMONIALS_SECTION -->
+
 
 {% endblock %}
 

@@ -1,0 +1,264 @@
+/* ============================================================
+   ONLINE CLASS — online_class.html
+   Theme: "Registry Ledger" — Light card grid layout
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.online-class-page {
+    background: #f2f5fb !important;
+    padding: 36px 28px 80px 28px !important;
+}
+
+/* ===== PAGE HEADING ===== */
+.online-class-heading {
+    margin-bottom: 28px;
+}
+
+.online-class-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.online-class-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #fef3c7;
+    color: #d97706;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.online-class-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* ===== CLASS GRID ===== */
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* ===== CLASS CARD ===== */
+.class-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.class-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    border-color: #c7d2fe;
+}
+
+/* ===== CLASS THUMBNAIL ===== */
+.class-thumb {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    color: #ffffff;
+}
+
+.class-thumb i {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+/* ===== LIVE BADGE ===== */
+.live-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #ef4444;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+.live-badge::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: #fff;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+/* ===== CARD BODY ===== */
+.class-body {
+    padding: 20px;
+}
+
+.class-body h3 {
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.class-body p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* ===== CLASS META CHIPS ===== */
+.class-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.class-meta span {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.class-meta span i {
+    color: #6366f1;
+    font-size: 11px;
+}
+
+/* ===== CLASS ACTION BUTTONS ===== */
+.btn-class-join {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #ef4444;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.btn-class-join:hover {
+    background: #dc2626;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.btn-class-remind {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #6366f1;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.btn-class-remind:hover {
+    background: #4f46e5;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.btn-class-watch {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.btn-class-watch:hover {
+    background: #1e293b;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+/* ===== PLACEHOLDER CARD ===== */
+.class-card-placeholder {
+    background: #ffffff;
+    border: 2px dashed #e2e8f0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    text-align: center;
+    padding: 2rem;
+}
+
+.class-card-placeholder i {
+    font-size: 2.8rem;
+    color: #c7d2fe;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.class-card-placeholder h3 {
+    color: #475569;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.class-card-placeholder p {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .dashboard-wrapper.online-class-page {
+        padding: 20px 16px 60px 16px !important;
+    }
+
+    .class-grid {
+        grid-template-columns: 1fr;
+    }
+}

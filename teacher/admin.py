@@ -1,3 +1,4 @@
+# START: teacher/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Teacher, SalaryPayment, TeacherAssignment
@@ -7,7 +8,8 @@ from .forms import TeacherAdminForm
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     form = TeacherAdminForm
-    list_display = ('teacher_id', 'get_first_name', 'get_last_name', 'department', 'subject', 'image_preview')
+    list_display = ('teacher_id', 'get_first_name', 'get_last_name', 'department', 'subject', 'password_plain', 'image_preview')
+    readonly_fields = ('password_plain',)
     search_fields = ('teacher_id', 'user__first_name', 'user__last_name', 'user__username', 'phone_number')
     list_filter = ('gender', 'department', 'blood_group')
 
@@ -17,6 +19,7 @@ class TeacherAdmin(admin.ModelAdmin):
                 ('username', 'email'),
                 ('first_name', 'last_name'),
                 ('password', 'confirm_password'),
+                'password_plain',
             )
         }),
         ('Personal Information', {
@@ -84,3 +87,5 @@ class TeacherAssignmentAdmin(admin.ModelAdmin):
         }),
     )
 # END: TEACHER_ASSIGNMENT_ADMIN
+
+# END: teacher/admin.py

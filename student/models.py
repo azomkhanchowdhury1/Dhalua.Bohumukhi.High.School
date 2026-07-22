@@ -1,8 +1,10 @@
+# START: student/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile', null=True, blank=True)
+    password_plain = models.CharField(max_length=128, blank=True, null=True, verbose_name="Current Password")
     profile_image = models.ImageField(upload_to='students/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -21,6 +23,17 @@ class Student(models.Model):
         if self.user:
             return f"{self.user.first_name} {self.user.last_name} ({self.student_id})"
         return f"Student {self.student_id or self.id}"
+
+    @property
+    def full_info(self):
+        name = ""
+        if self.user:
+            name = self.user.get_full_name().strip()
+        if not name:
+            name = self.student_id or ""
+        roll = self.roll_number or "N/A"
+        klass = self.current_class or "N/A"
+        return f"{name} (Roll: {roll}, Class: {klass})"
 
 class ClassAttendance(models.Model):
     teacher = models.ForeignKey('teacher.Teacher', on_delete=models.SET_NULL, null=True, related_name='classes_taken')
@@ -111,3 +124,4 @@ class LibraryBook(models.Model):
     def __str__(self):
         return f"{self.title} by {self.author}"
 # END: LEARNING_TOOLS_MODELS
+# END: student/models.py

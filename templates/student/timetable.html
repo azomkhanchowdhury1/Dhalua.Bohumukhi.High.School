@@ -2,37 +2,64 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/timetable.css' %}">
+
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_TIMETABLE_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Class Timetable</h1>
-        <p>Stay organized with your weekly class schedule for {{ student.current_class }}.</p>
+<div class="dashboard-wrapper timetable-page" style="padding: 2rem 1rem;">
+    <div class="timetable-page-heading" style="text-align: center;">
+        <h1><i class="fas fa-calendar-alt"></i> Class Timetable</h1>
+        <p>Stay organized with your weekly class schedule for Class: <strong>{{ student.current_class }}</strong>
+            (Section: <strong>{{ student.section|default:"A" }}</strong>)</p>
     </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:30px; border:1px solid rgba(255, 255, 255, 0.1);">
-        <table style="width:100%; border-collapse:collapse; color:#fff;">
+    <div class="routine-table-card">
+        <table class="routine-grid-table">
             <thead>
-                <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                    <th style="padding:15px;">Day</th>
-                    <th style="padding:15px;">Subject</th>
-                    <th style="padding:15px;">Time</th>
-                    <th style="padding:15px;">Room</th>
+                <tr>
+                    <th>Day</th>
+                    <th>Period 1</th>
+                    <th>Period 2</th>
+                    <th>Period 3</th>
+                    <th>Period 4</th>
+                    <th>Period 5</th>
+                    <th>Period 6</th>
                 </tr>
             </thead>
             <tbody>
-                {% for entry in timetable %}
-                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <td style="padding:15px; font-weight:700; color:var(--home-primary);">{{ entry.get_day_display }}</td>
-                    <td style="padding:15px;">{{ entry.subject.name }}</td>
-                    <td style="padding:15px;">{{ entry.start_time|time:"H:i" }} - {{ entry.end_time|time:"H:i" }}</td>
-                    <td style="padding:15px; color:#64748b;">{{ entry.section.room_number|default:"—" }}</td>
+                {% for row in routine_data %}
+                <tr>
+                    <td class="day-header-cell">{{ row.day }}</td>
+                    {% for slot in row.slots %}
+                    <td class="slot-cell">
+                        {% if slot %}
+                        <div class="slot-card-routine {% if slot.is_remembered %}has-reminder{% endif %}">
+                            {% if slot.is_remembered %}
+                            <i class="fas fa-exclamation-circle reminder-badge-icon"
+                                title="Notice: {{ slot.reminder_note|default:'Prepare for class!' }}"></i>
+                            {% endif %}
+                            <div class="slot-subject" title="{{ slot.subject.name }}">{{ slot.subject.name }}</div>
+                            <div class="slot-time">
+                                <i class="far fa-clock"></i>
+                                {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
+                            </div>
+                            <div class="slot-room" title="Room Number">
+                                <i class="fas fa-door-open"></i>
+                                Rm: {{ slot.section.room_number|default:"—" }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="empty-slot-routine">
+                            <span>Off</span>
+                        </div>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
                 </tr>
-                {% empty %}
-                <tr><td colspan="4" style="text-align:center; padding:50px; color:#94a3b8;">No timetable entries found for your class.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -1,0 +1,246 @@
+/* ============================================================
+   ACTIVITY LOG STYLES — activity_log.html
+   Theme: "Registry Ledger" — Light card design with colored type accents.
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.activity-log-page {
+    background: #f2f5fb !important;
+    padding: 36px 28px 80px 28px !important;
+}
+
+.act-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Page Header / Hero */
+.act-hero {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.act-hero-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+}
+
+.act-hero h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+}
+
+.act-hero p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Stats Bar */
+.act-stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.act-stat-pill {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 30px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #4f46e5;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.act-stat-pill i {
+    font-size: 11px;
+}
+
+/* Feed Container */
+.act-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Each log row */
+.act-row {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 20px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
+}
+
+.act-row.type-profile { --accent: #6366f1; }
+.act-row.type-login   { --accent: #10b981; }
+.act-row.type-logout  { --accent: #f59e0b; }
+.act-row.type-fee     { --accent: #06b6d4; }
+.act-row.type-default { --accent: #8b5cf6; }
+
+.act-row:hover {
+    border-color: var(--accent, #6366f1);
+    transform: translateX(4px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.08), -3px 0 0 var(--accent, #6366f1);
+}
+
+/* Icon bubble */
+.act-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.act-icon.profile { background: #eef2ff;  color: #6366f1; }
+.act-icon.login   { background: #ecfdf5;  color: #10b981; }
+.act-icon.logout  { background: #fffbeb;  color: #f59e0b; }
+.act-icon.fee     { background: #ecfeff;  color: #06b6d4; }
+.act-icon.default { background: #f5f3ff;  color: #8b5cf6; }
+
+.act-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 3px 0;
+    line-height: 1.35;
+}
+
+.act-desc {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* Timestamp */
+.act-ts {
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.act-ts-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.act-ts-time i {
+    font-size: 11px;
+}
+
+/* Date separator badge */
+.act-date-sep {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 6px 0;
+}
+
+.act-date-sep span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+}
+
+.act-date-sep::before,
+.act-date-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+/* Empty state */
+.act-empty {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.act-empty i {
+    font-size: 48px;
+    color: #c7d2fe;
+    display: block;
+    margin-bottom: 18px;
+}
+
+.act-empty p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin: 0;
+}
+
+/* Animate in */
+@keyframes actFadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.act-row {
+    animation: actFadeUp 0.35s ease both;
+}
+
+/* Staggered animation delays */
+.act-feed .act-row:nth-child(1)  { animation-delay: 0ms; }
+.act-feed .act-row:nth-child(2)  { animation-delay: 40ms; }
+.act-feed .act-row:nth-child(3)  { animation-delay: 80ms; }
+.act-feed .act-row:nth-child(4)  { animation-delay: 120ms; }
+.act-feed .act-row:nth-child(5)  { animation-delay: 160ms; }
+.act-feed .act-row:nth-child(6)  { animation-delay: 200ms; }
+.act-feed .act-row:nth-child(7)  { animation-delay: 240ms; }
+.act-feed .act-row:nth-child(8)  { animation-delay: 280ms; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .dashboard-wrapper.activity-log-page {
+        padding: 20px 16px 60px 16px !important;
+    }
+
+    .act-row {
+        grid-template-columns: 44px 1fr;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .act-ts {
+        grid-column: 2;
+        text-align: left;
+        margin-top: 2px;
+    }
+}

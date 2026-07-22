@@ -1,0 +1,350 @@
+/* ============================================================
+   REVIEW SUBMISSIONS PAGE CSS — teacher/review_submissions.html
+   School Management System — Clean Registry Theme
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.review-wrapper {
+    padding: 5%;
+    animation: slideUpFade 0.4s ease-out;
+}
+
+/* ===== PAGE HEADER ===== */
+.review-header {
+    margin-bottom: 28px;
+    padding-left: 3%;
+}
+
+.review-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.review-header h1 i {
+    color: var(--indigo);
+}
+
+.review-header p {
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 0.95rem;
+    padding-bottom: 4%;
+    text-align: center;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
+.alert-success {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: #15803d;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== SUBMISSIONS GRID ===== */
+.submissions-grid {
+    display: grid;
+    gap: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ===== HOMEWORK CARD ===== */
+.hw-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+    border-left-width: 4px;
+}
+
+.hw-card:hover {
+    border-color: var(--indigo);
+    box-shadow: var(--shadow-md);
+}
+
+.hw-card.graded {
+    border-left-color: #16a34a;
+}
+
+.hw-card.pending {
+    border-left-color: #f59e0b;
+}
+
+/* ===== CARD CONTENT ===== */
+.hw-meta {
+    flex: 1;
+    min-width: 200px;
+}
+
+.hw-meta .hw-title {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.hw-meta .hw-student {
+    color: var(--indigo);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hw-meta .hw-sub {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+/* ===== CARD ACTIONS ===== */
+.hw-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-graded {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+/* ===== MARKS DISPLAY ===== */
+.marks-display {
+    color: var(--indigo);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* ===== GRADE BUTTON ===== */
+.btn-grade {
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-grade:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+/* ===== VIEW FILE LINK ===== */
+.btn-view-file {
+    color: var(--indigo);
+    font-size: 0.82rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-view-file:hover {
+    text-decoration: underline;
+}
+
+/* ===== GRADE MODAL ===== */
+.grade-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.grade-modal-overlay.active {
+    display: flex;
+}
+
+.grade-modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-xl, 0 25px 60px rgba(0, 0, 0, 0.2));
+    animation: slideUpFade 0.2s ease-out;
+}
+
+.grade-modal h3 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.grade-modal .student-tag {
+    color: var(--indigo);
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 0 0 26px;
+}
+
+.grade-modal label {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.grade-modal input,
+.grade-modal textarea {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin-bottom: 18px;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.grade-modal input:focus,
+.grade-modal textarea:focus {
+    outline: none;
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-submit-grade {
+    flex: 1;
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.btn-submit-grade:hover {
+    opacity: 0.88;
+}
+
+.btn-cancel-grade {
+    background: var(--paper);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    padding: 13px 20px;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-cancel-grade:hover {
+    background: var(--surface);
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 70px 40px;
+    background: var(--surface);
+    border: 2px dashed var(--line);
+    border-radius: var(--radius);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+    display: block;
+}
+
+.empty-state p {
+    color: var(--ink-soft);
+    margin: 4px 0;
+    font-size: 0.95rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .hw-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 18px;
+    }
+
+    .hw-status {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .grade-modal {
+        padding: 24px;
+    }
+}

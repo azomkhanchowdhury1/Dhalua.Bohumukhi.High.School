@@ -59,11 +59,11 @@
     <div class="container">
         <div class="eligibility-grid">
             <div class="eligibility-content animate-slide-right">
-                <h2 class="section-title" style="text-align: left;">Eligibility & Requirements</h2>
+                <h2 class="section-title" style="text-align: left;">Eligibility &amp; Requirements</h2>
                 <ul class="requirements-list">
                     <li><i class="fas fa-check-circle"></i> <strong>Class 6:</strong> Minimum GPA 4.00 in PEC or equivalent.</li>
                     <li><i class="fas fa-check-circle"></i> <strong>Class 9:</strong> Minimum GPA 4.50 in JSC or equivalent for Science, and 4.00 for Commerce/Humanities.</li>
-                    <li><i class="fas fa-check-circle"></i> Birth Certificate & 4 copies of passport-sized photos.</li>
+                    <li><i class="fas fa-check-circle"></i> Birth Certificate &amp; 4 copies of passport-sized photos.</li>
                     <li><i class="fas fa-check-circle"></i> Previous school leaving certificate (Transfer Certificate).</li>
                 </ul>
             </div>
@@ -83,7 +83,7 @@
                         <td>৳ 1,200</td>
                     </tr>
                     <tr>
-                        <td>Library & Lab</td>
+                        <td>Library &amp; Lab</td>
                         <td>৳ 1,500 / year</td>
                     </tr>
                     <tr>
@@ -101,49 +101,85 @@
 <section id="apply-now" class="apply-section glass-container">
     <div class="container">
         <h2 class="section-title animate-zoom">Online Application Form</h2>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div style="margin-bottom: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            {% for message in messages %}
+            <div style="padding: 14px 20px; border-radius: 12px; margin-bottom: 10px; font-weight: 500; display: flex; align-items: center; gap: 10px;
+                {% if message.tags == 'error' %}
+                background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);
+                {% else %}
+                background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);
+                {% endif %}">
+                <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="form-wrapper glass-panel animate-fade-up">
-            <form action="#" method="POST" id="admissionForm">
+            <form action="{% url 'admission' %}" method="POST" id="admissionForm">
                 {% csrf_token %}
                 <div class="form-grid">
                     <div class="input-group">
-                        <label>Student's Full Name</label>
-                        <input type="text" placeholder="Enter full name" required>
+                        <label>Student's Full Name <span style="color:#ef4444;">*</span></label>
+                        <input type="text" name="full_name" placeholder="Enter full name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address <span style="color:#ef4444;">*</span></label>
+                        <input type="email" name="email" placeholder="Active email address" required>
                     </div>
                     <div class="input-group">
                         <label>Date of Birth</label>
-                        <input type="date" required>
+                        <input type="date" name="date_of_birth">
                     </div>
                     <div class="input-group">
-                        <label>Applying for Class</label>
-                        <select required>
+                        <label>Applying for Class <span style="color:#ef4444;">*</span></label>
+                        <select name="applying_class" required>
                             <option value="">Select Class</option>
-                            <option value="6">Class 6</option>
-                            <option value="7">Class 7</option>
-                            <option value="8">Class 8</option>
-                            <option value="9">Class 9 (Science)</option>
-                            <option value="9">Class 9 (Commerce)</option>
-                            <option value="9">Class 9 (Humanities)</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 9 (Science)">Class 9 (Science)</option>
+                            <option value="Class 9 (Commerce)">Class 9 (Commerce)</option>
+                            <option value="Class 9 (Humanities)">Class 9 (Humanities)</option>
+                            <option value="Class 10 (Science)">Class 10 (Science)</option>
+                            <option value="Class 10 (Commerce)">Class 10 (Commerce)</option>
+                            <option value="Class 10 (Humanities)">Class 10 (Humanities)</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Previous School</label>
-                        <input type="text" placeholder="Name of previous school" required>
+                        <input type="text" name="previous_school" placeholder="Name of previous school">
                     </div>
                     <div class="input-group">
-                        <label>Parent's Name</label>
-                        <input type="text" placeholder="Father/Mother name" required>
+                        <label>Parent's / Guardian's Name</label>
+                        <input type="text" name="parent_name" placeholder="Father/Mother/Guardian name">
                     </div>
                     <div class="input-group">
-                        <label>Contact Number</label>
-                        <input type="tel" placeholder="Active phone number" required>
+                        <label>Contact Number <span style="color:#ef4444;">*</span></label>
+                        <input type="tel" name="contact_number" placeholder="Active phone number" required>
                     </div>
                 </div>
                 <div class="input-group full-width">
-                    <label>Address</label>
-                    <textarea rows="3" placeholder="Present address" required></textarea>
+                    <label>Present Address</label>
+                    <textarea rows="3" name="address" placeholder="Present address"></textarea>
                 </div>
+
+                <div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 15px 20px; margin-top: 20px; display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas fa-info-circle" style="color: #818cf8; margin-top: 2px; flex-shrink: 0;"></i>
+                    <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">
+                        After submitting, your application will be reviewed by the school admin.
+                        Once approved, your <strong>login credentials (username &amp; password)</strong> will be sent to your email address.
+                    </div>
+                </div>
+
                 <div class="submit-btn-wrapper">
-                    <button type="submit" class="btn-submit">Submit Application</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Submit Application
+                    </button>
                 </div>
             </form>
         </div>

@@ -1,0 +1,317 @@
+/* ============================================================
+   LIBRARY STATUS STYLES — library.html
+   Theme: "Registry Ledger" — Light card layout matching the
+   student dashboard design system.
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.library-page {
+    background: #f2f5fb !important;
+    padding: 36px 28px 80px 28px !important;
+}
+
+/* ===== PAGE HEADING ===== */
+/* START: PAGE_HEADING */
+.library-page-heading {
+    margin-bottom: 28px;
+}
+
+.library-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.library-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #ede9fe;
+    color: #7c3aed;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.library-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+/* END: PAGE_HEADING */
+
+/* ===== CONTAINER ===== */
+/* START: CONTAINER */
+.library-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+/* END: CONTAINER */
+
+/* ===== SEARCH BOX ===== */
+/* START: LIBRARY_SEARCH */
+.library-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 11px 16px;
+    margin-bottom: 24px;
+    transition: all 0.2s ease;
+}
+
+.library-search-box:focus-within {
+    border-color: #a5b4fc;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
+}
+
+.library-search-box i {
+    color: #94a3b8;
+    font-size: 15px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.library-search-box input {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    color: #0f172a !important;
+    font-size: 14px !important;
+    font-family: 'Outfit', sans-serif !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    width: auto !important;
+}
+
+.library-search-box input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* END: LIBRARY_SEARCH */
+
+/* ===== TABLE ===== */
+/* START: LIBRARY_TABLE */
+.library-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.library-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.library-table thead th {
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 13px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.library-table thead th:first-child {
+    border-radius: 12px 0 0 0;
+    width: 52px;
+}
+
+.library-table thead th:last-child {
+    border-radius: 0 12px 0 0;
+}
+
+.library-table tbody td {
+    padding: 15px 18px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.library-table tbody tr {
+    background: #ffffff;
+    transition: background 0.15s ease;
+}
+
+.library-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.library-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.book-index {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.book-title-cell {
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.book-title-cell i {
+    width: 32px;
+    height: 32px;
+    background: #ede9fe;
+    color: #7c3aed;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.book-copies {
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+/* END: LIBRARY_TABLE */
+
+/* ===== STATUS BADGES ===== */
+/* START: STATUS_BADGE */
+.book-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.book-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-available .dot {
+    background: #15803d;
+}
+
+.status-issued,
+.status-unavailable {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-issued .dot,
+.status-unavailable .dot {
+    background: #b91c1c;
+}
+
+.status-limited {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.status-limited .dot {
+    background: #a16207;
+}
+
+/* END: STATUS_BADGE */
+
+/* ===== EMPTY STATE ===== */
+/* START: EMPTY_STATE */
+.library-empty-state {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.library-empty-state i {
+    font-size: 48px;
+    color: #c4b5fd;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.library-empty-state p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.library-empty-state span {
+    font-size: 14px;
+    color: #94a3b8;
+    display: block;
+    max-width: 360px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* END: EMPTY_STATE */
+
+/* ===== RESULTS COUNT ===== */
+.library-results-info {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .dashboard-wrapper.library-page {
+        padding: 20px 16px 60px 16px !important;
+    }
+
+    .library-container {
+        padding: 18px;
+    }
+
+    .library-page-heading h1 {
+        font-size: 22px;
+    }
+
+    .library-search-box {
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .library-page-heading h1 {
+        font-size: 19px;
+    }
+}

@@ -2,258 +2,491 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
 <style>
-    /* START: TIMETABLE_ADMIN_CSS */
-    .timetable-table {
+    /* Premium Routine CSS */
+    .timetable-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .filter-bar-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .filter-bar-card label {
+        font-weight: 600;
+        color: #334155;
+    }
+    
+    .filter-bar-card select {
+        padding: 0.5rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #f8fafc;
+        color: #0f172a;
+        font-weight: 500;
+        cursor: pointer;
+        min-width: 200px;
+    }
+    
+    .routine-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 2rem;
+        align-items: start;
+    }
+    
+    @media (max-width: 1024px) {
+        .routine-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .routine-table-container {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+    }
+    
+    .routine-grid-table {
         width: 100%;
         border-collapse: collapse;
-        color: #fff;
+        min-width: 800px;
     }
-    .timetable-table th, .timetable-table td {
-        padding: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        text-align: center;
-        vertical-align: top;
-    }
-    .timetable-table th { background: rgba(255, 255, 255, 0.02); color: #94a3b8; }
     
-    /* Premium Slot Card Styling */
-    .slot-card {
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #e2e8f0;
-        padding: 12px;
-        border-radius: 12px;
+    .routine-grid-table th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
         font-size: 0.85rem;
-        min-width: 160px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: center;
+    }
+    
+    .routine-grid-table th:first-child {
+        text-align: left;
+        border-top-left-radius: 8px;
+    }
+    
+    .routine-grid-table th:last-child {
+        border-top-right-radius: 8px;
+    }
+    
+    .routine-grid-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+        text-align: center;
+    }
+    
+    .day-header-cell {
+        background: #f8fafc;
+        font-weight: 700;
+        color: #1e293b;
+        text-align: left !important;
+        font-size: 0.95rem;
+        border-right: 2px solid #e2e8f0;
+        width: 120px;
+    }
+    
+    .slot-cell {
+        min-width: 120px;
+        transition: all 0.2s;
+    }
+    
+    .slot-cell:hover {
+        background-color: #f1f5f9;
+    }
+    
+    .slot-card-routine {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid #22c55e;
+        border-radius: 8px;
+        padding: 8px;
         text-align: left;
         position: relative;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        margin-bottom: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    .slot-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(99, 102, 241, 0.4);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    
+    .slot-card-routine.has-reminder {
+        background: #fffbeb;
+        border-color: #fef3c7;
+        border-left-color: #f59e0b;
     }
-    .slot-card.remembered {
-        border-color: rgba(16, 185, 129, 0.4);
-        background: rgba(16, 185, 129, 0.05);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-    }
-    .slot-card.remembered::before {
-        content: '\f02e'; /* font awesome bookmark icon */
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        position: absolute;
-        top: -6px;
-        right: 12px;
-        color: #10b981;
-        font-size: 1.1rem;
-    }
+    
     .slot-subject {
         font-weight: 700;
-        color: #ffffff;
-        font-size: 0.9rem;
-        display: block;
-        margin-bottom: 2px;
+        color: #14532d;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+    
+    .slot-card-routine.has-reminder .slot-subject {
+        color: #78350f;
+    }
+    
     .slot-time {
-        color: #a5b4fc;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 2px;
-    }
-    .slot-section {
-        color: #94a3b8;
         font-size: 0.75rem;
+        color: #166534;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         margin-bottom: 6px;
     }
-    .slot-actions {
-        display: flex;
-        gap: 10px;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        padding-top: 8px;
-        margin-top: auto;
+    
+    .slot-card-routine.has-reminder .slot-time {
+        color: #92400e;
     }
-    .slot-actions a {
-        color: #64748b;
-        font-size: 0.85rem;
-        transition: all 0.2s ease;
+    
+    .slot-actions-routine {
+        display: flex;
+        gap: 6px;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 4px;
+    }
+    
+    .slot-actions-routine a {
+        color: #475569;
+        font-size: 0.75rem;
+        transition: color 0.2s;
+    }
+    
+    .slot-actions-routine a:hover {
+        color: #0f172a;
+    }
+    
+    .slot-actions-routine a.delete-btn-routine:hover {
+        color: #ef4444;
+    }
+    
+    .empty-slot-routine {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 65px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        color: #94a3b8;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
         text-decoration: none;
     }
-    .slot-actions a:hover {
-        transform: scale(1.1);
-    }
-    .slot-actions a.edit-btn:hover { color: #6366f1; }
-    .slot-actions a.delete-btn:hover { color: #ef4444; }
-    .slot-actions a.remember-btn:hover { color: #10b981; }
-    .slot-actions a.remembered-active { color: #10b981; }
     
-    .slot-reminder-tooltip {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-        font-size: 0.75rem;
-        padding: 6px 8px;
-        border-radius: 6px;
-        margin-top: 4px;
-        border: 1px solid rgba(16, 185, 129, 0.2);
+    .empty-slot-routine:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+    
+    .empty-slot-routine i {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    
+    .empty-slot-routine:hover i {
+        opacity: 1;
+    }
+    
+    /* Form & Reminder Sidebar styling */
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+    
+    .sidebar-card h3 {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.75rem;
         display: flex;
         align-items: center;
+        gap: 8px;
+    }
+    
+    .form-group-routine {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group-routine label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: #475569;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    
+    .form-group-routine select,
+    .form-group-routine input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #0f172a;
+        background: #f8fafc;
+        outline: none;
+        transition: border 0.2s;
+    }
+    
+    .form-group-routine select:focus,
+    .form-group-routine input:focus {
+        border-color: #6366f1;
+        background: #ffffff;
+    }
+    
+    .btn-submit-routine {
+        width: 100%;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 6px;
     }
-    /* END: TIMETABLE_ADMIN_CSS */
+    
+    .btn-submit-routine:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px -1px rgba(79, 70, 229, 0.3);
+    }
+    
+    .reminder-item {
+        background: #f8fafc;
+        border-left: 3px solid #6366f1;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+    }
+    
+    .reminder-item strong {
+        color: #1e293b;
+    }
+    
+    .reminder-item div {
+        color: #64748b;
+        margin-top: 2px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- START: ACADEMICS_TIMETABLE_SECTION -->
 <div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Class Timetable</h1>
-        <p>Schedule classes and periods for each section.</p>
+    <div class="timetable-header">
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: #0f172a; margin: 0;"><i class="fas fa-calendar-alt" style="color: #6366f1;"></i> Class Routine Management</h1>
+            <p style="color: #64748b; margin-top: 4px; margin-bottom: 0;">Create and display the routine table spanning Sunday to Thursday with 6 periods daily.</p>
+        </div>
     </div>
 
-    <!-- Add Slot Form -->
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); margin-bottom:30px;">
-        <h3>Add Timetable Slot</h3>
-        <form method="POST" style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px; align-items:flex-end;">
-            {% csrf_token %}
-            <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                <label style="color:#94a3b8; font-size:0.8rem;">Section</label>
-                <select name="section_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-                    {% for sec in sections %}
-                    <option value="{{ sec.id }}">{{ sec }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                <label style="color:#94a3b8; font-size:0.8rem;">Subject</label>
-                <select name="subject_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-                    {% for sub in subjects %}
-                    <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                <label style="color:#94a3b8; font-size:0.8rem;">Day</label>
-                <select name="day" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-                    <option>Sunday</option><option>Monday</option><option>Tuesday</option>
-                    <option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option>
-                </select>
-            </div>
-            <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                <label style="color:#94a3b8; font-size:0.8rem;">Start Time</label>
-                <input type="time" name="start_time" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-            </div>
-            <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                <label style="color:#94a3b8; font-size:0.8rem;">End Time</label>
-                <input type="time" name="end_time" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-            </div>
-            <button type="submit" class="view-all-btn" style="margin-top:0; padding:10px;">Add Slot</button>
+    <!-- Feedback messages -->
+    {% if messages %}
+    <div style="margin-bottom: 1.5rem;">
+        {% for message in messages %}
+        <div style="padding: 1rem; border-radius: 8px; font-weight: 500; display: flex; align-items: center; gap: 8px; {% if message.tags == 'error' %}background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2;{% else %}background: #f0fdf4; color: #166534; border: 1px solid #dcfce7;{% endif %}">
+            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Filter Bar -->
+    <div class="filter-bar-card">
+        <label for="filter_section"><i class="fas fa-graduation-cap" style="color: #6366f1;"></i> Select Section:</label>
+        <form method="GET" action="" id="filterForm">
+            <select name="filter_section" id="filter_section" onchange="document.getElementById('filterForm').submit()">
+                {% for sec in sections %}
+                <option value="{{ sec.id }}" {% if filter_section == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec }}</option>
+                {% endfor %}
+            </select>
         </form>
     </div>
 
-    <!-- Two-Column Layout: Timetable Display & Active Reminders -->
-    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-        <!-- Left Side: Timetable Display (72%) -->
-        <div style="flex: 3; min-width: 320px; background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); overflow-x:auto;">
-            <table class="timetable-table">
+    <div class="routine-layout">
+        <!-- LEFT: Routine Table Grid -->
+        <div class="routine-table-container">
+            <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-weight: 700; color: #0f172a; font-size: 1.1rem;">
+                    {% if selected_section_obj %}
+                        Weekly Schedule: {{ selected_section_obj }}
+                    {% else %}
+                        Select a Section
+                    {% endif %}
+                </h3>
+            </div>
+            
+            <table class="routine-grid-table">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">Day</th>
-                        <th style="width: 85%;">Timetable Slots</th>
+                        <th>Day</th>
+                        <th>Period 1</th>
+                        <th>Period 2</th>
+                        <th>Period 3</th>
+                        <th>Period 4</th>
+                        <th>Period 5</th>
+                        <th>Period 6</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for day in days %}
+                    {% for row in routine_data %}
                     <tr>
-                        <td style="font-weight:700; color:#94a3b8;">{{ day }}</td>
-                        <td style="display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-start;">
-                            {% for slot in timetables %}
-                                {% if slot.day == day %}
-                                <div class="slot-card {% if slot.is_remembered %}remembered{% endif %}">
-                                    <span class="slot-subject">{{ slot.subject.name }}</span>
-                                    <span class="slot-time"><i class="far fa-clock"></i> {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}</span>
-                                    <span class="slot-section"><i class="fas fa-graduation-cap"></i> {{ slot.section }}</span>
-                                    
-                                    {% if slot.is_remembered and slot.reminder_note %}
-                                    <div class="slot-reminder-tooltip" title="Reminder: {{ slot.reminder_note }}">
-                                        <i class="fas fa-info-circle"></i> {{ slot.reminder_note|truncatechars:18 }}
-                                    </div>
-                                    {% endif %}
-                                    
-                                    <div class="slot-actions">
-                                        <a href="{% url 'admin_panel:timetable_edit' slot.id %}" class="edit-btn" title="Edit Slot"><i class="fas fa-edit"></i></a>
-                                        <a href="{% url 'admin_panel:timetable_delete' slot.id %}" class="delete-btn" title="Delete Slot"><i class="fas fa-trash-alt"></i></a>
-                                        <a href="{% url 'admin_panel:timetable_toggle_remember' slot.id %}" class="remember-btn {% if slot.is_remembered %}remembered-active{% endif %}" title="Toggle Reminder"><i class="fas fa-bookmark"></i></a>
-                                    </div>
+                        <td class="day-header-cell">{{ row.day }}</td>
+                        {% for slot in row.slots %}
+                        <td class="slot-cell">
+                            {% if slot %}
+                            <div class="slot-card-routine {% if slot.is_remembered %}has-reminder{% endif %}">
+                                <div class="slot-subject" title="{{ slot.subject.name }}">{{ slot.subject.name }}</div>
+                                <div class="slot-time">
+                                    <i class="far fa-clock"></i>
+                                    {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
                                 </div>
-                                {% endif %}
-                            {% endfor %}
+                                <div class="slot-actions-routine">
+                                    <a href="{% url 'admin_panel:timetable_edit' slot.id %}" title="Edit Slot"><i class="fas fa-edit"></i></a>
+                                    <a href="{% url 'admin_panel:timetable_delete' slot.id %}" class="delete-btn-routine" title="Delete Slot"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="{% url 'admin_panel:timetable_toggle_remember' slot.id %}" style="{% if slot.is_remembered %}color: #f59e0b;{% endif %}" title="Toggle Reminder"><i class="fas fa-bookmark"></i></a>
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="?filter_section={{ filter_section }}&day={{ row.day }}" class="empty-slot-routine" title="Add Slot Here">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Slot</span>
+                            </a>
+                            {% endif %}
                         </td>
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <!-- Right Side: Active Reminders Panel (28%) -->
-        <div style="flex: 1; min-width: 280px; background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column;">
-            <h3 style="color:#ffffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.15rem;">
-                <i class="fas fa-bell" style="color: #10b981;"></i> Active Reminders
-            </h3>
-            <div id="reminders-list" style="display: flex; flex-direction: column; gap: 15px;">
-                {% for slot in timetables %}
-                    {% if slot.is_remembered %}
-                    <div class="reminder-item" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 12px; transition: all 0.3s ease;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                            <strong style="color: #ffffff; font-size: 0.9rem;">{{ slot.subject.name }}</strong>
-                            <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: 600;">{{ slot.day }}</span>
+        <!-- RIGHT: Form and Reminders -->
+        <div>
+            <!-- Add Slot Form -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-plus-circle" style="color: #22c55e;"></i> Add Routine Slot</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="form-group-routine">
+                        <label>Class Section</label>
+                        <select name="section_id" required>
+                            {% for sec in sections %}
+                            <option value="{{ sec.id }}" {% if filter_section == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group-routine">
+                        <label>Subject</label>
+                        <select name="subject_id" required>
+                            {% for sub in subjects %}
+                            <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group-routine">
+                        <label>Day</label>
+                        <select name="day" required>
+                            <option {% if request.GET.day == 'Sunday' %}selected{% endif %}>Sunday</option>
+                            <option {% if request.GET.day == 'Monday' %}selected{% endif %}>Monday</option>
+                            <option {% if request.GET.day == 'Tuesday' %}selected{% endif %}>Tuesday</option>
+                            <option {% if request.GET.day == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+                            <option {% if request.GET.day == 'Thursday' %}selected{% endif %}>Thursday</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem;">
+                        <div class="form-group-routine" style="margin-bottom: 0;">
+                            <label>Start Time</label>
+                            <input type="time" name="start_time" required>
                         </div>
-                        <div style="color: #a5b4fc; font-size: 0.75rem; margin-bottom: 8px;">
-                            {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }} | {{ slot.section }}
+                        <div class="form-group-routine" style="margin-bottom: 0;">
+                            <label>End Time</label>
+                            <input type="time" name="end_time" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit-routine">
+                        <i class="fas fa-plus"></i> Save Slot
+                    </button>
+                </form>
+            </div>
+
+            <!-- Active Reminders -->
+            <div class="sidebar-card">
+                <h3><i class="fas fa-bell" style="color: #eab308;"></i> Active Notices</h3>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    {% for slot in timetables %}
+                    {% if slot.is_remembered %}
+                    <div class="reminder-item">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>{{ slot.subject.name }}</strong>
+                            <span style="font-size: 0.7rem; color: #f59e0b; font-weight: 700;">{{ slot.day }}</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #475569;">
+                            {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
                         </div>
                         {% if slot.reminder_note %}
-                        <div style="color: #cbd5e1; font-size: 0.8rem; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; border-left: 3px solid #10b981; word-break: break-word;">
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 6px; margin-top: 4px; font-style: italic; color: #475569; font-size: 0.75rem;">
                             {{ slot.reminder_note }}
-                        </div>
-                        {% else %}
-                        <div style="color: #94a3b8; font-size: 0.75rem; font-style: italic;">
-                            No message attached.
                         </div>
                         {% endif %}
                     </div>
-                    {% endif %}
-                {% endfor %}
-                <div id="no-reminders-message" style="color: #94a3b8; font-size: 0.85rem; text-align: center; padding: 20px; display: none;">
-                    No active reminders.
+                    {% empty %}
+                    <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 1rem 0;">
+                        No active notices.
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    // START: TIMETABLE_REMINDERS_TOGGLE_JS
-    document.addEventListener("DOMContentLoaded", function() {
-        const items = document.querySelectorAll('#reminders-list .reminder-item');
-        const message = document.getElementById('no-reminders-message');
-        if (items.length === 0 && message) {
-            message.style.display = 'block';
-        }
-    });
-    // END: TIMETABLE_REMINDERS_TOGGLE_JS
-</script>
-<!-- END: ACADEMICS_TIMETABLE_SECTION -->
 {% endblock %}

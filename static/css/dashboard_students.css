@@ -1,0 +1,176 @@
+/* START: DASHBOARD_STUDENTS_CSS */
+/* Theme: "The Registrar's Ledger" — matches the rest of the site.
+   Student module specific styles — attendance summary */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Special+Elite&display=swap');
+
+:root {
+    --paper: #f6f1e3;
+    --paper-alt: #ece2c9;
+    --card-bg: #fbf7ec;
+    --ink: #21303a;
+    --ink-soft: #5b6b70;
+    --gold: #a97a35;
+    --seal: #9c3d2e;
+    --forest: #3f5d4c;
+    --line: rgba(33, 48, 58, 0.18);
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-stamp: 'Special Elite', 'Courier New', monospace;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* ===== ATTENDANCE SUMMARY ===== */
+.attn-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.attn-box {
+    background: var(--card-bg);
+    border-radius: 4px;
+    padding: 16px 10px;
+    text-align: center;
+    border: 1.5px solid;
+    position: relative;
+}
+
+.attn-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+}
+
+.attn-box.present { border-color: var(--forest); }
+.attn-box.present::before { background: var(--forest); }
+
+.attn-box.absent { border-color: var(--seal); }
+.attn-box.absent::before { background: var(--seal); }
+
+.attn-box.total { border-color: var(--ink); }
+.attn-box.total::before { background: var(--ink); }
+
+.attn-box.late { border-color: var(--gold); }
+.attn-box.late::before { background: var(--gold); }
+
+.attn-box h4 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.attn-box.present h4 { color: var(--forest); }
+.attn-box.absent h4  { color: var(--seal); }
+.attn-box.total h4   { color: var(--ink); }
+.attn-box.late h4    { color: var(--gold); }
+
+.attn-box p {
+    font-family: var(--font-stamp);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+
+/* Attendance Progress Bar */
+.attn-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.attn-bar-label {
+    font-family: var(--font-stamp);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+}
+
+.attn-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--paper-alt);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.attn-progress-fill {
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--forest),
+        var(--forest) 6px,
+        var(--gold) 6px,
+        var(--gold) 12px
+    );
+    border-radius: 0;
+    transition: width 1s ease;
+}
+
+.attn-bar-percent {
+    font-family: var(--font-stamp);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--forest);
+    white-space: nowrap;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .attn-summary-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== STUDENT DASHBOARD SPECIFIC OVERRIDES ===== */
+.stat-icon.attendance {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.stat-icon.courses {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.stat-icon.homework {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.stat-icon.results {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+.module-header.profile {
+    color: #6366f1;
+}
+
+.module-header.academics {
+    color: #0ea5e9;
+}
+
+.module-header.exams {
+    color: #f59e0b;
+}
+
+.module-header.finance {
+    color: #10b981;
+}
+
+.module-header.learning {
+    color: #8b5cf6;
+}
+
+.module-header.notices {
+    color: #ec4899;
+}
+
+/* END: DASHBOARD_STUDENTS_CSS */

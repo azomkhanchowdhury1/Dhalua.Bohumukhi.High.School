@@ -1,0 +1,275 @@
+/* ============================================================
+   PAYMENT HISTORY — fees_history.html
+   Theme: "Registry Ledger" — Light metrics + table layout
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.history-page {
+    background: #ffffff !important;
+    padding: 36px 28px 80px 28px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* ===== PAGE HEADING ===== */
+.history-page-heading {
+    margin-bottom: 28px;
+    width: 100%;
+    text-align: center;
+}
+
+.history-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.history-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.history-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+/* ===== EXISTING STYLES (মাঝখানে সাজানো) ===== */
+.history-wrapper {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+
+.history-header {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.history-header h2 {
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.history-header .subtitle {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 2px 0 0;
+}
+
+/* metric cards */
+.history-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 1.25rem;
+}
+
+.metric-card {
+    background: #f1efe8;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.metric-card .metric-label {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.metric-card .metric-label i {
+    font-size: 14px;
+}
+
+.metric-card .metric-value {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+/* table card */
+.history-table-card {
+    background: #ffffff;
+    border: 0.5px solid #e5e5e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.history-table th {
+    color: #6b6b68;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 10px 12px;
+    border-bottom: 0.5px solid #e5e5e0;
+    text-align: center;
+}
+
+.history-table th:nth-child(1) {
+    width: 40px;
+}
+
+.history-table th:nth-child(3) {
+    text-align: center;
+}
+
+.history-table th:nth-child(6) {
+    text-align: center;
+}
+
+.history-table td {
+    padding: 12px;
+    border-bottom: 0.5px solid #e5e5e0;
+    color: #1a1a1a;
+    text-align: center;
+}
+
+.history-table td:nth-child(3) {
+    text-align: center;
+    font-weight: 500;
+}
+
+.history-table td:nth-child(6) {
+    text-align: center;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.history-table tbody tr:hover td {
+    background: #faf9f6;
+}
+
+/* status badges for populated rows */
+.badge-success {
+    display: inline-block;
+    background: #eaf3de;
+    color: #27500a;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.badge-pending {
+    display: inline-block;
+    background: #faeeda;
+    color: #633806;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.badge-failed {
+    display: inline-block;
+    background: #fcebeb;
+    color: #791f1f;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* empty state */
+.history-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.history-empty i {
+    font-size: 32px;
+    color: #999790;
+}
+
+.history-empty p {
+    font-size: 14px;
+    color: #6b6b68;
+    margin: 12px 0 4px;
+}
+
+.history-empty a {
+    font-size: 14px;
+    color: #378ADD;
+    text-decoration: none;
+}
+
+.history-empty a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Dark mode override — সবসময় সাদা ব্যাগরাউন্ড থাকবে ===== */
+@media (prefers-color-scheme: dark) {
+
+    .dashboard-wrapper.history-page {
+        background: #ffffff !important;
+    }
+
+    .history-header h2,
+    .metric-card .metric-value,
+    .history-table td {
+        color: #1a1a1a !important;
+    }
+
+    .history-header .subtitle,
+    .metric-card .metric-label,
+    .history-table th,
+    .history-empty p {
+        color: #6b6b68 !important;
+    }
+
+    .metric-card {
+        background: #f1efe8 !important;
+    }
+
+    .history-table-card {
+        background: #ffffff !important;
+        border-color: #e5e5e0 !important;
+    }
+
+    .history-table th,
+    .history-table td {
+        border-color: #e5e5e0 !important;
+    }
+
+    .history-table tbody tr:hover td {
+        background: #faf9f6 !important;
+    }
+
+    .history-empty i {
+        color: #999790 !important;
+    }
+}

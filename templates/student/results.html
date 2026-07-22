@@ -2,48 +2,56 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/view_resuilts.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_RESULTS_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Examination Results</h1>
+<div class="dashboard-wrapper results-page">
+    <div class="results-page-heading">
+        <h1><i class="fas fa-poll"></i> Examination Results</h1>
         <p>View your performance across different exams and subjects.</p>
     </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:30px; border:1px solid rgba(255, 255, 255, 0.1);">
-        <table style="width:100%; border-collapse:collapse; color:#fff;">
+    <div class="results-card">
+        {% if results %}
+        <table class="results-table">
             <thead>
-                <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                    <th style="padding:15px;">Exam</th>
-                    <th style="padding:15px;">Subject</th>
-                    <th style="padding:15px;">Marks</th>
-                    <th style="padding:15px;">Grade</th>
-                    <th style="padding:15px;">Status</th>
+                <tr>
+                    <th>Exam</th>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for res in results %}
-                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <td style="padding:15px; font-weight:600;">{{ res.exam.name }}</td>
-                    <td style="padding:15px;">{{ res.subject.name }}</td>
-                    <td style="padding:15px;">{{ res.marks_obtained }}</td>
-                    <td style="padding:15px;"><span style="background:rgba(99,102,241,0.2); color:var(--home-primary); padding:4px 12px; border-radius:20px; font-weight:700;">{{ res.grade.name }}</span></td>
-                    <td style="padding:15px;">
+                <tr>
+                    <td>{{ res.exam.name }}</td>
+                    <td>{{ res.subject.name }}</td>
+                    <td>{{ res.marks_obtained }}</td>
+                    <td><span class="badge-grade">{{ res.grade.name }}</span></td>
+                    <td>
                         {% if res.grade.point > 0 %}
-                        <span style="color:#10b981;"><i class="fas fa-check-circle"></i> Passed</span>
+                        <span class="badge-passed">Passed</span>
                         {% else %}
-                        <span style="color:#ef4444;"><i class="fas fa-times-circle"></i> Failed</span>
+                        <span class="badge-failed">Failed</span>
                         {% endif %}
                     </td>
                 </tr>
-                {% empty %}
-                <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No results published yet.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div>
+            <i class="fas fa-clipboard-list"></i>
+            <p>No results published yet.</p>
+            <span>Your exam results will appear here once they are published by your teacher.</span>
+        </div>
+        {% endif %}
     </div>
 </div>
 <!-- END: STUDENT_RESULTS_SECTION -->

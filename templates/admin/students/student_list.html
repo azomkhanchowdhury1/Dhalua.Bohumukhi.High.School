@@ -1,80 +1,10 @@
+<!-- START: templates/admin/students/student_list.html -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: STUDENT_LIST_CSS */
-    .management-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    .search-bar {
-        display: flex;
-        gap: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 10px 20px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .search-bar input {
-        background: transparent;
-        border: none;
-        color: #fff;
-        outline: none;
-        width: 250px;
-    }
-    .student-table-container {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 24px;
-        padding: 2rem;
-        overflow-x: auto;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        color: #fff;
-    }
-    th {
-        text-align: left;
-        padding: 15px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        color: #94a3b8;
-        font-weight: 600;
-    }
-    td {
-        padding: 15px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .status-pill {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-    .status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .action-btns {
-        display: flex;
-        gap: 10px;
-    }
-    .btn-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-        transition: all 0.3s;
-    }
-    .btn-icon:hover { background: var(--home-primary); }
-    /* END: STUDENT_LIST_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -89,7 +19,7 @@
             <form class="search-bar" method="GET">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" placeholder="Search by name or ID..." value="{{ query }}">
-                <button type="submit" style="display:none"></button>
+                <button type="submit"></button>
             </form>
         </div>
     </div>
@@ -103,6 +33,7 @@
                     <th>Class</th>
                     <th>Roll</th>
                     <th>Gender</th>
+                    <th>Password</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -115,16 +46,17 @@
                     <td>Class {{ student.current_class }}</td>
                     <td>{{ student.roll_number|default:"-" }}</td>
                     <td>{{ student.gender }}</td>
+                    <td><code>{{ student.password_plain|default:"—" }}</code></td>
                     <td><span class="status-pill status-active">Active</span></td>
                     <td class="action-btns">
                         <a href="#" class="btn-icon" title="View"><i class="fas fa-eye"></i></a>
                         <a href="#" class="btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
-                        <a href="#" class="btn-icon" title="Delete" style="color: #ef4444;"><i class="fas fa-trash"></i></a>
+                        <a href="#" class="btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 50px;">No students found.</td>
+                    <td colspan="8">No students found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -133,3 +65,4 @@
 </div>
 <!-- END: STUDENT_LIST_SECTION -->
 {% endblock %}
+<!-- END: templates/admin/students/student_list.html -->

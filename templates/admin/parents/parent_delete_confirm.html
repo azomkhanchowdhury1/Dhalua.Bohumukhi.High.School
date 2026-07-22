@@ -1,0 +1,68 @@
+<!-- START: templates/admin/parents/parent_delete_confirm.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<!-- START: PARENT_DELETE_CONFIRM_SECTION -->
+<div class="dashboard-wrapper">
+    <div class="delete-container">
+        <div class="delete-card">
+            <div class="delete-icon-ring">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+
+            <h2>নিশ্চিতভাবে মুছে ফেলবেন?</h2>
+            <p>এই অভিভাবককে মুছে ফেলার পর আর পুনরুদ্ধার করা যাবে না।</p>
+
+            <!-- Parent Info Preview -->
+            <div class="parent-info-box">
+                {% if parent.profile_image %}
+                <img src="{{ parent.profile_image.url }}" alt="">
+                {% else %}
+                <div class="info-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                {% endif %}
+
+                <div class="info-text">
+                    <div class="name">{{ parent.user.get_full_name }}</div>
+                    <div class="meta">#{{ parent.parent_id|default:"N/A" }} &nbsp;·&nbsp; {{ parent.relationship_type|default:"সম্পর্ক জানা নেই" }}</div>
+                    <div class="meta">{{ parent.user.email }}</div>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="warning-list">
+                <p>
+                    <i class="fas fa-exclamation-circle"></i> নিচের সকল ডেটা স্থায়ীভাবে মুছে যাবে:
+                </p>
+
+                <ul>
+                    <li>অভিভাবকের সম্পূর্ণ প্রোফাইল ও ব্যক্তিগত তথ্য</li>
+                    <li>লগইন অ্যাকাউন্ট (username ও পাসওয়ার্ড)</li>
+                </ul>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="btn-row">
+                    <a href="{% url 'admin_panel:parent_list' %}" class="btn-cancel-link">
+                        <i class="fas fa-times"></i> বাতিল করুন
+                    </a>
+
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fas fa-trash-alt"></i> হ্যাঁ, মুছে ফেলুন
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- END: PARENT_DELETE_CONFIRM_SECTION -->
+{% endblock %}
+<!-- END: templates/admin/parents/parent_delete_confirm.html -->

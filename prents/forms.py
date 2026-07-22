@@ -1,3 +1,4 @@
+# START: prents/forms.py
 from django import forms
 from django.contrib.auth.models import User
 from .models import Parent
@@ -55,6 +56,7 @@ class ParentAdminForm(forms.ModelForm):
                 last_name=self.cleaned_data['last_name']
             )
             parent.user = user
+            parent.password_plain = self.cleaned_data['password']
         else:
             user = parent.user
             user.username = self.cleaned_data['username']
@@ -63,8 +65,11 @@ class ParentAdminForm(forms.ModelForm):
             user.last_name = self.cleaned_data['last_name']
             if self.cleaned_data.get('password'):
                 user.set_password(self.cleaned_data['password'])
+                parent.password_plain = self.cleaned_data['password']
             user.save()
             
         if commit:
             parent.save()
         return parent
+
+# END: prents/forms.py

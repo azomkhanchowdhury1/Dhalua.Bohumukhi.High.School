@@ -2,38 +2,8 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: TEACHER_DASHBOARD_SPECIFIC */
-    .stat-icon.classes { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
-    .stat-icon.students { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-    .stat-icon.pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-    .stat-icon.leave { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
-
-    .stat-link {
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .stat-link:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-    .stat-link:hover .stat-info h3 {
-        color: #6366f1;
-    }
-
-    .module-header.attendance { color: #10b981; }
-    .module-header.marks { color: #f59e0b; }
-    .module-header.schedule { color: #6366f1; }
-    .module-header.assignments { color: #8b5cf6; }
-    .module-header.payroll { color: #0ea5e9; }
-    .module-header.communication { color: #ec4899; }
-    .module-header.online { color: #f43f5e; }
-    /* END: TEACHER_DASHBOARD_SPECIFIC */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -62,9 +32,9 @@
             </div>
             <div class="stat-trend positive">
                 {% if next_class %}
-                    Next: {{ next_class.time|time:"h:i A" }}
+                Next: {{ next_class.time|time:"h:i A" }}
                 {% else %}
-                    No more classes
+                No more classes
                 {% endif %}
             </div>
         </a>
@@ -114,8 +84,10 @@
             </div>
             <ul class="module-links">
                 <li><a href="{% url 'teacher:attendance_mark' %}"><i class="fas fa-edit"></i> Mark Attendance</a></li>
-                <li><a href="{% url 'teacher:attendance_history' %}"><i class="fas fa-list-alt"></i> Attendance History</a></li>
-                <li><a href="{% url 'teacher:attendance_absentee' %}"><i class="fas fa-exclamation-triangle"></i> Absentee List</a></li>
+                <li><a href="{% url 'teacher:attendance_history' %}"><i class="fas fa-list-alt"></i> Attendance
+                        History</a></li>
+                <li><a href="{% url 'teacher:attendance_absentee' %}"><i class="fas fa-exclamation-triangle"></i>
+                        Absentee List</a></li>
             </ul>
         </div>
 
@@ -126,9 +98,10 @@
                 <h3>Marks Entry</h3>
             </div>
             <ul class="module-links">
-                <li><a href="{% url 'teacher:marks_add' %}"><i class="fas fa-plus-circle"></i> Add Exam Marks</a></li>
-                <li><a href="{% url 'teacher:marks_results' %}"><i class="fas fa-poll"></i> View Results</a></li>
-                <li><a href="{% url 'teacher:marks_report' %}"><i class="fas fa-chart-bar"></i> Performance Report</a></li>
+                <li><a href="{% url 'teacher:marks_add' %}?tab=class_tests"><i class="fas fa-clipboard-list"></i> Class Tests</a></li>
+                <li><a href="{% url 'teacher:marks_add' %}?tab=add_marks"><i class="fas fa-plus-circle"></i> Add Exam Marks</a></li>
+                <li><a href="{% url 'teacher:marks_add' %}?tab=results"><i class="fas fa-poll"></i> View Results</a></li>
+                <li><a href="{% url 'teacher:marks_add' %}?tab=report"><i class="fas fa-chart-bar"></i> Progress Report</a></li>
             </ul>
         </div>
 
@@ -140,8 +113,10 @@
             </div>
             <ul class="module-links">
                 <li><a href="{% url 'teacher:today_routine' %}"><i class="fas fa-clock"></i> Today's Routine</a></li>
-                <li><a href="{% url 'teacher:weekly_timetable' %}"><i class="fas fa-calendar-week"></i> Weekly Timetable</a></li>
-                <li><a href="{% url 'teacher:proxy_classes' %}"><i class="fas fa-exchange-alt"></i> Proxy Classes</a></li>
+                <li><a href="{% url 'teacher:weekly_timetable' %}"><i class="fas fa-calendar-week"></i> Weekly
+                        Timetable</a></li>
+                <li><a href="{% url 'teacher:proxy_classes' %}"><i class="fas fa-exchange-alt"></i> Proxy Classes</a>
+                </li>
             </ul>
         </div>
 
@@ -152,11 +127,16 @@
                 <h3>Assignments</h3>
             </div>
             <ul class="module-links">
-                <li><a href="{% url 'teacher:create_assignment' %}"><i class="fas fa-plus-square"></i> Create Assignment</a></li>
-                <li><a href="{% url 'teacher:review_submissions' %}"><i class="fas fa-check-double"></i> Review Submissions</a></li>
-                <li><a href="{% url 'teacher:study_material' %}"><i class="fas fa-folder-open"></i> Study Material</a></li>
+                <li><a href="{% url 'teacher:create_assignment' %}"><i class="fas fa-plus-square"></i> Create
+                        Assignment</a></li>
+                <li><a href="{% url 'teacher:review_submissions' %}"><i class="fas fa-check-double"></i> Review
+                        Submissions</a></li>
+                <li><a href="{% url 'teacher:study_material' %}"><i class="fas fa-folder-open"></i> Study Material</a>
+                </li>
+                <li><a href="{% url 'teacher:upload_homework' %}"><i class="fas fa-upload"></i> Upload Homework</a></li>
             </ul>
         </div>
+
 
         <!-- Online Classes -->
         <div class="module-card">
@@ -165,8 +145,10 @@
                 <h3>Online Classes</h3>
             </div>
             <ul class="module-links">
-                <li><a href="{% url 'teacher:online_classes' %}"><i class="fas fa-broadcast-tower"></i> Live Classes</a></li>
-                <li><a href="{% url 'teacher:online_classes' %}"><i class="fas fa-calendar-plus"></i> Schedule a Class</a></li>
+                <li><a href="{% url 'teacher:online_classes' %}"><i class="fas fa-broadcast-tower"></i> Live Classes</a>
+                </li>
+                <li><a href="{% url 'teacher:online_classes' %}"><i class="fas fa-calendar-plus"></i> Schedule a
+                        Class</a></li>
                 <li><a href="{% url 'teacher:online_classes' %}"><i class="fas fa-video"></i> Recorded Sessions</a></li>
             </ul>
         </div>
@@ -178,8 +160,10 @@
                 <h3>Payroll & HR</h3>
             </div>
             <ul class="module-links">
-                <li><a href="{% url 'teacher:salary_slips' %}"><i class="fas fa-money-check-alt"></i> Salary Slips</a></li>
-                <li><a href="{% url 'teacher:leave_request' %}"><i class="fas fa-envelope-open-text"></i> Leave Request</a></li>
+                <li><a href="{% url 'teacher:salary_slips' %}"><i class="fas fa-money-check-alt"></i> Salary Slips</a>
+                </li>
+                <li><a href="{% url 'teacher:leave_request' %}"><i class="fas fa-envelope-open-text"></i> Leave
+                        Request</a></li>
                 <li><a href="{% url 'teacher:my_profile' %}"><i class="fas fa-user-tag"></i> My Profile</a></li>
             </ul>
         </div>
@@ -191,19 +175,21 @@
                 <h3>Communication</h3>
             </div>
             <ul class="module-links">
-                <li><a href="{% url 'teacher:student_messages' %}" style="font-weight:600; color:#ec4899;"><i class="fas fa-comments"></i> Student Messages</a></li>
-                <hr style="opacity: 0.1; margin: 10px 0;">
+                <li><a href="{% url 'teacher:student_messages' %}"><i class="fas fa-comments"></i> Student Messages</a>
+                </li>
+                <hr>
                 {% for notice in notices %}
                 <li>
-                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{ notice.title|truncatechars:20 }}</a>
+                    <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{
+                        notice.title|truncatechars:20 }}</a>
                     {% if notice.attachment %}
-                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    <a href="{{ notice.attachment.url }}" download><i class="fas fa-download"></i></a>
                     {% endif %}
                 </li>
                 {% empty %}
                 <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
                 {% endfor %}
-                <hr style="opacity: 0.1; margin: 10px 0;">
+                <hr>
                 <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
             </ul>
         </div>
@@ -213,26 +199,5 @@
 {% endblock %}
 
 {% block js %}
-<script>
-    // START: DASHBOARD_SCRIPT
-    document.addEventListener('DOMContentLoaded', () => {
-        // Set current date
-        const dateSpan = document.getElementById('dateText');
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
-
-        // Animation for cards
-        const cards = document.querySelectorAll('.stat-card, .module-card');
-        cards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-    // END: DASHBOARD_SCRIPT
-</script>
+<script src="{% static 'javascript/dashboard_teachers.js' %}"></script>
 {% endblock %}

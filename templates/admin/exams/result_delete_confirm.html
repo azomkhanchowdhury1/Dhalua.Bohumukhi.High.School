@@ -1,108 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: EXAM_RESULT_DELETE_CONFIRM_CSS */
-    .delete-container {
-        max-width: 500px;
-        margin: 60px auto;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(239, 68, 68, 0.2);
-        border-radius: 24px;
-        padding: 2.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        text-align: center;
-    }
-    
-    .warning-icon {
-        font-size: 3.5rem;
-        color: #ef4444;
-        margin-bottom: 20px;
-        animation: pulseWarning 2s infinite;
-    }
-
-    @keyframes pulseWarning {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    .delete-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #ffffff;
-        margin-bottom: 15px;
-    }
-
-    .delete-details {
-        color: #94a3b8;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 30px;
-        background: rgba(255, 255, 255, 0.02);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .info-span {
-        font-weight: 600;
-        color: #ffffff;
-        display: block;
-        margin-top: 5px;
-    }
-
-    .btn-container {
-        display: flex;
-        gap: 15px;
-    }
-
-    .btn-delete {
-        flex: 1;
-        padding: 12px 24px;
-        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-        color: #ffffff;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-delete:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-cancel {
-        flex: 1;
-        padding: 12px 24px;
-        background: rgba(255, 255, 255, 0.05);
-        color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-cancel:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-    }
-    /* END: EXAM_RESULT_DELETE_CONFIRM_CSS */
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: EXAM_RESULT_DELETE_SECTION -->
 <div class="dashboard-wrapper">
@@ -110,22 +8,28 @@
         <div class="warning-icon">
             <i class="fas fa-exclamation-triangle"></i>
         </div>
+
         <h2 class="delete-title">Delete Student Result?</h2>
+
         <div class="delete-details">
             Are you sure you want to delete the result record for student:
             <span class="info-span">
                 {{ result.student.user.get_full_name }} (ID: #{{ result.student.student_id }})
             </span>
+
             for the exam:
             <span class="info-span">
                 {{ result.exam.name }} - {{ result.subject.name }}
             </span>
+
             with score:
-            <span class="info-span" style="color: #ef4444; font-size: 1.1rem; font-weight: 700;">
+            <span class="info-span">
                 {{ result.marks_obtained }} (Grade: {{ result.grade.name|default:"F" }})
             </span>
+
             This action cannot be undone.
         </div>
+
         <form method="POST">
             {% csrf_token %}
             <div class="btn-container">

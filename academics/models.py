@@ -56,9 +56,16 @@ class Timetable(models.Model):
         return f"{self.section} - {self.subject} ({self.day})"
 
 class Syllabus(models.Model):
+    GROUP_CHOICES = (
+        ('Science', 'Science'),
+        ('Commerce', 'Commerce'),
+        ('Humanities', 'Humanities'),
+        ('General', 'General'),
+    )
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     file = models.FileField(upload_to='syllabus/')
+    group = models.CharField(max_length=20, choices=GROUP_CHOICES, default='General', help_text="The curriculum group this syllabus belongs to.")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
     # START: SYLLABUS_REMINDER_FIELDS
@@ -67,7 +74,7 @@ class Syllabus(models.Model):
     # END: SYLLABUS_REMINDER_FIELDS
     
     def __str__(self):
-        return f"{self.subject.name} Syllabus"
+        return f"{self.subject.name} Syllabus ({self.group})"
 
     class Meta:
         verbose_name_plural = "Syllabuses"
@@ -93,3 +100,18 @@ class OnlineClass(models.Model):
     def __str__(self):
         return f"{self.title} - {self.status}"
 # END: ONLINE_CLASS_MODEL
+
+# START: CLASS_ROUTINE_MODEL
+class ClassRoutine(models.Model):
+    school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, related_name='routines')
+    title = models.CharField(max_length=200, default='Class Routine')
+    file = models.FileField(upload_to='routines/', help_text="Upload the routine file (PDF, image, etc.)")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.school_class.name} - {self.title}"
+
+    class Meta:
+        verbose_name_plural = "Class Routines"
+        ordering = ['school_class__name']
+# END: CLASS_ROUTINE_MODEL

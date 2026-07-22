@@ -21,6 +21,12 @@ urlpatterns = [
     path('marks/add/', views.marks_add, name='marks_add'),
     path('marks/results/', views.marks_results, name='marks_results'),
     path('marks/report/', views.marks_report, name='marks_report'),
+    
+    # Class Tests
+    path('class-tests/', views.class_test_list, name='class_test_list'),
+    path('class-tests/<int:test_id>/edit/', views.class_test_edit, name='class_test_edit'),
+    path('class-tests/<int:test_id>/delete/', views.class_test_delete, name='class_test_delete'),
+    path('class-tests/<int:test_id>/toggle-publish/', views.class_test_toggle_publish, name='class_test_toggle_publish'),
 
     # My Schedule
     path('schedule/today/', views.today_routine, name='today_routine'),
@@ -43,4 +49,8 @@ urlpatterns = [
     path('hr/salary-slips/', views.salary_slips, name='salary_slips'),
     path('hr/leave-request/', views.leave_request, name='leave_request'),
     path('hr/profile/', views.my_profile, name='my_profile'),
+
+    # Homework Upload
+    path('homework/upload/', views.upload_homework, name='upload_homework'),
+    path('homework/delete/<int:hw_id>/', views.delete_homework, name='delete_homework'),
 ]

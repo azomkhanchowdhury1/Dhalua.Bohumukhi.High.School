@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- START: UPLOAD_HOMEWORK_CONTENT -->
+<div class="dashboard-wrapper">
+<div class="hw-page-wrapper">
+
+    <!-- Page Header -->
+    <div class="hw-page-header">
+        <div>
+            <h1><i class="fas fa-upload"></i> Upload Homework</h1>
+            <p>Assign and upload homework files for your students.</p>
+        </div>
+        <div>
+            <a href="{% url 'teacher:review_submissions' %}" class="back-btn">
+                <i class="fas fa-check-double"></i> Review Submissions
+            </a>
+            <a href="{% url 'teacher:teacher_dashboard' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <!-- Upload Form -->
+    <div class="upload-card">
+        <h2><i class="fas fa-cloud-upload-alt"></i> New Homework Upload</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Homework Title <span>*</span></label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Chapter 5 Exercise" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Subject <span>*</span></label>
+                    <select name="subject" class="form-control" required>
+                        <option value="">Select Subject</option>
+                        {% for sub in subjects %}
+                        <option value="{{ sub.name }}">{{ sub.name }}</option>
+                        {% empty %}
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="Bengali">Bengali</option>
+                        <option value="Social Science">Social Science</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Class <span>*</span></label>
+                    <select name="school_class" class="form-control" required>
+                        <option value="">Select Class</option>
+                        {% for cls in classes %}
+                        <option value="{{ cls.name }}">{{ cls.name }}</option>
+                        {% empty %}
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Section</label>
+                    <input type="text" name="section" class="form-control" placeholder="e.g. A, B (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" name="due_date" class="form-control">
+                </div>
+
+                <div class="form-group file-input-wrapper">
+                    <label>Attach File (PDF / Image / DOCX)</label>
+                    <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.zip">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Description / Instructions</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Describe the homework, page numbers, or special instructions..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-upload">
+                    <i class="fas fa-upload"></i> Upload Homework
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Uploaded Homework List -->
+    <div class="list-section">
+        <h2><i class="fas fa-list-alt"></i> Uploaded Homework ({{ homeworks.count }})</h2>
+        <div class="hw-table-wrapper">
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Due Date</th>
+                        <th>Uploaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hw in homeworks %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ hw.title }}</td>
+                        <td><span class="badge-subject">{{ hw.subject }}</span></td>
+                        <td><span class="badge-class">{{ hw.school_class }}</span></td>
+                        <td>{{ hw.section|default:"—" }}</td>
+                        <td>
+                            {% if hw.due_date %}
+                            <span class="due-date"><i class="fas fa-calendar-times"></i> {{ hw.due_date }}</span>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>{{ hw.uploaded_at|date:"d M Y" }}</td>
+                        <td>
+                            <div class="action-btns">
+                                {% if hw.file %}
+                                <a href="{{ hw.file.url }}" download class="btn-download" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'teacher:delete_homework' hw.id %}"
+                                   class="btn-delete"
+                                   onclick="return confirm('Delete this homework?')"
+                                   title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="empty-row">
+                        <td colspan="8">
+                            <i class="fas fa-inbox"></i>
+                            <div>No homework uploaded yet.</div>
+                            <div>Use the form above to upload your first homework.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</div>
+<!-- END: UPLOAD_HOMEWORK_CONTENT -->
+{% endblock %}

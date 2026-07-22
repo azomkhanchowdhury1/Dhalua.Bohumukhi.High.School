@@ -75,3 +75,19 @@ class SupportTicket(models.Model):
 
     def __str__(self):
         return f"Ticket #{self.id} - {self.subject} ({self.priority})"
+
+# START: TESTIMONIAL_MODEL
+class Testimonial(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100, help_text="e.g. Parent, Guardian, Senior Teacher")
+    quote = models.TextField(help_text="The testimonial quote text.")
+    image = models.ImageField(upload_to='testimonials/', blank=True, null=True, help_text="Optional profile image.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Testimonial by {self.name} ({self.role})"
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Testimonials"
+# END: TESTIMONIAL_MODEL

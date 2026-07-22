@@ -2,111 +2,101 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: ADMIN_ATTENDANCE_CSS */
-    .search-bar {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 1.5rem 2rem;
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .search-bar input {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 12px 20px;
-        color: #fff;
-        border-radius: 12px;
-        font-size: 1rem;
-    }
-    .student-attendance-table {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 2rem;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        overflow-x: auto;
-    }
-    .percentage-badge {
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-    .percentage-badge.high {
-        background: rgba(16, 185, 129, 0.15);
-        color: #10b981;
-    }
-    .percentage-badge.medium {
-        background: rgba(245, 158, 11, 0.15);
-        color: #f59e0b;
-    }
-    .percentage-badge.low {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-    }
-    /* END: ADMIN_ATTENDANCE_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
 {% endblock %}
 
 {% block content %}
-<!-- START: ADMIN_ATTENDANCE_SECTION -->
 <div class="dashboard-wrapper">
+    <div class="student-sub-nav">
+        <a href="{% url 'admin_panel:student_list' %}"
+            class="sub-nav-tab {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
+            <i class="fas fa-list"></i> Student List
+        </a>
+        <a href="{% url 'admin_panel:student_admission' %}"
+            class="sub-nav-tab {% if request.resolver_match.url_name == 'student_admission' %}active{% endif %}">
+            <i class="fas fa-plus-circle"></i> New Admission
+        </a>
+        <a href="{% url 'admin_panel:student_attendance' %}"
+            class="sub-nav-tab {% if request.resolver_match.url_name == 'student_attendance' %}active{% endif %}">
+            <i class="fas fa-calendar-check"></i> Attendance Report
+        </a>
+        <a href="{% url 'admin_panel:student_promotion' %}"
+            class="sub-nav-tab {% if request.resolver_match.url_name == 'student_promotion' %}active{% endif %}">
+            <i class="fas fa-user-plus"></i> Student Promotion
+        </a>
+    </div>
+
     <div class="section-header">
         <h1>Student Attendance Report</h1>
         <p>Overview of student attendance percentages and records.</p>
     </div>
 
-    <!-- Search Form -->
     <form method="GET" class="search-bar">
         <input type="text" name="search" value="{{ query }}" placeholder="Search by Student Name or ID...">
-        <button type="submit" class="view-all-btn" style="margin:0; padding:12px 25px;">
+        {% if selected_class_id %}
+        <input type="hidden" name="class_id" value="{{ selected_class_id }}">
+        {% endif %}
+        <button type="submit" class="view-all-btn">
             <i class="fas fa-search"></i> Search
         </button>
-        {% if query %}
-        <a href="{% url 'admin_panel:student_attendance' %}" class="view-all-btn" style="margin:0; padding:12px 25px; background:rgba(239,68,68,0.2); color:#ef4444;">Clear</a>
+        {% if query or selected_class_id %}
+        <a href="{% url 'admin_panel:student_attendance' %}" class="view-all-btn">Clear</a>
         {% endif %}
     </form>
 
+    <div class="class-filter-container">
+        <span class="filter-label"><i class="fas fa-filter"></i> Filter by Class:</span>
+        <div class="class-filter-tabs">
+            <a href="?search={{ query }}" class="filter-tab {% if not selected_class_id %}active{% endif %}">
+                All Classes
+            </a>
+            {% for cls in classes %}
+            <a href="?class_id={{ cls.id }}&search={{ query }}"
+                class="filter-tab {% if selected_class_id == cls.id|stringformat:'s' %}active{% endif %}">
+                {{ cls.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="student-attendance-table">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table>
             <thead>
                 <tr>
-                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Student ID</th>
-                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Student Name</th>
-                    <th style="text-align: left; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Class</th>
-                    <th style="text-align: center; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Present / Total</th>
-                    <th style="text-align: right; padding: 15px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1);">Attendance %</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Present / Total</th>
+                    <th>Attendance %</th>
                 </tr>
             </thead>
             <tbody>
                 {% for data in student_data %}
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 15px; color: #e2e8f0;">{{ data.student.student_id }}</td>
-                    <td style="padding: 15px;">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <img src="{% if data.student.profile_image %}{{ data.student.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Profile" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                            <span style="color: #fff; font-weight: 500;">{{ data.student.user.get_full_name }}</span>
+                <tr>
+                    <td>{{ data.student.student_id }}</td>
+                    <td>
+                        <div>
+                            <img src="{% if data.student.profile_image %}{{ data.student.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+                                alt="Profile">
+                            <span>{{ data.student.user.get_full_name }}</span>
                         </div>
                     </td>
-                    <td style="padding: 15px; color: #94a3b8;">{{ data.student.current_class }}</td>
-                    <td style="padding: 15px; text-align: center; color: #94a3b8;">
+                    <td>{{ data.student.current_class }}</td>
+                    <td>
                         {{ data.total_attended }} / {{ data.total_classes }}
                     </td>
-                    <td style="padding: 15px; text-align: right;">
-                        <span class="percentage-badge {% if data.percentage >= 85 %}high{% elif data.percentage >= 70 %}medium{% else %}low{% endif %}">
+                    <td>
+                        <span
+                            class="percentage-badge {% if data.percentage >= 85 %}high{% elif data.percentage >= 70 %}medium{% else %}low{% endif %}">
                             {{ data.percentage }}%
                         </span>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" style="padding: 30px; text-align: center; color: #94a3b8;">
-                        <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5; margin-bottom: 15px; display: block;"></i>
+                    <td colspan="5">
+                        <i class="fas fa-search"></i>
                         No students found.
                     </td>
                 </tr>
@@ -115,5 +105,4 @@
         </table>
     </div>
 </div>
-<!-- END: ADMIN_ATTENDANCE_SECTION -->
 {% endblock %}

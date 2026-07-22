@@ -1,0 +1,342 @@
+/* ============================================================
+   SUBJECT SYLLABUS STYLES — syllabus.html
+   Theme: "Registry Ledger" — Light card syllabus list layout.
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.syllabus-page {
+    background: #f2f5fb !important;
+    padding: 36px 20px 80px 20px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+/* ===== PAGE HEADING ===== */
+/* START: PAGE_HEADING */
+.syllabus-page-heading {
+    margin-bottom: 28px;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+}
+
+.syllabus-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.syllabus-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.syllabus-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+/* END: PAGE_HEADING */
+
+/* ===== CONTAINER / WRAPPER ===== */
+.syllabus-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* START: LIST_WRAPPER */
+.syllabus-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+/* END: LIST_WRAPPER */
+
+/* ===== CARD ===== */
+/* START: SYLLABUS_CARD */
+.syllabus-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+}
+
+.syllabus-card:hover {
+    transform: translateY(-3px);
+    border-color: #c7d2fe;
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.08);
+}
+/* END: SYLLABUS_CARD */
+
+/* ===== DATE BLOCK ===== */
+/* START: DATE_BLOCK */
+.syllabus-date-block {
+    flex-shrink: 0;
+    width: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    border-radius: 12px;
+    padding: 10px 6px;
+}
+
+.syllabus-date-block .date-day {
+    font-size: 20px;
+    font-weight: 800;
+    color: #7c3aed;
+    line-height: 1.1;
+}
+
+.syllabus-date-block .date-month {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6366f1;
+    margin-top: 2px;
+}
+
+.syllabus-date-block .date-year {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+/* END: DATE_BLOCK */
+
+/* ===== CONTENT ===== */
+/* START: CONTENT_BLOCK */
+.syllabus-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.syllabus-class-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.syllabus-subject-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7c3aed;
+    background: #ede9fe;
+    border: 1px solid #ddd6fe;
+    padding: 4px 12px;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.syllabus-subject-tag i {
+    font-size: 11px;
+}
+/* END: CONTENT_BLOCK */
+
+/* ===== DOWNLOAD ACTION ===== */
+/* START: DOWNLOAD_ACTION */
+.syllabus-action {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.btn-download-syllabus {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #6366f1;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-download-syllabus:hover {
+    background: #4f46e5;
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.btn-download-syllabus:active {
+    transform: translateY(0);
+}
+
+.btn-download-syllabus i {
+    font-size: 13px;
+}
+/* END: DOWNLOAD_ACTION */
+
+/* ===== EMPTY STATE ===== */
+/* START: EMPTY_STATE */
+.syllabus-empty-state {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.syllabus-empty-state i {
+    font-size: 48px;
+    color: #c7d2fe;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.syllabus-empty-state p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.syllabus-empty-state span {
+    font-size: 14px;
+    color: #94a3b8;
+}
+/* END: EMPTY_STATE */
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .syllabus-container {
+        max-width: 100%;
+    }
+    
+    .syllabus-page-heading {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper.syllabus-page {
+        padding: 24px 16px 60px 16px !important;
+    }
+    
+    .syllabus-container {
+        padding: 16px;
+    }
+    
+    .syllabus-card {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center;
+        padding: 16px;
+    }
+    
+    .syllabus-date-block {
+        flex-direction: row;
+        width: 100%;
+        gap: 12px;
+        padding: 10px 14px;
+        justify-content: center;
+    }
+    
+    .syllabus-date-block .date-day {
+        font-size: 18px;
+    }
+    
+    .syllabus-content {
+        align-items: center;
+        width: 100%;
+    }
+    
+    .syllabus-class-title {
+        font-size: 15px;
+        text-align: center;
+    }
+    
+    .syllabus-subject-tag {
+        justify-content: center;
+    }
+    
+    .syllabus-action {
+        width: 100%;
+    }
+    
+    .btn-download-syllabus {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .syllabus-page-heading h1 {
+        font-size: 22px;
+    }
+    
+    .syllabus-container {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .syllabus-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+    
+    .syllabus-date-block {
+        padding: 8px 12px;
+    }
+    
+    .syllabus-date-block .date-day {
+        font-size: 16px;
+    }
+    
+    .syllabus-date-block .date-month {
+        font-size: 10px;
+    }
+    
+    .syllabus-class-title {
+        font-size: 14px;
+    }
+    
+    .btn-download-syllabus {
+        font-size: 12px;
+        padding: 10px 16px;
+    }
+}

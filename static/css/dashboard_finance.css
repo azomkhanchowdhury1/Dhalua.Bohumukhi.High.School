@@ -1,0 +1,117 @@
+/* START: DASHBOARD_FINANCE_CSS */
+/* Theme: Clean Minimal SaaS — off-white surfaces, indigo accent, simple cards.
+   Finance module specific styles — salary highlights, payslips, fee tables */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #f8f9fb;
+    --surface: #ffffff;
+    --surface-soft: #f1f2f6;
+    --border: #e6e8ee;
+    --ink: #0f172a;
+    --text-secondary: #475569;
+    --muted: #64748b;
+    --primary: #4338ca;
+    --primary-soft: #eef0fd;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    font-family: var(--font-body);
+}
+
+/* ===== SALARY HIGHLIGHT ===== */
+.salary-highlight {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.salary-hl-item {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.salary-hl-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.salary-hl-item i {
+    font-size: 18px;
+    color: var(--primary);
+    background: var(--primary-soft);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.salary-hl-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.salary-hl-value {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+/* ===== PAYSLIP ===== */
+.payslip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-md);
+}
+
+.payslip-header {
+    text-align: center;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.payslip-header h4 {
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.payslip-header p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .salary-highlight {
+        flex-direction: column;
+    }
+}
+
+/* END: DASHBOARD_FINANCE_CSS */

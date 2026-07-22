@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SchoolClass, Section, Subject, Timetable, Syllabus, OnlineClass
+from .models import SchoolClass, Section, Subject, Timetable, Syllabus, OnlineClass, ClassRoutine
 
 # START: SCHOOLCLASS_ADMIN
 @admin.register(SchoolClass)
@@ -75,13 +75,14 @@ class TimetableAdmin(admin.ModelAdmin):
 # START: SYLLABUS_ADMIN
 @admin.register(Syllabus)
 class SyllabusAdmin(admin.ModelAdmin):
-    list_display = ('title', 'subject', 'uploaded_at', 'is_remembered')
-    list_filter = ('subject', 'is_remembered')
+    list_display = ('title', 'subject', 'group', 'uploaded_at', 'is_remembered')
+    list_filter = ('group', 'subject', 'is_remembered')
     search_fields = ('title', 'subject__name')
     fieldsets = (
         ('Syllabus File', {
             'fields': (
                 ('subject', 'title'),
+                'group',
                 'file'
             )
         }),
@@ -116,3 +117,19 @@ class OnlineClassAdmin(admin.ModelAdmin):
         }),
     )
 # END: ONLINECLASS_ADMIN
+
+# START: CLASSROUTINE_ADMIN
+@admin.register(ClassRoutine)
+class ClassRoutineAdmin(admin.ModelAdmin):
+    list_display = ('school_class', 'title', 'uploaded_at')
+    list_filter = ('school_class',)
+    search_fields = ('title', 'school_class__name')
+    fieldsets = (
+        ('Routine Details', {
+            'fields': (
+                ('school_class', 'title'),
+                'file',
+            )
+        }),
+    )
+# END: CLASSROUTINE_ADMIN

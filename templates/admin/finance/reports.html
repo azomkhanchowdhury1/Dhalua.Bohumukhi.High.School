@@ -1,29 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: FINANCIAL_REPORTS_CSS */
-    .report-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        margin-bottom: 30px;
-    }
-    .report-card {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 2.5rem;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        text-align: center;
-    }
-    .report-card h3 { color: #94a3b8; font-size: 1rem; margin-bottom: 10px; }
-    .report-card .value { font-size: 2.5rem; font-weight: 800; color: #fff; }
-    /* END: FINANCIAL_REPORTS_CSS */
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: FINANCIAL_REPORTS_SECTION -->
 <div class="dashboard-wrapper">
@@ -35,39 +12,49 @@
     <div class="report-grid">
         <div class="report-card">
             <h3>Total Income (Fees)</h3>
-            <div class="value" style="color:#10b981;">${{ total_fees }}</div>
+            <div class="value">${{ total_fees }}</div>
         </div>
+
         <div class="report-card">
             <h3>Total Expenses</h3>
-            <div class="value" style="color:#ef4444;">${{ total_expenses }}</div>
+            <div class="value">${{ total_expenses }}</div>
         </div>
+
         <div class="report-card">
             <h3>Net Balance</h3>
-            <div class="value" style="color:var(--home-primary);">${{ balance }}</div>
+            <div class="value">${{ balance }}</div>
         </div>
     </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+    <div>
         <h3>Monthly Summary Visualization</h3>
-        <div style="height:300px; display:flex; align-items:flex-end; gap:20px; padding:40px; justify-content:space-around;">
+
+        <div>
             <!-- Placeholder for chart bars using pure CSS -->
-            <div style="width:40px; height:60%; background:#10b981; border-radius:10px 10px 0 0; position:relative;">
-                <span style="position:absolute; bottom:-25px; left:0; width:100%; text-align:center; color:#94a3b8; font-size:0.8rem;">Jan</span>
+            <div>
+                <span>Jan</span>
             </div>
-            <div style="width:40px; height:85%; background:#10b981; border-radius:10px 10px 0 0; position:relative;">
-                <span style="position:absolute; bottom:-25px; left:0; width:100%; text-align:center; color:#94a3b8; font-size:0.8rem;">Feb</span>
+
+            <div>
+                <span>Feb</span>
             </div>
-            <div style="width:40px; height:70%; background:#10b981; border-radius:10px 10px 0 0; position:relative;">
-                <span style="position:absolute; bottom:-25px; left:0; width:100%; text-align:center; color:#94a3b8; font-size:0.8rem;">Mar</span>
+
+            <div>
+                <span>Mar</span>
             </div>
-            <div style="width:40px; height:95%; background:var(--home-primary); border-radius:10px 10px 0 0; position:relative;">
-                <span style="position:absolute; bottom:-25px; left:0; width:100%; text-align:center; color:#94a3b8; font-size:0.8rem;">Apr</span>
+
+            <div>
+                <span>Apr</span>
             </div>
-            <div style="width:40px; height:40%; background:#ef4444; border-radius:10px 10px 0 0; position:relative;">
-                <span style="position:absolute; bottom:-25px; left:0; width:100%; text-align:center; color:#94a3b8; font-size:0.8rem;">May</span>
+
+            <div>
+                <span>May</span>
             </div>
         </div>
-        <p style="text-align:center; color:#64748b; font-size:0.9rem; margin-top:20px;">* Visualization based on current month's transaction data.</p>
+
+        <p>
+            * Visualization based on current month's transaction data.
+        </p>
     </div>
 </div>
 <!-- END: FINANCIAL_REPORTS_SECTION -->

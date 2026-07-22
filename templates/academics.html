@@ -24,116 +24,136 @@
 <!-- START: CURRICULUM_SECTION -->
 <section class="curriculum-section glass-container">
     <div class="container">
-        <h2 class="section-title animate-fade-up">Curriculum & Syllabus</h2>
-        <p class="section-subtitle animate-fade-up">Designed to foster critical thinking and creativity across all grade levels.</p>
+        <h2 class="section-title animate-in">Curriculum &amp; Syllabus</h2>
+        <p class="section-subtitle animate-in delay-1">Designed to foster critical thinking and creativity across all grade levels.</p>
         
         <div class="curriculum-grid">
-            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="curriculum-card animate-in delay-1">
                 <div class="icon-circle"><i class="fas fa-flask"></i></div>
                 <h3>Science</h3>
                 <p>Physics, Chemistry, Biology, and Higher Mathematics focusing on practical and theoretical excellence.</p>
-                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% if science_syllabuses %}
+                <a href="#" class="btn-link" onclick="openSyllabusModal('science'); return false;">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% else %}
+                <span class="btn-link-disabled"><i class="fas fa-info-circle"></i> No syllabus yet</span>
+                {% endif %}
             </div>
-            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="curriculum-card animate-in delay-2">
                 <div class="icon-circle"><i class="fas fa-calculator"></i></div>
                 <h3>Commerce</h3>
                 <p>Accounting, Finance, and Business Entrepreneurship for the next generation of business leaders.</p>
-                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% if commerce_syllabuses %}
+                <a href="#" class="btn-link" onclick="openSyllabusModal('commerce'); return false;">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% else %}
+                <span class="btn-link-disabled"><i class="fas fa-info-circle"></i> No syllabus yet</span>
+                {% endif %}
             </div>
-            <div class="curriculum-card animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="curriculum-card animate-in delay-3">
                 <div class="icon-circle"><i class="fas fa-palette"></i></div>
                 <h3>Humanities</h3>
                 <p>History, Geography, Civics, and Economics to understand society, culture, and human development.</p>
-                <a href="#" class="btn-link">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% if humanities_syllabuses %}
+                <a href="#" class="btn-link" onclick="openSyllabusModal('humanities'); return false;">View Syllabus <i class="fas fa-arrow-right"></i></a>
+                {% else %}
+                <span class="btn-link-disabled"><i class="fas fa-info-circle"></i> No syllabus yet</span>
+                {% endif %}
             </div>
         </div>
     </div>
 </section>
 <!-- END: CURRICULUM_SECTION -->
 
+<!-- START: SYLLABUS_MODAL -->
+<div id="syllabusModal" class="syllabus-modal-overlay" onclick="if(event.target===this) closeSyllabusModal();">
+    <div class="syllabus-modal-content">
+        <div class="syllabus-modal-header">
+            <h3 id="syllabusModalTitle"><i class="fas fa-book-open"></i> Syllabus</h3>
+            <button class="syllabus-close-btn" onclick="closeSyllabusModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="syllabus-modal-body" id="syllabusModalBody">
+            <!-- Dynamic content loaded by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Syllabus Data for JS (hidden) -->
+<script type="application/json" id="syllabusData">
+{
+    "science": [
+        {% for s in science_syllabuses %}
+        {"id": {{ s.id }}, "title": "{{ s.title }}", "subject": "{{ s.subject.name }}", "file": "{{ s.file.url }}", "uploaded": "{{ s.uploaded_at|date:'d M Y' }}"}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "commerce": [
+        {% for s in commerce_syllabuses %}
+        {"id": {{ s.id }}, "title": "{{ s.title }}", "subject": "{{ s.subject.name }}", "file": "{{ s.file.url }}", "uploaded": "{{ s.uploaded_at|date:'d M Y' }}"}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "humanities": [
+        {% for s in humanities_syllabuses %}
+        {"id": {{ s.id }}, "title": "{{ s.title }}", "subject": "{{ s.subject.name }}", "file": "{{ s.file.url }}", "uploaded": "{{ s.uploaded_at|date:'d M Y' }}"}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+<!-- END: SYLLABUS_MODAL -->
+
 <!-- START: CLASS_ROUTINE_SECTION -->
 <section class="routine-section">
     <div class="container">
-        <div class="routine-wrapper glass-panel animate-zoom">
-            <h2 class="section-title">Class Routine</h2>
-            <div class="routine-tabs">
-                <button class="tab-btn active" onclick="openTab(event, 'Class6')">Class 6-8</button>
-                <button class="tab-btn" onclick="openTab(event, 'Class9')">Class 9-10</button>
+        <div class="routine-wrapper glass-panel animate-in">
+            <h2 class="section-title" style="margin-bottom: 0.5rem;">Class Routine</h2>
+            <p class="section-subtitle" style="margin-bottom: 2rem;">Select your class to view and download the routine.</p>
+
+            <div class="routine-selector-wrapper">
+                <label for="classSelect" class="routine-select-label">
+                    <i class="fas fa-graduation-cap"></i> Select Class:
+                </label>
+                <select id="classSelect" class="routine-select" onchange="showRoutineForClass(this.value)">
+                    <option value="">-- Choose a Class --</option>
+                    {% for cls in school_classes %}
+                    <option value="{{ cls.id }}">{{ cls.name }}</option>
+                    {% endfor %}
+                    {% if not school_classes %}
+                    <option value="" disabled>No classes configured yet</option>
+                    {% endif %}
+                </select>
             </div>
-            
-            <div id="Class6" class="tab-content" style="display: block;">
-                <div class="table-responsive">
-                    <table class="routine-table">
-                        <thead>
-                            <tr>
-                                <th>Day</th>
-                                <th>1st Period</th>
-                                <th>2nd Period</th>
-                                <th>Break</th>
-                                <th>3rd Period</th>
-                                <th>4th Period</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Sunday</td>
-                                <td>Mathematics</td>
-                                <td>Bengali</td>
-                                <td class="break-cell">Tiffin</td>
-                                <td>English</td>
-                                <td>Science</td>
-                            </tr>
-                            <tr>
-                                <td>Monday</td>
-                                <td>English</td>
-                                <td>Science</td>
-                                <td class="break-cell">Tiffin</td>
-                                <td>Mathematics</td>
-                                <td>Religion</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <!-- Routine Display Area -->
+            <div id="routineDisplay" class="routine-display" style="display:none;">
+                <div class="routine-display-header">
+                    <h4 id="routineClassName"></h4>
+                    <a id="routineDownloadBtn" href="#" download class="btn-download" style="display:none;">
+                        <i class="fas fa-download"></i> Download Routine
+                    </a>
+                </div>
+                <div id="routineFileContainer" class="routine-file-container">
+                    <!-- File preview or download link will appear here -->
                 </div>
             </div>
-            
-            <div id="Class9" class="tab-content" style="display: none;">
-                <div class="table-responsive">
-                    <table class="routine-table">
-                        <thead>
-                            <tr>
-                                <th>Day</th>
-                                <th>1st Period</th>
-                                <th>2nd Period</th>
-                                <th>Break</th>
-                                <th>3rd Period</th>
-                                <th>4th Period</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Sunday</td>
-                                <td>Physics/Acc</td>
-                                <td>Chemistry/Fin</td>
-                                <td class="break-cell">Tiffin</td>
-                                <td>H.Math/Geo</td>
-                                <td>Biology/Eco</td>
-                            </tr>
-                            <tr>
-                                <td>Monday</td>
-                                <td>English</td>
-                                <td>Bengali</td>
-                                <td class="break-cell">Tiffin</td>
-                                <td>ICT</td>
-                                <td>Mathematics</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+
+            <!-- Empty state - shown only when no classes exist at all -->
+            <div id="routineEmpty" class="routine-empty" {% if school_classes %}style="display:none;"{% endif %}>
+                <i class="fas fa-calendar-times"></i>
+                <p>No classes have been configured yet. Please check back later.</p>
             </div>
-            
-            <div class="text-center mt-3">
-                <a href="#" class="btn-download"><i class="fas fa-download"></i> Download Full Routine</a>
-            </div>
+
+            <!-- Routine Data from server -->
+            <script type="application/json" id="routineData">
+            {
+                {% for cls in school_classes %}
+                "{{ cls.id }}": {
+                    "name": "{{ cls.name }}",
+                    "routines": [
+                        {% for r in cls.routines.all %}
+                        {"id": {{ r.id }}, "title": "{{ r.title }}", "file": "{{ r.file.url }}", "uploaded": "{{ r.uploaded_at|date:'d M Y' }}"}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ]
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            }
+            </script>
         </div>
     </div>
 </section>
@@ -142,21 +162,21 @@
 <!-- START: GRADING_SYSTEM_SECTION -->
 <section class="grading-section glass-container">
     <div class="container">
-        <h2 class="section-title animate-fade-up">Examination & Grading System</h2>
+        <h2 class="section-title animate-in">Examination &amp; Grading System</h2>
         
         <div class="grading-split">
-            <div class="grading-info animate-slide-right">
+            <div class="grading-info animate-in delay-1">
                 <h3>Continuous Assessment</h3>
                 <p>Our evaluation process is continuous, involving monthly tests, assignments, practical works, and term-final examinations. This ensures students are consistently learning and improving.</p>
                 <ul class="assessment-list">
                     <li><i class="fas fa-check-circle"></i> Weekly Class Tests (20%)</li>
-                    <li><i class="fas fa-check-circle"></i> Assignments & Projects (10%)</li>
+                    <li><i class="fas fa-check-circle"></i> Assignments &amp; Projects (10%)</li>
                     <li><i class="fas fa-check-circle"></i> Half-Yearly Exam (30%)</li>
                     <li><i class="fas fa-check-circle"></i> Final Exam (40%)</li>
                 </ul>
             </div>
             
-            <div class="grading-table-wrapper glass-panel animate-slide-left">
+            <div class="grading-table-wrapper glass-panel animate-in delay-2">
                 <table class="grading-table">
                     <thead>
                         <tr>

@@ -1,0 +1,155 @@
+/* ============================================================
+   MARKS MANAGEMENT CSS — teacher/marks_add.html
+   School Management System
+   ============================================================ */
+
+/* ===== FILTER BAR ===== */
+.class-filter-bar {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.class-filter-bar label {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.class-filter-bar select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 11px 18px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.class-filter-bar select:focus {
+    border-color: var(--home-primary, #6366f1);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.class-filter-bar select option {
+    background: #0f172a;
+    color: #f1f5f9;
+}
+
+/* ===== MARKS TABLE ===== */
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.marks-table th {
+    text-align: left;
+    padding: 14px 18px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.marks-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+}
+
+.marks-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ===== MARKS INPUT ===== */
+.mark-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: #fff;
+    font-size: 0.95rem;
+    width: 120px;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.mark-input:focus {
+    border-color: var(--home-primary, #6366f1);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mark-input::placeholder {
+    color: #475569;
+}
+
+/* Remove number spinner buttons */
+.mark-input::-webkit-outer-spin-button,
+.mark-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+.mark-input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* ===== MARKS REPORT ===== */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th {
+    text-align: left;
+    padding: 14px 18px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.report-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+}
+
+.report-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.subject-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin: 4px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .class-filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1.2rem 1.5rem;
+    }
+    .class-filter-bar select {
+        width: 100%;
+    }
+}

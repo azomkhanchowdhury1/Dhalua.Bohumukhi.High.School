@@ -2,87 +2,73 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/my_teachers.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_TEACHERS_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>My Teachers</h1>
+<div class="dashboard-wrapper teachers-page">
+    <div class="teachers-page-heading">
+        <h1><i class="fas fa-user-tie"></i> My Teachers</h1>
         <p>Information about instructors assigned to {{ student.current_class }}.</p>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px, 1fr)); gap:30px;">
+    <!-- Teachers Grid -->
+    <div class="teachers-grid">
         {% for t in teachers %}
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); display:flex; gap:20px; align-items:center;">
-            <img src="{% if t.profile_image %}{{ t.profile_image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Teacher" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--home-primary);">
-            <div>
-                <h3 style="color:#fff; margin-bottom:5px;">{{ t.user.get_full_name }}</h3>
-                <p style="color:var(--home-primary); font-weight:700; font-size:0.9rem;">{{ t.department }} Department</p>
-                <div style="margin-top:10px; display:flex; gap:10px;">
-                    <a href="mailto:{{ t.user.email }}" style="color:#94a3b8; font-size:1.2rem;" title="Email Teacher"><i class="fas fa-envelope"></i></a>
-                    <a href="javascript:void(0)" onclick="openChatModal('{{ t.id }}', '{{ t.user.get_full_name|escapejs }}')" style="color:#94a3b8; font-size:1.2rem;" title="Message Teacher"><i class="fas fa-comments"></i></a>
+        <div class="teacher-spotlight-card">
+            <!-- Avatar ring -->
+            <div class="teacher-avatar-ring">
+                <div class="teacher-avatar">
+                    {% if t.profile_image %}
+                    <img src="{{ t.profile_image.url }}" alt="{{ t.user.get_full_name }}">
+                    {% else %}
+                    <i class="fas fa-user-tie"></i>
+                    {% endif %}
                 </div>
+            </div>
+
+            <!-- Details -->
+            <h3 class="teacher-name">{{ t.user.get_full_name }}</h3>
+            <span class="teacher-department-badge">
+                <i class="fas fa-university"></i>
+                {{ t.department }} Department
+            </span>
+
+            <!-- Actions -->
+            <div class="teacher-contact-row">
+                <a href="mailto:{{ t.user.email }}" title="Email Teacher"><i class="fas fa-envelope"></i></a>
+                <a href="javascript:void(0)" onclick="openChatModal('{{ t.id }}', '{{ t.user.get_full_name|escapejs }}')" title="Message Teacher"><i class="fas fa-comments"></i></a>
             </div>
         </div>
         {% empty %}
-        <div style="grid-column:1/-1; text-align:center; padding:100px; background:rgba(15,23,42,0.6); border-radius:30px; border:1px dashed rgba(255,255,255,0.1);">
-            <h3 style="color:#94a3b8;">No teachers assigned to your class yet.</h3>
+        <div class="teachers-empty-state">
+            <i class="fas fa-users-slash"></i>
+            <p>No teachers assigned yet.</p>
+            <span>No instructors are currently assigned to your class. Please check back later.</span>
         </div>
         {% endfor %}
     </div>
 </div>
 
 <!-- Direct Message Modal -->
-<div class="modal-overlay" id="chatModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
-    <div class="modal-container" style="max-width:550px; background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:24px; overflow:hidden; display:flex; flex-direction:column; width:90%; max-height:85vh;">
-        <div class="modal-header" style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
-            <h3 style="color:#fff; margin:0;" id="chatTitle"><i class="fas fa-comments" style="color:var(--home-primary); margin-right:10px;"></i> Chat</h3>
-            <button onclick="closeChatModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;"><i class="fas fa-times"></i></button>
+<div class="modal-overlay" id="chatModal" onclick="if(event.target===this) closeChatModal()">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 id="chatTitle"><i class="fas fa-comments"></i> Chat</h3>
+            <button onclick="closeChatModal()"><i class="fas fa-times"></i></button>
         </div>
-        <div id="chatHistory" style="padding:1.5rem; flex:1; overflow-y:auto; min-height:280px; max-height:400px; display:flex; flex-direction:column; gap:12px; background:rgba(0,0,0,0.15);">
+        <div id="chatHistory">
             <!-- Messages load here -->
         </div>
-        <div style="padding:1.2rem; border-top:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.01); display:flex; gap:10px;">
-            <input type="text" id="chatInput" placeholder="Type your message here..." style="flex:1; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 16px; outline:none; font-size:0.95rem;">
-            <button onclick="sendChatMessage()" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color:#fff; border:none; border-radius:12px; padding:0 20px; font-weight:600; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+        <div class="chat-input-bar">
+            <input type="text" id="chatInput" placeholder="Type your message here...">
+            <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
-
-<style>
-    .chat-bubble {
-        padding: 10px 14px;
-        border-radius: 16px;
-        max-width: 80%;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        word-wrap: break-word;
-    }
-    .chat-bubble.sent {
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-        color: #fff;
-        align-self: flex-end;
-        border-bottom-right-radius: 4px;
-    }
-    .chat-bubble.received {
-        background: rgba(255,255,255,0.08);
-        color: #f1f5f9;
-        align-self: flex-start;
-        border-bottom-left-radius: 4px;
-    }
-    .chat-time {
-        font-size: 0.72rem;
-        color: #64748b;
-        margin-top: 4px;
-        display: block;
-        text-align: right;
-    }
-    .chat-bubble.received .chat-time {
-        text-align: left;
-    }
-</style>
 
 <script>
     // START: STUDENT_TEACHER_CHAT_SCRIPT
@@ -91,17 +77,15 @@
 
     function openChatModal(teacherId, teacherName) {
         activeTeacherId = teacherId;
-        document.getElementById('chatTitle').innerHTML = `<i class="fas fa-comments" style="color:#6366f1; margin-right:10px;"></i> Chat with ${teacherName}`;
+        document.getElementById('chatTitle').innerHTML = `<i class="fas fa-comments"></i> Chat with ${teacherName}`;
         document.getElementById('chatModal').style.display = 'flex';
         document.getElementById('chatHistory').innerHTML = '<div style="text-align:center; color:#64748b; margin-top:20px;">Loading chat history...</div>';
         
         loadChatHistory();
         
-        // Poll every 5 seconds for new messages
         if (pollInterval) clearInterval(pollInterval);
         pollInterval = setInterval(loadChatHistory, 5000);
         
-        // Handle input Enter key
         document.getElementById('chatInput').addEventListener('keypress', handleKeyPress);
     }
 

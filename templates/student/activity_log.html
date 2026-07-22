@@ -2,40 +2,74 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/activity_log.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_ACTIVITY_LOG_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
+<div class="dashboard-wrapper activity-log-page">
+<div class="act-wrapper">
+
+    <!-- Hero -->
+    <div class="act-hero">
+        <div class="act-hero-icon"><i class="fas fa-history"></i></div>
         <h1>Activity Log</h1>
         <p>A detailed record of your actions and updates within the system.</p>
     </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
-        <h3 style="color:#fff; margin-bottom:20px;">Recent Activities</h3>
-        
-        <div style="display:flex; flex-direction:column; gap:15px;">
-            {% for log in logs %}
-            <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:15px; border:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h4 style="color:#fff; margin-bottom:5px;"><i class="fas fa-check-circle" style="color:#10b981; margin-right:8px;"></i> {{ log.action }}</h4>
-                    <p style="color:#94a3b8; font-size:0.9rem;">{{ log.details }}</p>
-                </div>
-                <div style="text-align:right;">
-                    <span style="color:var(--home-primary); font-weight:700; display:block;">{{ log.timestamp|date:"d M, Y" }}</span>
-                    <span style="color:#64748b; font-size:0.8rem;">{{ log.timestamp|time:"H:i A" }}</span>
-                </div>
-            </div>
-            {% empty %}
-            <div style="text-align:center; padding:50px; color:#94a3b8;">
-                <i class="fas fa-history" style="font-size:3rem; opacity:0.2; margin-bottom:15px;"></i>
-                <p>No activities recorded yet.</p>
-            </div>
-            {% endfor %}
-        </div>
+    <!-- Stats pills -->
+    {% if logs %}
+    <div class="act-stats">
+        <div class="act-stat-pill"><i class="fas fa-list"></i> {{ logs|length }} total records</div>
+        <div class="act-stat-pill"><i class="fas fa-calendar-day"></i> Latest: {{ logs.0.timestamp|date:"d M Y" }}</div>
     </div>
+    {% endif %}
+
+    <!-- Feed -->
+    <div class="act-feed">
+        {% if logs %}
+        {% regroup logs by timestamp|date:"d M, Y" as logs_by_date %}
+        {% for date_group in logs_by_date %}
+
+        <!-- Date separator -->
+        <div class="act-date-sep"><span>{{ date_group.grouper }}</span></div>
+
+        {% for log in date_group.list %}
+        {% with al=log.action|lower %}
+        <div class="act-row type-{% if 'profile' in al %}profile{% elif 'login' in al %}login{% elif 'logout' in al %}logout{% elif 'fee' in al %}fee{% else %}default{% endif %}">
+
+            <!-- Icon -->
+            <div class="act-icon {% if 'profile' in al %}profile{% elif 'login' in al %}login{% elif 'logout' in al %}logout{% elif 'fee' in al %}fee{% else %}default{% endif %}">
+                <i class="fas {% if 'profile' in al %}fa-user-edit{% elif 'login' in al %}fa-sign-in-alt{% elif 'logout' in al %}fa-sign-out-alt{% elif 'password' in al %}fa-key{% elif 'fee' in al %}fa-receipt{% else %}fa-bolt{% endif %}"></i>
+            </div>
+
+            <!-- Text -->
+            <div class="act-text">
+                <p class="act-title">{{ log.action }}</p>
+                <p class="act-desc">{{ log.details }}</p>
+            </div>
+
+            <!-- Time -->
+            <div class="act-ts">
+                <span class="act-ts-time"><i class="far fa-clock"></i> {{ log.timestamp|time:"h:i A" }}</span>
+            </div>
+
+        </div>
+        {% endwith %}
+        {% endfor %}
+
+        {% endfor %}
+        {% else %}
+        <div class="act-empty">
+            <i class="fas fa-history"></i>
+            <p>No activities recorded yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
 </div>
 <!-- END: STUDENT_ACTIVITY_LOG_SECTION -->
 {% endblock %}

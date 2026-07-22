@@ -1,121 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-/* Premium Event Delete Confirm Styles */
-@keyframes ev-fadeUp {
-    from { opacity: 0; transform: scale(0.95) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.ev-wrapper {
-    max-width: 600px;
-    margin: 80px auto;
-    padding: 0 24px;
-    animation: ev-fadeUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.ev-confirm-card {
-    background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 28px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 30px 60px -15px rgba(239, 68, 68, 0.15);
-    position: relative;
-    overflow: hidden;
-}
-.ev-confirm-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ef4444, #f43f5e);
-}
-
-.ev-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: rgba(239, 68, 68, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    border: 2px solid rgba(239, 68, 68, 0.2);
-}
-.ev-icon-wrapper i {
-    font-size: 36px;
-    color: #ef4444;
-}
-
-.ev-confirm-card h1 {
-    font-size: 26px;
-    color: #f8fafc;
-    margin-bottom: 12px;
-    font-weight: 700;
-}
-.ev-confirm-card p {
-    color: #94a3b8;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-.ev-item-title {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 12px 24px;
-    border-radius: 12px;
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    color: #cbd5e1;
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 35px;
-}
-
-.ev-actions {
-    display: flex;
-    gap: 16px;
-}
-.ev-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    border: none;
-}
-.ev-btn-delete {
-    background: linear-gradient(135deg, #ef4444, #e11d48);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-}
-.ev-btn-delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-}
-.ev-btn-cancel {
-    background: rgba(255, 255, 255, 0.05);
-    color: #cbd5e1;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.ev-btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-}
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: EVENT_DELETE_SECTION -->
 <div class="ev-wrapper">
@@ -123,14 +8,15 @@
         <div class="ev-icon-wrapper">
             <i class="fas fa-exclamation-triangle"></i>
         </div>
-        
+
         <h1>Delete Event?</h1>
-        <p>This action cannot be undone. Are you sure you want to permanently delete this event and its associated image?</p>
-        
+        <p>This action cannot be undone. Are you sure you want to permanently delete this event and its associated
+            image?</p>
+
         <div class="ev-item-title">
             <i class="far fa-calendar-alt"></i> {{ event.title }}
         </div>
-        
+
         <form method="POST">
             {% csrf_token %}
             <div class="ev-actions">

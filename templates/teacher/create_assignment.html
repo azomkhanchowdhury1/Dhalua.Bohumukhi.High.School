@@ -2,87 +2,52 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* START: CREATE_ASSIGNMENT */
-    .assignment-container {
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-top: 20px;
-        max-width: 800px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-        color: #374151;
-    }
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #d1d5db;
-        border-radius: 5px;
-        font-family: inherit;
-    }
-    .btn-submit {
-        background: #8b5cf6;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 600;
-    }
-    .btn-submit:hover {
-        background: #7c3aed;
-    }
-    /* END: CREATE_ASSIGNMENT */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/create_assignment.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: CREATE_ASSIGNMENT_CONTENT -->
-<div class="assignment-container">
-    <h2><i class="fas fa-plus-square" style="color: #8b5cf6;"></i> Create New Assignment</h2>
-    <hr style="opacity: 0.2; margin: 15px 0;">
-    
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label>Assignment Title</label>
-            <input type="text" name="title" class="form-control" placeholder="Enter assignment title" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Class & Section</label>
-            <select name="class" class="form-control" required>
-                <option value="">Select Class</option>
-                <option value="10A">Class 10 - A</option>
-                <option value="9B">Class 9 - B</option>
-            </select>
-        </div>
+<div class="dashboard-wrapper">
+    <div class="assignment-container">
+        <h2><i class="fas fa-plus-square"></i> Create New Assignment</h2>
+        <hr>
 
-        <div class="form-group">
-            <label>Due Date</label>
-            <input type="date" name="due_date" class="form-control" required>
-        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Assignment Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Enter assignment title" required>
+            </div>
 
-        <div class="form-group">
-            <label>Description / Instructions</label>
-            <textarea name="description" class="form-control" rows="5" placeholder="Enter instructions here..." required></textarea>
-        </div>
+            <div class="form-group">
+                <label>Class &amp; Section</label>
+                <select name="class" class="form-control" required>
+                    <option value="">Select Class</option>
+                    <option value="10A">Class 10 - A</option>
+                    <option value="9B">Class 9 - B</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label>Attachment (Optional)</label>
-            <input type="file" name="attachment" class="form-control">
-        </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" name="due_date" class="form-control" required>
+            </div>
 
-        <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Publish Assignment</button>
-    </form>
+            <div class="form-group">
+                <label>Description / Instructions</label>
+                <textarea name="description" class="form-control" rows="5" placeholder="Enter instructions here..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Attachment (Optional)</label>
+                <input type="file" name="attachment" class="form-control">
+            </div>
+
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Publish Assignment</button>
+        </form>
+    </div>
 </div>
 <!-- END: CREATE_ASSIGNMENT_CONTENT -->
 {% endblock %}

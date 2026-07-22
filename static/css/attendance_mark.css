@@ -1,0 +1,710 @@
+/* ============================================================
+   ATTENDANCE MARK PAGE CSS — teacher/attendance_mark.html
+   School Management System — Clean Registry Theme Redesign
+   ============================================================ */
+.dashboard-wrapper {
+    margin: auto;
+    padding: 4%;
+}
+
+/* ===== PAGE HEADER ===== */
+.section-header {
+    margin-bottom: 2rem;
+    animation: slideUpFade 0.4s ease-out;
+    padding-left: 30%;
+}
+
+.section-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 9%;
+
+}
+
+.section-header p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+
+}
+
+/* ===== FILTER BAR ===== */
+.class-filter-bar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.class-filter-bar label {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+/* ===== SELECT STYLING - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    min-width: 180px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+    background-color: var(--paper) !important;
+}
+
+.class-filter-bar select:hover {
+    border-color: var(--ink-faint);
+}
+
+.class-filter-bar select:focus {
+    border-color: var(--indigo);
+    background-color: var(--surface) !important;
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ফোকাসে কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    background-color: var(--surface) !important;
+}
+
+/* ===== SELECT OPTION - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select option {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+}
+
+/* অপশন হোভার এবং সিলেক্টেড স্টাইল - কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select option:hover,
+.class-filter-bar select option:checked,
+.class-filter-bar select option:active,
+.class-filter-bar select option:focus {
+    background: var(--indigo) !important;
+    background-color: var(--indigo) !important;
+    color: #ffffff !important;
+}
+
+/* ব্রাউজার ডিফল্ট কালো হাইলাইট রিমুভ */
+.class-filter-bar select::-webkit-list-button,
+.class-filter-bar select::-webkit-inner-spin-button,
+.class-filter-bar select::-webkit-calendar-picker-indicator {
+    background: transparent !important;
+}
+
+/* ===== ATTENDANCE FORM PANEL ===== */
+.attendance-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.6s ease-out;
+}
+
+.attendance-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.attendance-panel-header h3 {
+    color: var(--ink);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.attendance-panel-header h3 .student-count {
+    background: var(--brass-tint);
+    color: var(--brass-deep);
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+/* ===== SUBJECT / TIME / DATE CONTROLS ===== */
+.attendance-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.attendance-controls label {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+/* ===== ATTENDANCE CONTROLS SELECT & INPUT - কালো রিমুভ ===== */
+.attendance-controls select,
+.attendance-controls input[type="time"],
+.attendance-controls input[type="date"] {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--paper) !important;
+}
+
+.attendance-controls select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+}
+
+.attendance-controls select:hover,
+.attendance-controls input:hover {
+    border-color: var(--ink-faint);
+}
+
+.attendance-controls select:focus,
+.attendance-controls input:focus {
+    border-color: var(--indigo);
+    background-color: var(--surface) !important;
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ফোকাসে কালো ব্যাকগ্রাউন্ড রিমুভ */
+.attendance-controls select:focus-visible,
+.attendance-controls input:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    background-color: var(--surface) !important;
+}
+
+/* ===== ATTENDANCE CONTROLS OPTION - কালো রিমুভ ===== */
+.attendance-controls select option {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+}
+
+.attendance-controls select option:hover,
+.attendance-controls select option:checked,
+.attendance-controls select option:active,
+.attendance-controls select option:focus {
+    background: var(--indigo) !important;
+    background-color: var(--indigo) !important;
+    color: #ffffff !important;
+}
+
+/* ব্রাউজার ডিফল্ট কালো হাইলাইট রিমুভ */
+.attendance-controls select::-webkit-list-button,
+.attendance-controls select::-webkit-inner-spin-button,
+.attendance-controls select::-webkit-calendar-picker-indicator {
+    background: transparent !important;
+}
+
+/* Browser date/time indicators */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: none;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ===== MARK ALL BAR + SUMMARY — একই রো ===== */
+.mark-all-summary-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* ===== MARK ALL QUICK BUTTONS ===== */
+.mark-all-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.mark-all-bar span {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.mark-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 30px;
+    border: 1.5px solid;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--surface);
+    transition: all 0.2s ease;
+}
+
+.mark-all-btn.present {
+    border-color: #a7f3d0;
+    color: #059669;
+}
+
+.mark-all-btn.present:hover {
+    background: #ecfdf5;
+    border-color: #059669;
+}
+
+.mark-all-btn.absent {
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.mark-all-btn.absent:hover {
+    background: #fef2f2;
+    border-color: #dc2626;
+}
+
+.mark-all-btn.late {
+    border-color: #fde68a;
+    color: #d97706;
+}
+
+.mark-all-btn.late:hover {
+    background: #fffbeb;
+    border-color: #d97706;
+}
+
+/* divider between buttons and summary */
+.mark-summary-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--line);
+    flex-shrink: 0;
+}
+
+/* ===== LIVE SUMMARY BADGES ===== */
+#attendanceSummaryBadge {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+}
+
+.summary-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+}
+
+.summary-present {
+    background: #ecfdf5;
+    color: #059669;
+    border-color: #a7f3d0;
+}
+
+.summary-absent {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.summary-late {
+    background: #fffbeb;
+    color: #d97706;
+    border-color: #fde68a;
+}
+
+.summary-total {
+    background: #f1f5f9;
+    color: var(--ink-soft);
+    border-color: var(--line);
+}
+
+/* ===== ATTENDANCE TABLE ===== */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: var(--surface);
+}
+
+.attendance-table thead tr {
+    background: var(--paper);
+}
+
+.attendance-table th {
+    text-align: left;
+    padding: 14px 20px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--line);
+}
+
+.attendance-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink);
+    vertical-align: middle;
+    font-size: 0.92rem;
+    transition: all 0.2s ease;
+}
+
+/* Zebra striping */
+.attendance-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.attendance-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+/* টেবিল রো ফোকাস - কালো রিমুভ */
+.attendance-table tbody tr:focus-within {
+    outline: none;
+}
+
+.attendance-table tbody tr:focus-within td {
+    background-color: var(--paper);
+}
+
+/* Row states based on selections */
+.attendance-table tbody tr.row-present td {
+    background-color: rgba(16, 185, 129, 0.03);
+}
+
+.attendance-table tbody tr.row-present td:first-child {
+    border-left: 4px solid #10b981;
+}
+
+.attendance-table tbody tr.row-absent td {
+    background-color: rgba(239, 68, 68, 0.03);
+}
+
+.attendance-table tbody tr.row-absent td:first-child {
+    border-left: 4px solid #ef4444;
+}
+
+.attendance-table tbody tr.row-late td {
+    background-color: rgba(245, 158, 11, 0.03);
+}
+
+.attendance-table tbody tr.row-late td:first-child {
+    border-left: 4px solid #f59e0b;
+}
+
+/* Row details styling */
+.attendance-table td.row-num {
+    color: var(--ink-faint);
+    font-weight: 600;
+    width: 60px;
+}
+
+.attendance-table td.student-name {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.attendance-table td.roll-no {
+    color: var(--ink-soft);
+    font-weight: 500;
+    font-family: monospace;
+}
+
+/* ===== RADIO ATTENDANCE BUTTONS ===== */
+.radio-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Hide native radio */
+.radio-group input[type="radio"] {
+    display: none;
+}
+
+/* Base Pill label styling */
+.radio-group label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 30px;
+    border: 1.5px solid var(--line);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.radio-group label:hover {
+    border-color: var(--ink-faint);
+    color: var(--ink);
+    background: var(--paper);
+}
+
+/* ── Present Checked State ── */
+.present-radio input[type="radio"]:checked+label {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+}
+
+/* ── Absent Checked State ── */
+.absent-radio input[type="radio"]:checked+label {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+}
+
+/* ── Late Checked State ── */
+.late-radio input[type="radio"]:checked+label {
+    background: #f59e0b;
+    color: #ffffff;
+    border-color: #f59e0b;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+}
+
+/* ===== SAVE BUTTON ===== */
+.attendance-save-wrap {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-soft);
+}
+
+.btn-save-attendance {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--indigo) 0%, #4338ca 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 32px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(59, 75, 140, 0.25);
+}
+
+.btn-save-attendance:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 75, 140, 0.35);
+}
+
+.btn-save-attendance:active {
+    transform: translateY(0);
+}
+
+/* বাটন ফোকাসে কালো রিমুভ */
+.btn-save-attendance:focus-visible {
+    outline: 3px solid var(--indigo);
+    outline-offset: 3px;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 75, 140, 0.35);
+}
+
+/* ===== EMPTY STATE ===== */
+.attendance-empty {
+    text-align: center;
+    padding: 80px 40px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 2px dashed var(--line);
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.attendance-empty i {
+    font-size: 3rem;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+    display: block;
+}
+
+.attendance-empty h3 {
+    color: var(--ink);
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    margin: 0;
+}
+
+.attendance-empty p {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .attendance-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .attendance-controls {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .class-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.25rem;
+        gap: 15px;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .class-filter-bar select {
+        width: 100%;
+    }
+
+    .attendance-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .control-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .attendance-controls select,
+    .attendance-controls input {
+        width: 100%;
+    }
+
+    .radio-group {
+        gap: 6px;
+    }
+
+    .radio-group label {
+        padding: 6px 12px;
+        font-size: 0.78rem;
+    }
+
+    .btn-save-attendance {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,491 @@
+/* ============================================================
+   EXAM ROUTINE STYLES — exam_routine.html
+   Theme: "Registry Ledger" — Light ticket-card layout
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.exam-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f2f5fb !important;
+    padding: 36px 28px 80px 28px !important;
+    min-height: 100vh;
+}
+
+/* START: PAGE_HEADING */
+.exam-page-heading {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+    width: 100%;
+}
+
+.exam-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.exam-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.exam-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* END: PAGE_HEADING */
+
+/* ===== OUTER CONTAINER ===== */
+.exam-container {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+/* START: LIST_WRAPPER */
+.exam-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* END: LIST_WRAPPER */
+
+/* START: TICKET_CARD */
+.exam-ticket {
+    display: flex;
+    align-items: stretch;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.exam-ticket:hover {
+    transform: translateY(-3px);
+    border-color: #c7d2fe;
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.08);
+}
+
+/* END: TICKET_CARD */
+
+/* START: DATE_STUB (left side ticket perforation) */
+.exam-date-stub {
+    position: relative;
+    flex-shrink: 0;
+    width: 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f5f3ff;
+    border-right: 2px dashed #ddd6fe;
+    padding: 20px 10px;
+}
+
+/* The ticket punch-hole circles */
+.exam-date-stub::before,
+.exam-date-stub::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    width: 18px;
+    height: 18px;
+    background: #f2f5fb;
+    border-radius: 50%;
+    border: 1px solid #ddd6fe;
+}
+
+.exam-date-stub::before {
+    top: -9px;
+}
+
+.exam-date-stub::after {
+    bottom: -9px;
+}
+
+.exam-date-stub .stub-day {
+    font-size: 28px;
+    font-weight: 800;
+    color: #7c3aed;
+    line-height: 1;
+}
+
+.exam-date-stub .stub-month {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6366f1;
+    margin-top: 4px;
+}
+
+.exam-date-stub .stub-year {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* END: DATE_STUB */
+
+/* START: TICKET_BODY */
+.exam-ticket-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 24px;
+    flex-wrap: wrap;
+}
+
+.exam-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 150px;
+}
+
+.exam-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.exam-subject-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7c3aed;
+    background: #ede9fe;
+    border: 1px solid #ddd6fe;
+    padding: 4px 12px;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.exam-subject-tag i {
+    font-size: 11px;
+}
+
+/* END: TICKET_BODY */
+
+/* START: TICKET_META (time & room chips) */
+.exam-meta-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.exam-meta-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 16px;
+    min-width: 84px;
+}
+
+.exam-meta-chip .meta-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+}
+
+.exam-meta-chip .meta-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.exam-meta-chip .meta-value i {
+    color: #6366f1;
+    font-size: 11px;
+}
+
+/* END: TICKET_META */
+
+/* START: EMPTY_STATE */
+.exam-empty-state {
+    text-align: center;
+    padding: 70px 20px;
+    background: #ffffff;
+    border-radius: 14px;
+}
+
+.exam-empty-state i {
+    font-size: 48px;
+    color: #c7d2fe;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.exam-empty-state p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.exam-empty-state span {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+/* END: EMPTY_STATE */
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* ===== 1024px - ল্যাপটপ ===== */
+@media (max-width: 1024px) {
+    .exam-container {
+        max-width: 95%;
+        padding: 20px;
+    }
+
+    .exam-ticket-body {
+        gap: 16px;
+    }
+}
+
+/* ===== 768px - ট্যাবলেট ===== */
+@media (max-width: 768px) {
+    .dashboard-wrapper.exam-page {
+        padding: 24px 20px 60px 20px !important;
+    }
+
+    .exam-ticket-body {
+        flex-wrap: wrap;
+        padding: 16px 20px;
+    }
+
+    .exam-meta-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .exam-meta-chip {
+        min-width: 70px;
+        padding: 6px 14px;
+    }
+}
+
+/* ===== 640px - বড় মোবাইল ===== */
+@media (max-width: 640px) {
+    .dashboard-wrapper.exam-page {
+        padding: 16px 12px 50px 12px !important;
+    }
+
+    .exam-container {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .exam-ticket {
+        flex-direction: column;
+        border-radius: 12px;
+    }
+
+    .exam-date-stub {
+        width: 100%;
+        flex-direction: row;
+        gap: 8px;
+        border-right: none;
+        border-bottom: 2px dashed #ddd6fe;
+        padding: 12px 16px;
+        justify-content: center;
+    }
+
+    .exam-date-stub::before,
+    .exam-date-stub::after {
+        right: auto;
+        bottom: auto;
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .exam-date-stub::before {
+        top: -9px;
+    }
+
+    .exam-date-stub::after {
+        bottom: -9px;
+        right: auto;
+        top: auto;
+    }
+
+    .exam-date-stub .stub-day {
+        font-size: 24px;
+    }
+
+    .exam-ticket-body {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .exam-main-info {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .exam-meta-group {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .exam-meta-chip {
+        flex: 1;
+        min-width: 60px;
+        padding: 6px 10px;
+    }
+
+    .exam-meta-chip .meta-value {
+        font-size: 12px;
+    }
+
+    .exam-name {
+        font-size: 15px;
+    }
+
+    .exam-page-heading h1 {
+        font-size: 22px;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .exam-page-heading h1 i {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
+
+/* ===== 480px - ছোট মোবাইল ===== */
+@media (max-width: 480px) {
+    .dashboard-wrapper.exam-page {
+        padding: 12px 8px 40px 8px !important;
+    }
+
+    .exam-container {
+        padding: 8px;
+        border-radius: 10px;
+    }
+
+    .exam-page-heading h1 {
+        font-size: 20px;
+        gap: 8px;
+    }
+
+    .exam-page-heading h1 i {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .exam-page-heading p {
+        font-size: 13px;
+    }
+
+    .exam-ticket {
+        border-radius: 10px;
+    }
+
+    .exam-date-stub {
+        padding: 10px 12px;
+    }
+
+    .exam-date-stub .stub-day {
+        font-size: 20px;
+    }
+
+    .exam-date-stub .stub-month {
+        font-size: 10px;
+    }
+
+    .exam-ticket-body {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .exam-name {
+        font-size: 14px;
+    }
+
+    .exam-subject-tag {
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+
+    .exam-meta-chip {
+        min-width: 50px;
+        padding: 4px 8px;
+        border-radius: 8px;
+    }
+
+    .exam-meta-chip .meta-label {
+        font-size: 8px;
+    }
+
+    .exam-meta-chip .meta-value {
+        font-size: 11px;
+    }
+
+    .exam-meta-chip .meta-value i {
+        font-size: 10px;
+    }
+
+    .exam-empty-state {
+        padding: 40px 16px;
+    }
+
+    .exam-empty-state i {
+        font-size: 36px;
+    }
+}

@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils.html import format_html
-from .models import UserProfile, RegistrationRequest
+from .models import UserProfile, RegistrationRequest, Testimonial
 from student.models import Student
 from teacher.models import Teacher
 from staff.models import Staff
@@ -118,13 +118,13 @@ class RegistrationRequestAdmin(admin.ModelAdmin):
         
         # 4. Create Role Profile
         if req.role == 'Student':
-            Student.objects.create(user=user, phone_number=req.phone_number, student_id=f"STU{random.randint(1000, 9999)}")
+            Student.objects.create(user=user, phone_number=req.phone_number, student_id=f"STU{random.randint(1000, 9999)}", password_plain=password)
         elif req.role == 'Teacher':
-            Teacher.objects.create(user=user, phone_number=req.phone_number, teacher_id=f"TEA{random.randint(1000, 9999)}", salary=0)
+            Teacher.objects.create(user=user, phone_number=req.phone_number, teacher_id=f"TEA{random.randint(1000, 9999)}", salary=0, password_plain=password)
         elif req.role == 'Staff':
-            Staff.objects.create(user=user, phone_number=req.phone_number, staff_id=f"STA{random.randint(1000, 9999)}", salary=0)
+            Staff.objects.create(user=user, phone_number=req.phone_number, staff_id=f"STA{random.randint(1000, 9999)}", salary=0, password_plain=password)
         elif req.role == 'Parent':
-            SchoolParent.objects.create(user=user, phone_number=req.phone_number, parent_id=f"PAR{random.randint(1000, 9999)}")
+            SchoolParent.objects.create(user=user, phone_number=req.phone_number, parent_id=f"PAR{random.randint(1000, 9999)}", password_plain=password)
 
         # 5. Send Email
         subject = 'Your School Management System Account'
@@ -178,3 +178,25 @@ class RegistrationRequestAdmin(admin.ModelAdmin):
         queryset.update(is_rejected=True, is_approved=False)
     reject_requests.short_description = "Reject selected requests"
 # END: REGISTRATION_REQUEST_ADMIN
+
+# START: TESTIMONIAL_ADMIN
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ('name', 'role', 'image_preview', 'created_at')
+    search_fields = ('name', 'role', 'quote')
+    fieldsets = (
+        ('Testimonial Details', {
+            'fields': (
+                ('name', 'role'),
+                'quote',
+                'image',
+            )
+        }),
+    )
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" />', obj.image.url)
+        return "No Image"
+    image_preview.short_description = 'Photo'
+# END: TESTIMONIAL_ADMIN

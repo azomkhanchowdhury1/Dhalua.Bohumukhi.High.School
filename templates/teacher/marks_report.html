@@ -3,51 +3,9 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: MARKS_REPORT_CSS */
-    .class-filter-bar {
-        background: rgba(15,23,42,0.6);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 20px;
-        padding: 1.5rem 2rem;
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    .class-filter-bar label { color: #94a3b8; font-size: 0.9rem; white-space:nowrap; }
-    .class-filter-bar select {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 12px;
-        padding: 11px 18px;
-        color: #fff;
-        font-size: 0.95rem;
-    }
-    .class-filter-bar select option { background: #0f172a; }
-    .report-table { width: 100%; border-collapse: collapse; }
-    .report-table th {
-        text-align: left;
-        padding: 14px 18px;
-        color: #94a3b8;
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .report-table td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #e2e8f0; }
-    .subject-pill {
-        display: inline-block;
-        padding: 4px 10px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 8px;
-        margin: 4px;
-        font-size: 0.85rem;
-    }
-    /* END: MARKS_REPORT_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/perormance_repoat.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -60,7 +18,7 @@
 
     <!-- Filter Bar -->
     <form method="GET" class="class-filter-bar">
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div>
             <label>Select Exam:</label>
             <select name="exam_id" onchange="this.form.submit()" required>
                 <option value="">— Choose an exam —</option>
@@ -70,7 +28,7 @@
             </select>
         </div>
 
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div>
             <label>Select Class:</label>
             <select name="class_id" onchange="this.form.submit()" {% if not selected_exam %}disabled{% endif %}>
                 <option value="">— Choose a class —</option>
@@ -83,13 +41,13 @@
 
     {% if selected_exam and selected_class %}
         {% if report_data %}
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
-            <h3 style="color:#fff; margin-bottom:25px;">Progress Reports</h3>
+        <div class="report-panel">
+            <h3>Progress Reports</h3>
 
             <table class="report-table">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th class="row-num">#</th>
                         <th>Student Name</th>
                         <th>Roll No</th>
                         <th>Subject Details (Marks/Grade)</th>
@@ -100,34 +58,34 @@
                 <tbody>
                     {% for item in report_data %}
                     <tr>
-                        <td style="color:#64748b;">{{ forloop.counter }}</td>
-                        <td style="font-weight:600;">{{ item.student.user.get_full_name }}</td>
-                        <td style="color:#94a3b8;">{{ item.student.roll_number|default:"—" }}</td>
+                        <td class="row-num">{{ forloop.counter }}</td>
+                        <td class="student-name">{{ item.student.user.get_full_name }}</td>
+                        <td class="roll-no">{{ item.student.roll_number|default:"—" }}</td>
                         <td>
                             {% for r in item.results %}
                             <span class="subject-pill">
                                 <strong>{{ r.subject.name }}:</strong> {{ r.marks_obtained }} ({{ r.grade.grade_letter|default:"—" }})
                             </span>
                             {% empty %}
-                            <span style="color:#64748b; font-style:italic;">No marks entered</span>
+                            <span>No marks entered</span>
                             {% endfor %}
                         </td>
-                        <td style="font-weight: 700; color: #fff;">{{ item.total }}</td>
-                        <td style="font-weight: 700; color: var(--home-primary, #6366f1);">{{ item.average|stringformat:".2f" }}%</td>
+                        <td class="marks">{{ item.total }}</td>
+                        <td class="average">{{ item.average|stringformat:".2f" }}%</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-        <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-            <h3 style="color:#64748b;">No progress reports found for the selected options.</h3>
+        <div class="empty-state">
+            <h3>No progress reports found for the selected options.</h3>
         </div>
         {% endif %}
     {% else %}
-    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <i class="fas fa-arrow-up" style="font-size:2rem; color:rgba(255,255,255,0.1); margin-bottom:15px; display:block;"></i>
-        <h3 style="color:#64748b;">Please select an exam and a class from above to view progress reports.</h3>
+    <div class="empty-state">
+        <i class="fas fa-arrow-up"></i>
+        <h3>Please select an exam and a class from above to view progress reports.</h3>
     </div>
     {% endif %}
 </div>

@@ -16,7 +16,7 @@
 
     <div class="notice-grid">
         {% for notice in notices %}
-        <div class="notice-card" style="animation-delay: {{ forloop.counter0|add:1|mul:0.1 }}s;">
+        <div class="notice-card">
             {% if notice.is_public %}
             <span class="notice-badge badge-public">Public</span>
             {% else %}

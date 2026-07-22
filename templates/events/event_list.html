@@ -2,130 +2,39 @@
 {% load static %}
 
 {% block css %}
-<style>
-    .events-header {
-        text-align: center;
-        padding: 60px 20px;
-        background: linear-gradient(135deg, #1e293b, #0f172a);
-        color: white;
-        margin-bottom: 40px;
-    }
-    .events-header h1 {
-        font-size: 36px;
-        margin-bottom: 10px;
-        background: linear-gradient(135deg, #fff, #a5b4fc);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .events-header p {
-        color: #94a3b8;
-        font-size: 18px;
-    }
-    .events-section {
-        max-width: 1200px;
-        margin: 0 auto 60px;
-        padding: 0 20px;
-    }
-    .section-title {
-        font-size: 24px;
-        color: #1e293b;
-        margin-bottom: 30px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #e2e8f0;
-    }
-    .event-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 30px;
-    }
-    .event-card {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .event-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    .event-img {
-        height: 200px;
-        width: 100%;
-        object-fit: cover;
-    }
-    .event-content {
-        padding: 24px;
-    }
-    .event-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 12px;
-    }
-    .event-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 16px;
-        font-size: 14px;
-        color: #64748b;
-    }
-    .event-meta i {
-        color: #6366f1;
-        width: 20px;
-    }
-    .event-desc {
-        color: #475569;
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 40px;
-        background: #f8fafc;
-        border-radius: 12px;
-        color: #64748b;
-    }
-    .empty-state i {
-        font-size: 40px;
-        color: #cbd5e1;
-        margin-bottom: 15px;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
-<div class="events-header">
+<div>
     <h1>School Events</h1>
     <p>Stay updated with our latest and upcoming activities</p>
 </div>
 
-<div class="events-section">
-    <h2 class="section-title">Upcoming Events</h2>
+<div>
+    <h2>Upcoming Events</h2>
     {% if upcoming_events %}
-    <div class="event-grid">
+    <div>
         {% for event in upcoming_events %}
-        <div class="event-card">
+        <div>
             {% if event.image %}
-            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-img">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}">
             {% else %}
-            <img src="https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=600&auto=format&fit=crop" alt="Event" class="event-img">
+            <img src="{% static 'image/event_default.png' %}" alt="Event">
             {% endif %}
-            <div class="event-content">
-                <h3 class="event-title">{{ event.title }}</h3>
-                <div class="event-meta">
+            <div>
+                <h3>{{ event.title }}</h3>
+                <div>
                     <div><i class="far fa-calendar-alt"></i> {{ event.date|date:"F d, Y" }}</div>
                     <div><i class="far fa-clock"></i> {{ event.time|time:"h:i A" }}</div>
                     <div><i class="fas fa-map-marker-alt"></i> {{ event.location }}</div>
                 </div>
-                <p class="event-desc">{{ event.description|truncatewords:20 }}</p>
+                <p>{{ event.description|truncatewords:20 }}</p>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state">
+    <div>
         <i class="far fa-calendar-times"></i>
         <h3>No Upcoming Events</h3>
         <p>Check back later for new events.</p>
@@ -133,20 +42,20 @@
     {% endif %}
 </div>
 
-<div class="events-section">
-    <h2 class="section-title">Past Events</h2>
+<div>
+    <h2>Past Events</h2>
     {% if past_events %}
-    <div class="event-grid">
+    <div>
         {% for event in past_events %}
-        <div class="event-card" style="opacity: 0.8;">
+        <div>
             {% if event.image %}
-            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-img">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}">
             {% else %}
-            <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=600&auto=format&fit=crop" alt="Event" class="event-img">
+            <img src="{% static 'image/event_default.png' %}" alt="Event">
             {% endif %}
-            <div class="event-content">
-                <h3 class="event-title">{{ event.title }}</h3>
-                <div class="event-meta">
+            <div>
+                <h3>{{ event.title }}</h3>
+                <div>
                     <div><i class="far fa-calendar-alt"></i> {{ event.date|date:"F d, Y" }}</div>
                     <div><i class="fas fa-map-marker-alt"></i> {{ event.location }}</div>
                 </div>
@@ -155,7 +64,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state">
+    <div>
         <i class="far fa-images"></i>
         <p>No past events to show.</p>
     </div>

@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="dashboard-wrapper">
     <div class="section-header">
         <h1>{% if group %}Edit{% else %}Add{% endif %} Group</h1>
     </div>
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); max-width:800px;">
+
+    <div>
         <form method="POST">
             {% csrf_token %}
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <input type="text" name="name" value="{{ group.name }}" required placeholder="Group Name" style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
-                <button type="submit" class="view-all-btn" style="border:none; cursor:pointer;"><i class="fas fa-save"></i> Save</button>
+
+            <div>
+                <input type="text" name="name" value="{{ group.name }}" required placeholder="Group Name">
+
+                <button type="submit" class="view-all-btn">
+                    <i class="fas fa-save"></i> Save
+                </button>
             </div>
         </form>
     </div>

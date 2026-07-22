@@ -1,0 +1,16 @@
+/* START: DASHBOARD_PARENTS_CSS */
+
+/* ===== PARENT DASHBOARD SPECIFIC OVERRIDES ===== */
+.stat-icon.child { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.stat-icon.results { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+.stat-icon.fees { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+.module-header.progress { color: #6366f1; }
+.module-header.attendance { color: #10b981; }
+.module-header.finance { color: #f59e0b; }
+.module-header.exams { color: #8b5cf6; }
+.module-header.schedule { color: #0ea5e9; }
+.module-header.communication { color: #ec4899; }
+
+/* END: DASHBOARD_PARENTS_CSS */

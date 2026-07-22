@@ -13,4 +13,5 @@ urlpatterns = [
     path('otp-verify/', views.otp_verify_view, name='otp_verify'),
     path('reset-password/', views.reset_password_view, name='reset_password'),
     path('global-search/', views.global_search, name='global_search'),
+    path('chatbot/', views.chatbot_response, name='chatbot_response'),
 ]

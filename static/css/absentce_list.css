@@ -1,0 +1,388 @@
+/* ============================================================
+   ABSENTEE LIST PAGE CSS — teacher/attendance_absentee.html
+   School Management System — Clean Registry Theme Redesign
+   ============================================================ */
+
+/* ===== PAGE HEADER ===== */
+.section-header {
+    margin-bottom: 2rem;
+    animation: slideUpFade 0.4s ease-out;
+    text-align: center;
+}
+
+.section-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+}
+
+.section-header p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ===== FILTER BAR ===== */
+.class-filter-bar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px 30px;
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.class-filter-bar>div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 60%;
+}
+
+.class-filter-bar label {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ===== SELECT & INPUT STYLING - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select,
+.class-filter-bar input[type="date"] {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--paper) !important;
+}
+
+/* কাস্টম ড্রপডাউন অ্যারো - শুধু select এর জন্য */
+.class-filter-bar select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+}
+
+.class-filter-bar select:hover,
+.class-filter-bar input:hover {
+    border-color: var(--ink-faint);
+}
+
+.class-filter-bar select:focus,
+.class-filter-bar input:focus {
+    border-color: var(--indigo);
+    background-color: var(--surface) !important;
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ফোকাসে কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select:focus-visible,
+.class-filter-bar input:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    background-color: var(--surface) !important;
+}
+
+/* ===== SELECT OPTION - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select option {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+}
+
+/* অপশন হোভার এবং সিলেক্টেড স্টাইল - কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select option:hover,
+.class-filter-bar select option:checked,
+.class-filter-bar select option:active,
+.class-filter-bar select option:focus {
+    background: var(--indigo) !important;
+    background-color: var(--indigo) !important;
+    color: #ffffff !important;
+}
+
+/* ব্রাউজার ডিফল্ট কালো হাইলাইট রিমুভ */
+.class-filter-bar select::-webkit-list-button,
+.class-filter-bar select::-webkit-inner-spin-button,
+.class-filter-bar select::-webkit-calendar-picker-indicator {
+    background: transparent !important;
+}
+
+/* Date input এর ক্যালেন্ডার আইকন */
+.class-filter-bar input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.class-filter-bar input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ===== SEARCH BUTTON ===== */
+.filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: auto;
+    background: var(--indigo);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    width: 50%;
+    height: 50%;
+    justify-content: center;
+}
+
+.view-all-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 75, 140, 0.3);
+}
+
+.view-all-btn:focus-visible {
+    outline: 3px solid var(--indigo);
+    outline-offset: 3px;
+}
+
+/* ===== ALERT BANNER ===== */
+.alert-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #dc2626;
+    font-size: 0.95rem;
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.alert-banner i {
+    font-size: 1.3rem;
+}
+
+/* ===== ABSENTEE CARDS GRID ===== */
+.absentees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    animation: slideUpFade 0.6s ease-out;
+}
+
+.absentee-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid #ef4444;
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.absentee-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fecaca;
+}
+
+.badge-cross {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    background: #ef4444;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-cross i {
+    font-size: 8px;
+    color: #fff;
+}
+
+.card-info {
+    flex: 1;
+}
+
+.card-info h3 {
+    color: var(--ink);
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.card-info p {
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.card-info .class-tag {
+    margin-top: 4px;
+}
+
+.status-badge {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-green-state {
+    text-align: center;
+    padding: 70px 40px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 2px dashed #a7f3d0;
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.empty-green-state i {
+    font-size: 3.5rem;
+    color: #10b981;
+    margin-bottom: 18px;
+    display: block;
+}
+
+.empty-green-state h2 {
+    color: #059669;
+    font-size: 1.3rem;
+    font-family: var(--font-display);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.empty-green-state h3 {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.empty-neutral-state {
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 2px dashed var(--line);
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.empty-neutral-state h3 {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .class-filter-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .class-filter-bar {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+        gap: 15px;
+    }
+
+    .class-filter-bar>div {
+        gap: 4px;
+    }
+
+    .class-filter-bar select,
+    .class-filter-bar input {
+        width: 100%;
+    }
+
+    .view-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .absentees-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

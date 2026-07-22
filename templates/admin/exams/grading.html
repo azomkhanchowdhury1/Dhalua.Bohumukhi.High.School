@@ -1,49 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    .grading-container {
-        display: grid;
-        grid-template-columns: 1.2fr 2fr 1fr;
-        gap: 30px;
-        align-items: start;
-    }
-    .grade-row {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .grade-row.remembered {
-        background: rgba(16, 185, 129, 0.02);
-    }
-    .action-btn {
-        transition: 0.2s;
-        text-decoration: none;
-    }
-    .edit-action { color: #6366f1; }
-    .delete-action { color: #ef4444; }
-    .remember-action { color: #64748b; }
-    .remember-action.active { color: #10b981; }
-
-    @media (max-width: 1200px) {
-        .grading-container {
-            grid-template-columns: 1fr 1.5fr;
-        }
-        .reminders-panel {
-            grid-column: span 2;
-        }
-    }
-    @media (max-width: 768px) {
-        .grading-container {
-            grid-template-columns: 1fr;
-        }
-        .reminders-panel {
-            grid-column: span 1;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: GRADING_SYSTEM_SECTION -->
 <div class="dashboard-wrapper">
@@ -54,69 +11,91 @@
 
     <div class="grading-container">
         <!-- Add Grade Form -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+        <div>
             <h3>Configure New Grade</h3>
-            <form method="POST" style="margin-top:20px;">
+            <form method="POST">
                 {% csrf_token %}
-                <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8;">Grade Name</label>
-                    <input type="text" name="name" placeholder="e.g. A+" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                <div class="form-group">
+                    <label>Grade Name</label>
+                    <input type="text" name="name" placeholder="e.g. A+" required>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="color:#94a3b8;">Min Mark</label>
-                        <input type="number" name="min_mark" placeholder="80" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <div class="form-group">
+                        <label>Min Mark</label>
+                        <input type="number" name="min_mark" placeholder="80" required>
                     </div>
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="color:#94a3b8;">Max Mark</label>
-                        <input type="number" name="max_mark" placeholder="100" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                    <div class="form-group">
+                        <label>Max Mark</label>
+                        <input type="number" name="max_mark" placeholder="100" required>
                     </div>
                 </div>
-                <div class="form-group" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8;">Grade Point</label>
-                    <input type="number" step="0.01" name="point" placeholder="5.00" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div class="form-group">
+                    <label>Grade Point</label>
+                    <input type="number" step="0.01" name="point" placeholder="5.00" required>
                 </div>
-                <button type="submit" class="view-all-btn" style="width:100%; margin-top:20px;">Save Grade Rule</button>
+
+                <button type="submit" class="view-all-btn">Save Grade Rule</button>
             </form>
         </div>
 
         <!-- Grade List -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
+        <div>
             <h3>Current Grading Rules</h3>
-            <div style="margin-top:20px; overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+            <div>
+                <table>
                     <thead>
-                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:15px;">Grade</th>
-                            <th style="padding:15px;">Marks Range</th>
-                            <th style="padding:15px;">Grade Point</th>
-                            <th style="padding:15px; text-align:center;">Action</th>
+                        <tr>
+                            <th>Grade</th>
+                            <th>Marks Range</th>
+                            <th>Grade Point</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for g in grades %}
                         <tr class="grade-row {% if g.is_remembered %}remembered{% endif %}">
-                            <td style="padding:15px; font-weight:700;">
+                            <td>
                                 {{ g.name }}
+
                                 {% if g.is_remembered and g.reminder_note %}
                                 <br>
-                                <div style="background:rgba(16, 185, 129, 0.1); color:#10b981; font-size:0.75rem; padding:4px 8px; border-radius:6px; margin-top:5px; border:1px solid rgba(16, 185, 129, 0.2); display:inline-flex; align-items:center; gap:6px;">
+                                <div>
                                     <i class="fas fa-info-circle"></i> {{ g.reminder_note }}
                                 </div>
                                 {% endif %}
                             </td>
-                            <td style="padding:15px; color:#cbd5e1;">{{ g.min_mark }} - {{ g.max_mark }}</td>
-                            <td style="padding:15px; color:var(--home-primary);">{{ g.point }}</td>
-                            <td style="padding:15px; text-align:center;">
-                                <div style="display:flex; gap:10px; justify-content:center;">
-                                    <a href="{% url 'admin_panel:exam_grading_edit' g.id %}" class="action-btn edit-action" title="Edit"><i class="fas fa-edit"></i></a>
-                                    <a href="{% url 'admin_panel:exam_grading_delete' g.id %}" class="action-btn delete-action" title="Delete"><i class="fas fa-trash"></i></a>
-                                    <a href="{% url 'admin_panel:exam_grading_toggle_remember' g.id %}" class="action-btn remember-action {% if g.is_remembered %}active{% endif %}" title="Toggle Reminder"><i class="fas fa-bookmark"></i></a>
+
+                            <td>{{ g.min_mark }} - {{ g.max_mark }}</td>
+                            <td>{{ g.point }}</td>
+
+                            <td>
+                                <div>
+                                    <a href="{% url 'admin_panel:exam_grading_edit' g.id %}"
+                                        class="action-btn edit-action" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <a href="{% url 'admin_panel:exam_grading_delete' g.id %}"
+                                        class="action-btn delete-action" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+
+                                    <a href="{% url 'admin_panel:exam_grading_toggle_remember' g.id %}"
+                                        class="action-btn remember-action {% if g.is_remembered %}active{% endif %}"
+                                        title="Toggle Reminder">
+                                        <i class="fas fa-bookmark"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" style="text-align:center; padding:50px; color:#94a3b8;">No grading rules defined.</td></tr>
+                        <tr>
+                            <td colspan="4">No grading rules defined.</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -124,34 +103,38 @@
         </div>
 
         <!-- Active Reminders Sidebar -->
-        <div class="reminders-panel" style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1);">
-            <h3 style="color:#ffffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.15rem;">
-                <i class="fas fa-bell" style="color: #10b981;"></i> Active Reminders
+        <div class="reminders-panel">
+            <h3>
+                <i class="fas fa-bell"></i> Active Reminders
             </h3>
-            <div id="reminders-list" style="display: flex; flex-direction: column; gap: 15px;">
+
+            <div id="reminders-list">
                 {% for g in grades %}
-                    {% if g.is_remembered %}
-                    <div class="reminder-item" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 12px; transition: all 0.3s ease;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                            <strong style="color: #ffffff; font-size: 0.9rem;">Grade {{ g.name }}</strong>
-                            <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: 600;">GPA {{ g.point }}</span>
-                        </div>
-                        <div style="color: #a5b4fc; font-size: 0.75rem; margin-bottom: 8px;">
-                            Range: {{ g.min_mark }} - {{ g.max_mark }}
-                        </div>
-                        {% if g.reminder_note %}
-                        <div style="color: #cbd5e1; font-size: 0.8rem; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; border-left: 3px solid #10b981; word-break: break-word;">
-                            {{ g.reminder_note }}
-                        </div>
-                        {% else %}
-                        <div style="color: #94a3b8; font-size: 0.75rem; font-style: italic;">
-                            No message attached.
-                        </div>
-                        {% endif %}
+                {% if g.is_remembered %}
+                <div class="reminder-item">
+                    <div>
+                        <strong>Grade {{ g.name }}</strong>
+                        <span>GPA {{ g.point }}</span>
+                    </div>
+
+                    <div>
+                        Range: {{ g.min_mark }} - {{ g.max_mark }}
+                    </div>
+
+                    {% if g.reminder_note %}
+                    <div>
+                        {{ g.reminder_note }}
+                    </div>
+                    {% else %}
+                    <div>
+                        No message attached.
                     </div>
                     {% endif %}
+                </div>
+                {% endif %}
                 {% endfor %}
-                <div id="no-reminders-message" style="color: #94a3b8; font-size: 0.85rem; text-align: center; padding: 20px; display: none;">
+
+                <div id="no-reminders-message">
                     No active reminders.
                 </div>
             </div>
@@ -160,7 +143,7 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const items = document.querySelectorAll('#reminders-list .reminder-item');
         const message = document.getElementById('no-reminders-message');
         if (items.length === 0 && message) {

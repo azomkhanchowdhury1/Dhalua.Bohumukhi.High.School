@@ -1,50 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    .delete-container {
-        max-width: 500px;
-        margin: 60px auto;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        padding: 2.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        text-align: center;
-    }
-    .warning-icon {
-        font-size: 3rem;
-        color: #ef4444;
-        margin-bottom: 20px;
-    }
-    .delete-title {
-        font-size: 1.5rem;
-        color: #fff;
-        margin-bottom: 15px;
-    }
-    .delete-text {
-        color: #94a3b8;
-        font-size: 1rem;
-        margin-bottom: 30px;
-        line-height: 1.6;
-    }
-    .btn-container {
-        display: flex; gap: 15px;
-    }
-    .btn-delete {
-        flex: 1; padding: 12px 24px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-    }
-    .btn-delete:hover { background: #ef4444; color: #fff; }
-    .btn-cancel {
-        flex: 1; padding: 12px 24px; background: rgba(255, 255, 255, 0.05); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.3s ease;
-    }
-    .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="dashboard-wrapper">
     <div class="delete-container">

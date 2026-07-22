@@ -1,9 +1,11 @@
+# START: prents/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from student.models import Student
 
 class Parent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile', null=True, blank=True)
+    password_plain = models.CharField(max_length=128, blank=True, null=True, verbose_name="Current Password")
     profile_image = models.ImageField(upload_to='parents/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -20,3 +22,5 @@ class Parent(models.Model):
         if self.user:
             return f"{self.user.first_name} {self.user.last_name} ({self.parent_id})"
         return f"Parent {self.parent_id or self.id}"
+
+# END: prents/models.py

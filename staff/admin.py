@@ -1,3 +1,4 @@
+# START: staff/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Staff
@@ -7,7 +8,8 @@ from .forms import StaffAdminForm
 @admin.register(Staff)
 class StaffAdmin(admin.ModelAdmin):
     form = StaffAdminForm
-    list_display = ('staff_id', 'get_first_name', 'get_last_name', 'designation', 'department', 'image_preview')
+    list_display = ('staff_id', 'get_first_name', 'get_last_name', 'designation', 'department', 'password_plain', 'image_preview')
+    readonly_fields = ('password_plain',)
     search_fields = ('staff_id', 'user__first_name', 'user__last_name', 'user__username', 'phone_number')
     list_filter = ('gender', 'department', 'work_shift')
 
@@ -17,6 +19,7 @@ class StaffAdmin(admin.ModelAdmin):
                 ('username', 'email'),
                 ('first_name', 'last_name'),
                 ('password', 'confirm_password'),
+                'password_plain',
             )
         }),
         ('Personal Information', {
@@ -71,3 +74,4 @@ admin.site.register(PerformanceRecord)
 admin.site.register(VisitorLog)
 
 # END: STAFF_ADMIN
+# END: staff/admin.py

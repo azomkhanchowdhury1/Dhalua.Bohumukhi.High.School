@@ -35,13 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function() {
-            // Toggle the type attribute
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+            // Check if password type is password
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
             
-            // Toggle the icon
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
+            // Toggle icon classes and title attribute
+            this.classList.toggle('fa-eye', !isPassword);
+            this.classList.toggle('fa-eye-slash', isPassword);
+            this.setAttribute('title', isPassword ? 'Hide Password' : 'Show Password');
         });
     }
     // END: PASSWORD_TOGGLE_LOGIC

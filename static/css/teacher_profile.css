@@ -1,0 +1,221 @@
+.dashboard-wrapper {
+    padding-top: 50px;
+}
+
+.profile-wrapper {
+    max-width: 680px;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ebe6e6;
+
+
+}
+
+/* profile header card */
+.profile-header-card {
+    background: #ffffff;
+    border: 0.5px solid #e5e5e0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #f1efe8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: #6b6b68;
+    flex-shrink: 0;
+}
+
+.profile-identity .profile-name {
+    font-weight: 500;
+    font-size: 17px;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.profile-identity .profile-role {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 2px 0 0;
+}
+
+.edit-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    background: transparent;
+    border: 0.5px solid #b4b2a9;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #1a1a1a;
+}
+
+.edit-profile-btn:hover {
+    background: #f1efe8;
+}
+
+/* personal info card */
+.info-card {
+    background: #ffffff;
+    border: 0.5px solid #e5e5e0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.info-card .info-title {
+    font-weight: 500;
+    font-size: 15px;
+    margin: 0 0 14px;
+    color: #1a1a1a;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.info-grid .field-label {
+    font-size: 11px;
+    color: #999790;
+    margin: 0 0 2px;
+}
+
+.info-grid .field-value {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+@media (max-width: 480px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* school footer block */
+.school-footer {
+    background: #f1efe8;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+}
+
+.footer-about .school-name {
+    font-weight: 500;
+    font-size: 15px;
+    margin: 0 0 8px;
+    color: #1a1a1a;
+}
+
+.footer-about .school-desc {
+    font-size: 13px;
+    color: #6b6b68;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.footer-links .links-title {
+    font-weight: 500;
+    font-size: 13px;
+    margin: 0 0 10px;
+    color: #1a1a1a;
+}
+
+.footer-links .links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links a {
+    font-size: 13px;
+    color: #6b6b68;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #378ADD;
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+
+    .profile-identity .profile-name,
+    .edit-profile-btn,
+    .info-card .info-title,
+    .info-grid .field-value,
+    .footer-about .school-name,
+    .footer-links .links-title {
+        color: #020202;
+    }
+
+    .profile-identity .profile-role,
+    .footer-about .school-desc,
+    .footer-links a {
+        color: #f50505;
+    }
+
+    .profile-header-card,
+    .info-card {
+        background: #ffffff;
+        border-color: #cfcf40;
+    }
+
+    .profile-avatar {
+        background: #3a3a37;
+        color: #b4b2a9;
+    }
+
+    .edit-profile-btn {
+        border-color: #d1cfc9;
+    }
+
+    .edit-profile-btn:hover {
+        background: #d1d1b9;
+        color: black;
+    }
+
+    .info-grid .field-label {
+        color: #888780;
+    }
+
+    .school-footer {
+        background: #2c2c2a;
+    }
+}

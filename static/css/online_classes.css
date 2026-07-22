@@ -1,0 +1,360 @@
+/* START: ONLINE_CLASSES_CSS */
+
+/* ——— Page Layout ——— */
+.oc-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ——— Header Banner ——— */
+.oc-banner {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border-radius: 20px;
+    padding: 40px 36px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+.oc-banner::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(244,63,94,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.oc-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40%;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.oc-banner-text h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 8px;
+    position: relative;
+}
+.oc-banner-text p {
+    color: #94a3b8;
+    font-size: 15px;
+    margin: 0;
+    max-width: 480px;
+    position: relative;
+}
+.oc-banner-icon {
+    font-size: 64px;
+    color: rgba(244,63,94,0.7);
+    position: relative;
+    flex-shrink: 0;
+    animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Teacher: Schedule Button */
+.btn-schedule {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f43f5e;
+    color: #fff;
+    padding: 11px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background 0.2s, transform 0.2s;
+    position: relative;
+}
+.btn-schedule:hover { background: #e11d48; transform: translateY(-2px); }
+
+/* ——— Section Headings ——— */
+.oc-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 32px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f5f9;
+}
+.oc-section-title .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+}
+.dot-live     { background: #ef4444; animation: pulse 1.2s infinite; }
+.dot-upcoming { background: #f59e0b; }
+.dot-recorded { background: #6366f1; }
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+    50%       { box-shadow: 0 0 0 7px rgba(239,68,68,0); }
+}
+
+/* ——— Cards Grid ——— */
+.oc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* ——— Class Card ——— */
+.oc-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f1f5f9;
+}
+.oc-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+/* Card Top Color Bar */
+.oc-card-bar {
+    height: 5px;
+    width: 100%;
+}
+.bar-live     { background: linear-gradient(90deg, #ef4444, #f97316); }
+.bar-upcoming { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+.bar-recorded { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+
+.oc-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Status Badge */
+.oc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    width: fit-content;
+}
+.oc-status.live     { background: #fee2e2; color: #b91c1c; }
+.oc-status.upcoming { background: #fef3c7; color: #92400e; }
+.oc-status.recorded { background: #ede9fe; color: #5b21b6; }
+.oc-status .live-dot {
+    width: 7px; height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 1.2s infinite;
+}
+
+/* Title & Topic */
+.oc-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 6px;
+    line-height: 1.3;
+}
+.oc-card-topic {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+/* Meta row (teacher, time, students) */
+.oc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.oc-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #475569;
+}
+.oc-meta-item i {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* Action Buttons */
+.oc-card-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.oc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.oc-btn-join {
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: #fff;
+    flex: 1;
+    justify-content: center;
+}
+.oc-btn-join:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.oc-btn-reminder {
+    background: #fef3c7;
+    color: #92400e;
+    flex: 1;
+    justify-content: center;
+}
+.oc-btn-reminder:hover { background: #fde68a; }
+
+.oc-btn-watch {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    flex: 1;
+    justify-content: center;
+}
+.oc-btn-watch:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Teacher-only: Edit / Delete */
+.oc-btn-edit   { background: #f1f5f9; color: #475569; }
+.oc-btn-edit:hover { background: #e2e8f0; }
+.oc-btn-delete { background: #fee2e2; color: #b91c1c; }
+.oc-btn-delete:hover { background: #fecaca; }
+
+/* Duration badge */
+.oc-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #6366f1;
+    background: #ede9fe;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+/* ——— Info Footer Banner ——— */
+.oc-info-banner {
+    margin-top: 48px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 1px solid #bae6fd;
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+.oc-info-banner i {
+    font-size: 28px;
+    color: #0284c7;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.oc-info-banner h4 { font-size: 16px; font-weight: 700; color: #0c4a6e; margin: 0 0 5px; }
+.oc-info-banner p  { font-size: 13px; color: #0369a1; margin: 0; }
+
+/* ——— Empty State ——— */
+.oc-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #94a3b8;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 2px dashed #e2e8f0;
+}
+.oc-empty i { font-size: 48px; display: block; margin-bottom: 14px; opacity: 0.35; }
+.oc-empty p { font-size: 15px; margin: 0; }
+
+/* ——— Schedule Form (Teacher only) ——— */
+.oc-schedule-form {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 28px;
+    margin-bottom: 36px;
+    border: 1px solid #f1f5f9;
+    display: none;
+}
+.oc-schedule-form.open { display: block; }
+.oc-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.oc-form-group { display: flex; flex-direction: column; gap: 6px; }
+.oc-form-group.full { grid-column: 1 / -1; }
+.oc-form-group label { font-size: 13px; font-weight: 600; color: #374151; }
+.oc-form-group input,
+.oc-form-group select,
+.oc-form-group textarea {
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 14px;
+    color: #1e293b;
+    background: #f9fafb;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+.oc-form-group input:focus,
+.oc-form-group select:focus,
+.oc-form-group textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #fff;
+}
+.oc-form-actions { display: flex; gap: 12px; margin-top: 20px; }
+.oc-btn-save {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 9px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+.oc-btn-save:hover { opacity: 0.9; }
+.oc-btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 10px 24px;
+    border-radius: 9px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+/* END: ONLINE_CLASSES_CSS */

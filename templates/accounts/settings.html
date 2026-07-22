@@ -2,457 +2,7 @@
 {% load static %}
 
 <!-- Start: Settings Page CSS -->
-{% block css %}
-<style>
-/* Start: Settings Page Styles */
-@keyframes st-fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-}
 
-.st-wrapper {
-    max-width: 1200px;
-    margin: 50px auto;
-    padding: 0 24px;
-    animation: st-fadeUp 0.6s ease;
-}
-
-/* ── Layout ── */
-.st-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-@media (max-width: 860px) {
-    .st-layout { grid-template-columns: 1fr; }
-}
-
-/* ── Sidebar ── */
-.st-sidebar {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 22px;
-    padding: 24px 16px;
-    position: sticky;
-    top: 90px;
-}
-
-.st-sidebar-avatar {
-    text-align: center;
-    padding: 16px 0 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    margin-bottom: 16px;
-}
-
-.st-avatar-ring {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    padding: 3px;
-    background: linear-gradient(135deg, #6366f1, #ec4899, #a855f7);
-    margin: 0 auto 12px;
-    box-shadow: 0 0 20px rgba(99,102,241,0.3);
-}
-
-.st-avatar-ring img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #0f172a;
-    display: block;
-}
-
-.st-avatar-ring .st-fallback-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 3px solid #0f172a;
-    background: #1e293b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    color: #6366f1;
-}
-
-.st-sidebar-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #f8fafc;
-    margin-bottom: 4px;
-}
-
-.st-sidebar-role {
-    font-size: 12px;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-}
-
-/* Sidebar Nav */
-.st-nav { display: flex; flex-direction: column; gap: 4px; }
-
-.st-nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 13px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #94a3b8;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    text-decoration: none;
-    transition: all 0.25s ease;
-}
-
-.st-nav-btn i {
-    width: 20px;
-    text-align: center;
-    font-size: 15px;
-    flex-shrink: 0;
-}
-
-.st-nav-btn:hover {
-    background: rgba(255,255,255,0.05);
-    color: #e2e8f0;
-}
-
-.st-nav-btn.active {
-    background: rgba(99,102,241,0.15);
-    color: #a5b4fc;
-    border-left: 3px solid #6366f1;
-}
-
-.st-nav-divider {
-    height: 1px;
-    background: rgba(255,255,255,0.06);
-    margin: 12px 0;
-}
-
-.st-nav-btn.danger { color: #f87171; }
-.st-nav-btn.danger:hover { background: rgba(239,68,68,0.08); color: #fca5a5; }
-
-/* ── Main Content ── */
-.st-main { display: flex; flex-direction: column; gap: 24px; }
-
-/* Tab Panels */
-.st-panel {
-    display: none;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 22px;
-    overflow: hidden;
-    animation: st-fadeUp 0.35s ease;
-}
-
-.st-panel.active { display: block; }
-
-.st-panel-header {
-    padding: 28px 32px 22px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    background: rgba(99,102,241,0.04);
-}
-
-.st-panel-header h2 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #f8fafc;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.st-panel-header h2 i {
-    color: #818cf8;
-    font-size: 18px;
-}
-
-.st-panel-header p {
-    font-size: 14px;
-    color: #64748b;
-    margin: 0;
-}
-
-.st-panel-body { padding: 32px; }
-
-/* Form Grid */
-.st-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.st-grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-}
-
-@media (max-width: 600px) {
-    .st-grid-2, .st-grid-3 { grid-template-columns: 1fr; }
-}
-
-/* Form Group */
-.st-form-group { margin-bottom: 22px; }
-
-.st-form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #94a3b8;
-    margin-bottom: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.st-form-group input[type="text"],
-.st-form-group input[type="password"],
-.st-form-group input[type="date"],
-.st-form-group input[type="email"],
-.st-form-group select,
-.st-form-group textarea {
-    width: 100%;
-    padding: 13px 16px;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    color: #f8fafc;
-    font-size: 15px;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.st-form-group input:focus,
-.st-form-group select:focus,
-.st-form-group textarea:focus {
-    border-color: #6366f1;
-    background: rgba(99,102,241,0.07);
-    box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
-}
-
-.st-form-group select option { background: #1e293b; color: #f8fafc; }
-
-/* File Input */
-.st-file-wrap {
-    border: 2px dashed rgba(99,102,241,0.3);
-    border-radius: 14px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: rgba(99,102,241,0.03);
-}
-
-.st-file-wrap:hover {
-    border-color: rgba(99,102,241,0.6);
-    background: rgba(99,102,241,0.07);
-}
-
-.st-file-wrap i {
-    font-size: 32px;
-    color: #818cf8;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.st-file-wrap span {
-    display: block;
-    font-size: 14px;
-    color: #94a3b8;
-    margin-bottom: 12px;
-}
-
-.st-file-wrap input[type="file"] {
-    display: none;
-}
-
-.st-file-label {
-    display: inline-block;
-    padding: 8px 20px;
-    background: rgba(99,102,241,0.15);
-    color: #a5b4fc;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid rgba(99,102,241,0.3);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.st-file-label:hover {
-    background: rgba(99,102,241,0.25);
-    color: #c7d2fe;
-}
-
-/* Section Divider */
-.st-section-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 28px 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.st-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255,255,255,0.06);
-}
-
-/* Toggle Switch */
-.st-toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 20px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    margin-bottom: 12px;
-}
-
-.st-toggle-info p { margin: 0; }
-.st-toggle-info .st-toggle-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: #e2e8f0;
-    margin-bottom: 3px;
-}
-.st-toggle-info .st-toggle-sub {
-    font-size: 13px;
-    color: #64748b;
-}
-
-.st-switch {
-    position: relative;
-    width: 48px;
-    height: 26px;
-    flex-shrink: 0;
-}
-
-.st-switch input { opacity: 0; width: 0; height: 0; }
-
-.st-switch-slider {
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.12);
-    border-radius: 34px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.st-switch-slider::before {
-    content: '';
-    position: absolute;
-    width: 18px; height: 18px;
-    left: 4px; bottom: 4px;
-    background: #fff;
-    border-radius: 50%;
-    transition: 0.3s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-.st-switch input:checked + .st-switch-slider { background: #6366f1; }
-.st-switch input:checked + .st-switch-slider::before { transform: translateX(22px); }
-
-/* Buttons */
-.st-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 13px 28px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    text-decoration: none;
-}
-
-.st-btn-primary {
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(99,102,241,0.3);
-}
-.st-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99,102,241,0.5);
-    color: #fff;
-}
-
-.st-btn-outline {
-    background: transparent;
-    color: #94a3b8;
-    border: 1px solid rgba(255,255,255,0.12);
-}
-.st-btn-outline:hover {
-    background: rgba(255,255,255,0.06);
-    color: #e2e8f0;
-    border-color: rgba(255,255,255,0.2);
-}
-
-.st-btn-danger {
-    background: rgba(239,68,68,0.1);
-    color: #f87171;
-    border: 1px solid rgba(239,68,68,0.3);
-}
-.st-btn-danger:hover {
-    background: #ef4444;
-    color: #fff;
-    box-shadow: 0 8px 25px rgba(239,68,68,0.35);
-}
-
-.st-action-row {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-/* Danger Zone */
-.st-danger-box {
-    border: 1px solid rgba(239,68,68,0.25);
-    border-radius: 16px;
-    padding: 24px;
-    background: rgba(239,68,68,0.04);
-    margin-top: 8px;
-}
-
-.st-danger-box p {
-    font-size: 14px;
-    color: #94a3b8;
-    margin-bottom: 18px;
-    line-height: 1.6;
-}
-
-/* Password strength bar */
-.st-pw-hint {
-    font-size: 12px;
-    color: #64748b;
-    margin-top: 6px;
-}
-/* End: Settings Page Styles */
-</style>
-{% endblock %}
 <!-- End: Settings Page CSS -->
 
 <!-- Start: Settings Page Content -->
@@ -466,11 +16,11 @@
             <div class="st-sidebar-avatar">
                 <div class="st-avatar-ring">
                     {% if profile and profile.profile_image %}
-                        <img src="{{ profile.profile_image.url }}" alt="Profile">
+                    <img src="{{ profile.profile_image.url }}" alt="Profile">
                     {% elif user_profile and user_profile.profile_image %}
-                        <img src="{{ user_profile.profile_image.url }}" alt="Profile">
+                    <img src="{{ user_profile.profile_image.url }}" alt="Profile">
                     {% else %}
-                        <div class="st-fallback-icon"><i class="fas fa-user"></i></div>
+                    <div class="st-fallback-icon"><i class="fas fa-user"></i></div>
                     {% endif %}
                 </div>
                 <div class="st-sidebar-name">{{ user.first_name }} {{ user.last_name }}</div>
@@ -525,7 +75,7 @@
                             <span>Click to upload a new profile photo</span>
                             <label class="st-file-label" for="img-upload">Choose File</label>
                             <input type="file" id="img-upload" name="profile_image" accept="image/*"
-                                   onchange="document.querySelector('.st-file-wrap span').textContent = this.files[0]?.name || 'Click to upload a new profile photo'">
+                                onchange="document.querySelector('.st-file-wrap span').textContent = this.files[0]?.name || 'Click to upload a new profile photo'">
                         </div>
                         <!-- End: Profile Picture Upload -->
 
@@ -560,17 +110,23 @@
                                 <select name="gender">
                                     <option value="">— Select —</option>
                                     {% if profile and profile.gender %}
-                                        <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
-                                        <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
-                                        <option value="Other" {% if profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                                    <option value="Male" {% if profile.gender=='Male' %}selected{% endif %}>Male
+                                    </option>
+                                    <option value="Female" {% if profile.gender=='Female' %}selected{% endif %}>Female
+                                    </option>
+                                    <option value="Other" {% if profile.gender=='Other' %}selected{% endif %}>Other
+                                    </option>
                                     {% elif user_profile and user_profile.gender %}
-                                        <option value="Male" {% if user_profile.gender == 'Male' %}selected{% endif %}>Male</option>
-                                        <option value="Female" {% if user_profile.gender == 'Female' %}selected{% endif %}>Female</option>
-                                        <option value="Other" {% if user_profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                                    <option value="Male" {% if user_profile.gender=='Male' %}selected{% endif %}>Male
+                                    </option>
+                                    <option value="Female" {% if user_profile.gender=='Female' %}selected{% endif %}>
+                                        Female</option>
+                                    <option value="Other" {% if user_profile.gender=='Other' %}selected{% endif %}>Other
+                                    </option>
                                     {% else %}
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
                                     {% endif %}
                                 </select>
                             </div>
@@ -583,7 +139,8 @@
                         </div>
                         <div class="st-form-group">
                             <label>Full Address</label>
-                            <textarea name="address" rows="3" placeholder="Your full address...">{% if profile and profile.address %}{{ profile.address }}{% elif user_profile and user_profile.address %}{{ user_profile.address }}{% endif %}</textarea>
+                            <textarea name="address" rows="3"
+                                placeholder="Your full address...">{% if profile and profile.address %}{{ profile.address }}{% elif user_profile and user_profile.address %}{{ user_profile.address }}{% endif %}</textarea>
                         </div>
                         {% endif %}
                         <!-- End: Basic Info -->
@@ -594,16 +151,18 @@
                         <div class="st-grid-2">
                             <div class="st-form-group">
                                 <label>Roll Number</label>
-                                <input type="text" name="roll_number" value="{{ profile.roll_number|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
+                                <input type="text" name="roll_number" value="{{ profile.roll_number|default:'' }}"
+                                    readonly>
                             </div>
                             <div class="st-form-group">
                                 <label>Current Class</label>
-                                <input type="text" name="current_class" value="{{ profile.current_class|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
+                                <input type="text" name="current_class" value="{{ profile.current_class|default:'' }}"
+                                    readonly>
                             </div>
                         </div>
                         <div class="st-form-group">
                             <label>Section</label>
-                            <input type="text" name="section" value="{{ profile.section|default:'' }}" readonly style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); color: #94a3b8; cursor: not-allowed;">
+                            <input type="text" name="section" value="{{ profile.section|default:'' }}" readonly>
                         </div>
 
                         {% elif role == 'Teacher' %}
@@ -671,7 +230,8 @@
 
                         <div class="st-form-group">
                             <label>Current Password</label>
-                            <input type="password" name="current_password" placeholder="Enter current password" required>
+                            <input type="password" name="current_password" placeholder="Enter current password"
+                                required>
                         </div>
                         <div class="st-grid-2">
                             <div class="st-form-group">
@@ -681,7 +241,8 @@
                             </div>
                             <div class="st-form-group">
                                 <label>Confirm New Password</label>
-                                <input type="password" name="confirm_password" placeholder="Repeat new password" required>
+                                <input type="password" name="confirm_password" placeholder="Repeat new password"
+                                    required>
                             </div>
                         </div>
                         <div class="st-action-row">
@@ -712,14 +273,14 @@
                                 <p class="st-toggle-sub">Stay logged in on this device</p>
                             </div>
                             <label class="st-switch">
-                                <input type="checkbox" name="is_remembered"
-                                       {% if user_profile and user_profile.is_remembered %}checked{% endif %}>
+                                <input type="checkbox" name="is_remembered" {% if user_profile and
+                                    user_profile.is_remembered %}checked{% endif %}>
                                 <span class="st-switch-slider"></span>
                             </label>
                         </div>
                         <!-- End: Remember Me Toggle -->
 
-                        <div class="st-action-row" style="margin-top:24px;">
+                        <div class="st-action-row">
                             <button type="submit" class="st-btn st-btn-primary">
                                 <i class="fas fa-save"></i> Save Preferences
                             </button>
@@ -733,17 +294,18 @@
             <!-- Start: Danger Zone Panel -->
             <div class="st-panel" id="st-danger">
                 <div class="st-panel-header">
-                    <h2><i class="fas fa-exclamation-triangle" style="color:#f87171"></i> Danger Zone</h2>
+                    <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
                     <p>These actions are permanent and cannot be undone.</p>
                 </div>
                 <div class="st-panel-body">
                     <div class="st-danger-box">
                         <p>
-                            <strong style="color:#fca5a5;">Permanently delete your account.</strong><br>
+                            <strong>Permanently delete your account.</strong><br>
                             All your data, profile information, and access will be removed forever.
-                            This action <strong style="color:#fca5a5;">cannot be undone</strong>.
+                            This action <strong>cannot be undone</strong>.
                         </p>
-                        <form method="POST" onsubmit="return confirm('Are you absolutely sure? This will permanently delete your account.');">
+                        <form method="POST"
+                            onsubmit="return confirm('Are you absolutely sure? This will permanently delete your account.');">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="delete_account">
                             <button type="submit" class="st-btn st-btn-danger">
@@ -767,14 +329,14 @@
 <!-- Start: Settings Page JS -->
 {% block js %}
 <script>
-// Start: Settings Tab Switcher
-function stSwitch(evt, panelId) {
-    document.querySelectorAll('.st-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.st-nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(panelId).classList.add('active');
-    evt.currentTarget.classList.add('active');
-}
-// End: Settings Tab Switcher
+    // Start: Settings Tab Switcher
+    function stSwitch(evt, panelId) {
+        document.querySelectorAll('.st-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.st-nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(panelId).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+    // End: Settings Tab Switcher
 </script>
 {% endblock %}
 <!-- End: Settings Page JS -->

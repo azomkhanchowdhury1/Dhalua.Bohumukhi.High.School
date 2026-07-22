@@ -1,0 +1,145 @@
+/* ============================================================
+   PROXY CLASSES PAGE CSS — teacher/proxy_classes.html
+   School Management System — Clean Registry Theme
+   ============================================================ */
+.dashboard-wrapper {
+    margin: auto;
+    padding: 10%;
+}
+
+/* ===== PAGE HEADER ===== */
+.section-header {
+    margin-bottom: 2rem;
+    animation: slideUpFade 0.4s ease-out;
+}
+
+.section-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+}
+
+.section-header p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ===== PROXY CONTAINER ===== */
+.proxy-container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+/* ===== PROXY HEADER (inside card) ===== */
+.proxy-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+}
+
+.proxy-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.proxy-header h2 i {
+    color: var(--indigo);
+}
+
+/* ===== PROXY TABLE ===== */
+.proxy-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.proxy-table thead tr {
+    background: var(--paper);
+}
+
+.proxy-table th {
+    padding: 13px 20px;
+    text-align: left;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 2px solid var(--line);
+}
+
+.proxy-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink);
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.proxy-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-badge.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-badge.declined {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 70px 40px;
+    color: var(--ink-soft);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 14px;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+
+    .proxy-table th,
+    .proxy-table td {
+        padding: 12px 14px;
+        font-size: 0.83rem;
+    }
+}

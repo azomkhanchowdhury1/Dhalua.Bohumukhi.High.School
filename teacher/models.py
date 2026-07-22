@@ -1,8 +1,10 @@
+# START: teacher/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher_profile', null=True, blank=True)
+    password_plain = models.CharField(max_length=128, blank=True, null=True, verbose_name="Current Password")
     profile_image = models.ImageField(upload_to='teachers/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -44,3 +46,23 @@ class TeacherAssignment(models.Model):
 
     def __str__(self):
         return self.title
+
+class TeacherHomework(models.Model):
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='uploaded_homeworks')
+    title = models.CharField(max_length=255)
+    subject = models.CharField(max_length=100)
+    school_class = models.CharField(max_length=50)
+    section = models.CharField(max_length=20, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='teacher_homework/', blank=True, null=True)
+    due_date = models.DateField(null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} — {self.school_class} ({self.teacher})"
+
+    class Meta:
+        verbose_name_plural = "Teacher Homework Uploads"
+        ordering = ['-uploaded_at']
+
+# END: teacher/models.py

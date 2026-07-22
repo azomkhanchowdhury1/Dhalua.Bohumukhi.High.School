@@ -1,24 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: SYLLABUS_CUSTOM_STYLE */
-    .remembered-row {
-        background: rgba(16, 185, 129, 0.02) !important;
-    }
-    .pin-btn {
-        color: #64748b;
-        text-decoration: none;
-    }
-    .pin-btn.pinned {
-        color: #10b981;
-    }
-    /* END: SYLLABUS_CUSTOM_STYLE */
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: ACADEMICS_SYLLABUS_SECTION -->
 <div class="dashboard-wrapper">
@@ -27,59 +9,70 @@
         <p>Upload and manage academic syllabi for different subjects.</p>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px;">
+    <div>
         <!-- Left Side: Forms & Pinned/Reminders -->
-        <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div>
             <!-- Upload Syllabus Form -->
-            <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); height:fit-content;">
+            <div>
                 <h3>Upload New Syllabus</h3>
-                <form method="POST" enctype="multipart/form-data" style="margin-top:20px;">
+
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                        <label style="color:#94a3b8;">Select Subject</label>
-                        <select name="subject_id" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                    <div class="form-group">
+                        <label>Select Subject</label>
+                        <select name="subject_id" required>
                             {% for sub in subjects %}
                             <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                        <label style="color:#94a3b8;">Syllabus Title</label>
-                        <input type="text" name="title" placeholder="e.g. Annual Syllabus 2024" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                    <div class="form-group">
+                        <label>Syllabus Title</label>
+                        <input type="text" name="title" placeholder="e.g. Annual Syllabus 2024" required>
                     </div>
-                    <div class="form-group" style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                        <label style="color:#94a3b8;">Upload File (PDF/DOC)</label>
-                        <input type="file" name="file" required style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                    <div class="form-group">
+                        <label>Upload File (PDF/DOC)</label>
+                        <input type="file" name="file" required>
                     </div>
-                    <button type="submit" class="view-all-btn" style="width:100%; margin-top:10px;">Upload Syllabus</button>
+
+                    <button type="submit" class="view-all-btn">Upload Syllabus</button>
                 </form>
             </div>
 
             <!-- Active Reminders / Pinned Syllabi -->
-            <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); height:fit-content;">
-                <h3 style="color:#ffffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.15rem;">
-                    <i class="fas fa-bookmark" style="color: #10b981;"></i> Pinned Syllabi & Notices
+            <div>
+                <h3>
+                    <i class="fas fa-bookmark"></i> Pinned Syllabi & Notices
                 </h3>
-                <div id="syllabus-reminders-list" style="display: flex; flex-direction: column; gap: 15px;">
+
+                <div id="syllabus-reminders-list">
                     {% for item in syllabi %}
                         {% if item.is_remembered %}
-                        <div class="syllabus-reminder-item" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 12px; transition: all 0.3s ease;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                                <strong style="color: #ffffff; font-size: 0.9rem;">{{ item.subject.name }}</strong>
-                                <a href="{{ item.file.url }}" target="_blank" style="font-size: 0.75rem; color: #a5b4fc; text-decoration: none;"><i class="fas fa-download"></i></a>
+                        <div class="syllabus-reminder-item">
+                            <div>
+                                <strong>{{ item.subject.name }}</strong>
+                                <a href="{{ item.file.url }}" target="_blank">
+                                    <i class="fas fa-download"></i>
+                                </a>
                             </div>
-                            <div style="color: #a5b4fc; font-size: 0.75rem; margin-bottom: 8px;">
+
+                            <div>
                                 {{ item.title }}
                             </div>
+
                             {% if item.reminder_note %}
-                            <div style="color: #cbd5e1; font-size: 0.8rem; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; border-left: 3px solid #10b981; word-break: break-word;">
+                            <div>
                                 {{ item.reminder_note }}
                             </div>
                             {% endif %}
                         </div>
                         {% endif %}
                     {% endfor %}
-                    <div id="no-syllabus-reminders-message" style="color: #94a3b8; font-size: 0.85rem; text-align: center; padding: 20px; display: none;">
+
+                    <div id="no-syllabus-reminders-message">
                         No pinned syllabi.
                     </div>
                 </div>
@@ -87,43 +80,66 @@
         </div>
 
         <!-- Syllabus List -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); height: fit-content;">
+        <div>
             <h3>Available Syllabi</h3>
-            <div style="margin-top:20px; overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+            <div>
+                <table>
                     <thead>
-                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:15px; width:30%;">Subject</th>
-                            <th style="padding:15px; width:40%;">Title</th>
-                            <th style="padding:15px; width:30%;">Action</th>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Title</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for item in syllabi %}
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);" class="{% if item.is_remembered %}remembered-row{% endif %}">
-                            <td style="padding:15px; font-weight:600;">
+                        <tr class="{% if item.is_remembered %}remembered-row{% endif %}">
+                            <td>
                                 {{ item.subject.name }}
+
                                 {% if item.is_remembered %}
-                                <span style="margin-left:8px; color:#10b981;" title="Pinned/Reminder Active"><i class="fas fa-bookmark"></i></span>
+                                <span>
+                                    <i class="fas fa-bookmark"></i>
+                                </span>
                                 {% endif %}
                             </td>
-                            <td style="padding:15px; color:#cbd5e1;">
+
+                            <td>
                                 {{ item.title }}
+
                                 {% if item.is_remembered and item.reminder_note %}
-                                <div style="font-size:0.75rem; color:#10b981; margin-top:4px; display:flex; align-items:center; gap:6px;">
-                                    <i class="fas fa-info-circle"></i> {{ item.reminder_note }}
+                                <div>
+                                    <i class="fas fa-info-circle"></i>
+                                    {{ item.reminder_note }}
                                 </div>
                                 {% endif %}
                             </td>
-                            <td style="padding:15px; display:flex; gap:15px; align-items:center;">
-                                <a href="{{ item.file.url }}" target="_blank" style="color:#a5b4fc; text-decoration:none;" title="Download File"><i class="fas fa-download"></i></a>
-                                <a href="{% url 'admin_panel:syllabus_edit' item.id %}" style="color:#6366f1; text-decoration:none;" title="Edit Syllabus"><i class="fas fa-edit"></i></a>
-                                <a href="{% url 'admin_panel:syllabus_delete' item.id %}" style="color:#ef4444; text-decoration:none;" title="Delete Syllabus"><i class="fas fa-trash-alt"></i></a>
-                                <a href="{% url 'admin_panel:syllabus_toggle_remember' item.id %}" class="pin-btn {% if item.is_remembered %}pinned{% endif %}" title="Toggle Pin"><i class="fas fa-bell"></i></a>
+
+                            <td>
+                                <a href="{{ item.file.url }}" target="_blank" title="Download File">
+                                    <i class="fas fa-download"></i>
+                                </a>
+
+                                <a href="{% url 'admin_panel:syllabus_edit' item.id %}" title="Edit Syllabus">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="{% url 'admin_panel:syllabus_delete' item.id %}" title="Delete Syllabus">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+
+                                <a href="{% url 'admin_panel:syllabus_toggle_remember' item.id %}" class="pin-btn {% if item.is_remembered %}pinned{% endif %}" title="Toggle Pin">
+                                    <i class="fas fa-bell"></i>
+                                </a>
                             </td>
                         </tr>
+
                         {% empty %}
-                        <tr><td colspan="3" style="text-align:center; padding:50px; color:#94a3b8;">No syllabi uploaded yet.</td></tr>
+                        <tr>
+                            <td colspan="3">No syllabi uploaded yet.</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -131,17 +147,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    // START: SYLLABUS_REMINDERS_TOGGLE_JS
-    document.addEventListener("DOMContentLoaded", function() {
-        const items = document.querySelectorAll('#syllabus-reminders-list .syllabus-reminder-item');
-        const message = document.getElementById('no-syllabus-reminders-message');
-        if (items.length === 0 && message) {
-            message.style.display = 'block';
-        }
-    });
-    // END: SYLLABUS_REMINDERS_TOGGLE_JS
-</script>
 <!-- END: ACADEMICS_SYLLABUS_SECTION -->
 {% endblock %}

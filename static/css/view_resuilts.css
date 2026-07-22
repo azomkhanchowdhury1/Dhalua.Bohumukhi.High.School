@@ -1,0 +1,455 @@
+/* ============================================================
+   RESULTS PAGE STYLES — results.html
+   Theme: "Registry Ledger" — Light table-card layout
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.results-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff !important;  /* সম্পূর্ণ সাদা */
+    padding: 36px 28px 80px 28px !important;
+    min-height: 100vh;
+}
+
+/* ===== PAGE HEADING ===== */
+.results-page-heading {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+    width: 100%;
+}
+
+.results-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.results-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.results-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* ===== CARD CONTAINER ===== */
+.results-card {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.results-card h2 {
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    color: #0f172a;
+}
+
+.results-card .subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0 0 20px 0;
+}
+
+/* ===== TABLE STYLES ===== */
+.results-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -4px;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 500px;
+}
+
+.results-table th {
+    text-align: left;
+    padding: 12px 14px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.results-table th:nth-child(3),
+.results-table th:nth-child(4),
+.results-table th:nth-child(5) {
+    text-align: center;
+}
+
+.results-table td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    vertical-align: middle;
+}
+
+.results-table td:nth-child(2) {
+    color: #64748b;
+}
+
+.results-table td:nth-child(3) {
+    text-align: center;
+    font-weight: 600;
+}
+
+.results-table td:nth-child(4),
+.results-table td:nth-child(5) {
+    text-align: center;
+}
+
+.results-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.results-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.results-table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+/* ===== BADGES ===== */
+.badge-grade {
+    display: inline-block;
+    background: #eef2ff;
+    color: #6366f1;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+.badge-passed {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+}
+
+.badge-passed::before {
+    content: "✓";
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.badge-failed {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+}
+
+.badge-failed::before {
+    content: "✕";
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* ===== EMPTY STATE ===== */
+.results-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    border-radius: 14px;
+}
+
+.results-empty-state i {
+    font-size: 48px;
+    color: #c7d2fe;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.results-empty-state p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.results-empty-state span {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* ===== 1024px - ল্যাপটপ ===== */
+@media (max-width: 1024px) {
+    .results-card {
+        max-width: 95%;
+        padding: 24px 28px;
+    }
+}
+
+/* ===== 768px - ট্যাবলেট ===== */
+@media (max-width: 768px) {
+    .dashboard-wrapper.results-page {
+        padding: 24px 20px 60px 20px !important;
+    }
+
+    .results-card {
+        padding: 20px 24px;
+        border-radius: 14px;
+    }
+
+    .results-table {
+        font-size: 13px;
+        min-width: 450px;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 10px 12px;
+    }
+
+    .results-card h2 {
+        font-size: 17px;
+    }
+}
+
+/* ===== 640px - বড় মোবাইল ===== */
+@media (max-width: 640px) {
+    .dashboard-wrapper.results-page {
+        padding: 16px 12px 50px 12px !important;
+    }
+
+    .results-card {
+        padding: 16px 16px;
+        border-radius: 12px;
+    }
+
+    .results-table {
+        font-size: 12px;
+        min-width: 380px;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 8px 10px;
+    }
+
+    .results-table th {
+        font-size: 10px;
+        padding: 8px 10px;
+    }
+
+    .results-card h2 {
+        font-size: 16px;
+    }
+
+    .results-card .subtitle {
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .badge-grade,
+    .badge-passed,
+    .badge-failed {
+        font-size: 10px;
+        padding: 3px 10px;
+    }
+
+    .results-page-heading h1 {
+        font-size: 22px;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .results-page-heading h1 i {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
+
+/* ===== 480px - ছোট মোবাইল ===== */
+@media (max-width: 480px) {
+    .dashboard-wrapper.results-page {
+        padding: 12px 8px 40px 8px !important;
+    }
+
+    .results-card {
+        padding: 12px 12px;
+        border-radius: 10px;
+    }
+
+    .results-table {
+        font-size: 11px;
+        min-width: 320px;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 6px 8px;
+    }
+
+    .results-table th {
+        font-size: 9px;
+        padding: 6px 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .results-card h2 {
+        font-size: 15px;
+    }
+
+    .results-card .subtitle {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .badge-grade,
+    .badge-passed,
+    .badge-failed {
+        font-size: 9px;
+        padding: 2px 8px;
+        border-radius: 16px;
+    }
+
+    .badge-passed::before,
+    .badge-failed::before {
+        font-size: 10px;
+    }
+
+    .results-page-heading h1 {
+        font-size: 20px;
+        gap: 8px;
+    }
+
+    .results-page-heading h1 i {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .results-page-heading p {
+        font-size: 13px;
+    }
+
+    .results-empty-state {
+        padding: 40px 16px;
+    }
+
+    .results-empty-state i {
+        font-size: 36px;
+    }
+}
+
+/* ===== DARK MODE SUPPORT (ঐচ্ছিক) ===== */
+@media (prefers-color-scheme: dark) {
+    .dashboard-wrapper.results-page {
+        background: #ffffff !important;  /* ডার্ক মোডেও সাদা থাকবে */
+    }
+
+    .results-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .results-card h2,
+    .results-table td {
+        color: #0f172a;
+    }
+
+    .results-card .subtitle,
+    .results-table th,
+    .results-table td:nth-child(2) {
+        color: #64748b;
+    }
+
+    .results-table th {
+        border-bottom-color: #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .results-table td {
+        border-bottom-color: #f1f5f9;
+    }
+
+    .results-table tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    .results-page-heading h1 {
+        color: #0f172a;
+    }
+
+    .results-page-heading p {
+        color: #64748b;
+    }
+
+    .results-page-heading h1 i {
+        background: #eef2ff;
+        color: #6366f1;
+    }
+
+    .results-empty-state {
+        background: #ffffff;
+    }
+
+    .results-empty-state p {
+        color: #334155;
+    }
+
+    .results-empty-state span {
+        color: #94a3b8;
+    }
+
+    .results-empty-state i {
+        color: #c7d2fe;
+    }
+}

@@ -2,122 +2,109 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: ATTENDANCE_MARK_CSS */
-    .class-filter-bar {
-        background: rgba(15,23,42,0.6);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 20px;
-        padding: 1.5rem 2rem;
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    .class-filter-bar label { color: #94a3b8; font-size: 0.9rem; white-space:nowrap; }
-    .class-filter-bar select, .class-filter-bar input {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 12px;
-        padding: 11px 18px;
-        color: #fff;
-        font-size: 0.95rem;
-    }
-    .class-filter-bar select option { background: #0f172a; }
-    .attendance-table { width: 100%; border-collapse: collapse; }
-    .attendance-table th {
-        text-align: left;
-        padding: 14px 18px;
-        color: #94a3b8;
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .attendance-table td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #e2e8f0; }
-    .radio-group { display: flex; gap: 10px; }
-    .radio-group label {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.1);
-        cursor: pointer;
-        font-size: 0.85rem;
-        color: #94a3b8;
-        transition: all 0.2s;
-    }
-    .radio-group input[type="radio"] { display: none; }
-    .radio-group input[type="radio"]:checked + label {
-        border-color: transparent;
-        color: #fff;
-        font-weight: 600;
-    }
-    .present-radio input:checked + label { background: rgba(16,185,129,0.2); color: #10b981; border-color: rgba(16,185,129,0.4); }
-    .absent-radio input:checked + label { background: rgba(239,68,68,0.2); color: #ef4444; border-color: rgba(239,68,68,0.4); }
-    .late-radio input:checked + label { background: rgba(245,158,11,0.2); color: #f59e0b; border-color: rgba(245,158,11,0.4); }
-    /* END: ATTENDANCE_MARK_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/attendance_mark.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: TEACHER_ATTENDANCE_MARK_SECTION -->
 <div class="dashboard-wrapper">
     <div class="section-header">
-        <h1>Mark Attendance</h1>
+        <h1><i class="fas fa-clipboard-check"></i> Mark Attendance</h1>
         <p>Select a class and date, then mark attendance for each student.</p>
     </div>
 
-    <!-- Class & Section Filter -->
-    <form method="GET" class="class-filter-bar">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label>Select Class:</label>
-            <select name="class_id" onchange="this.form.submit()">
+    <!-- ── Class & Section Filter Bar ── -->
+    <form method="GET" class="class-filter-bar" id="filterForm">
+        <!-- Class -->
+        <div class="filter-group">
+            <label for="class_id">Select Class:</label>
+            <select name="class_id" id="class_id" onchange="this.form.submit()">
                 <option value="">— Choose a class —</option>
                 {% for cls in classes %}
-                <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }} ({{ cls.code }})</option>
+                <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>
+                    {{ cls.name }} ({{ cls.code }})
+                </option>
                 {% endfor %}
             </select>
         </div>
-        
+
+        <!-- Section -->
         {% if sections %}
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label>Select Section:</label>
-            <select name="section_id" onchange="this.form.submit()">
+        <div class="filter-group">
+            <label for="section_id">Select Section:</label>
+            <select name="section_id" id="section_id" onchange="this.form.submit()">
                 <option value="">— All Sections —</option>
                 {% for sec in sections %}
-                <option value="{{ sec.id }}" {% if selected_section_id == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec.name }}</option>
+                <option value="{{ sec.id }}" {% if selected_section_id == sec.id|stringformat:"s" %}selected{% endif %}>
+                    {{ sec.name }}
+                </option>
                 {% endfor %}
             </select>
         </div>
         {% endif %}
     </form>
 
+    <!-- ── Students Table + Attendance Form ── -->
     {% if students %}
-    <form method="POST">
+    <form method="POST" id="attendanceForm">
         {% csrf_token %}
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px;">
-                <h3 style="color:#fff; margin:0;">Students ({{ students|length }})</h3>
-                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Subject:</label>
-                    <select name="subject_id" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
-                        <option value="">— Select Subject —</option>
-                        {% for sub in subjects %}
-                        <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
-                        {% endfor %}
-                    </select>
+        <div class="attendance-panel">
 
-                    <label style="color:#94a3b8; font-size:0.9rem;">Time:</label>
-                    <input type="time" name="time" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
+            <!-- Panel Header -->
+            <div class="attendance-panel-header">
+                <h3>
+                    <i class="fas fa-users"></i>
+                    Students
+                    <span class="student-count">{{ students|length }}</span>
+                </h3>
 
-                    <label style="color:#94a3b8; font-size:0.9rem;">Date:</label>
-                    <input type="date" name="date" value="{{ today }}" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 16px; color:#fff;">
+                <!-- Subject / Time / Date Controls -->
+                <div class="attendance-controls">
+                    <div class="control-group">
+                        <label for="subject_id">Subject:</label>
+                        <select name="subject_id" id="subject_id" required>
+                            <option value="">— Select Subject —</option>
+                            {% for sub in subjects %}
+                            <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>
+                                {{ sub.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="att_time">Time:</label>
+                        <input type="time" name="time" id="att_time" required>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="att_date">Date:</label>
+                        <input type="date" name="date" id="att_date" value="{{ today }}" required>
+                    </div>
                 </div>
             </div>
 
+            <!-- Mark All Quick Buttons + Live Summary -->
+            <div class="mark-all-summary-row">
+                <div class="mark-all-bar">
+                    <span>Mark all as:</span>
+                    <button type="button" class="mark-all-btn present" data-status="Present">
+                        <i class="fas fa-check-circle"></i> All Present
+                    </button>
+                    <button type="button" class="mark-all-btn absent" data-status="Absent">
+                        <i class="fas fa-times-circle"></i> All Absent
+                    </button>
+                    <button type="button" class="mark-all-btn late" data-status="Late">
+                        <i class="fas fa-clock"></i> All Late
+                    </button>
+                </div>
+                <div class="mark-summary-divider"></div>
+                <div id="attendanceSummaryBadge"></div>
+            </div>
+
+            <!-- Attendance Table -->
             <table class="attendance-table">
                 <thead>
                     <tr>
@@ -130,22 +117,37 @@
                 <tbody>
                     {% for student in students %}
                     <tr>
-                        <td style="color:#64748b;">{{ forloop.counter }}</td>
-                        <td style="font-weight:600;">{{ student.user.get_full_name }}</td>
-                        <td style="color:#94a3b8;">{{ student.roll_number|default:"—" }}</td>
+                        <td class="row-num">{{ forloop.counter }}</td>
+                        <td class="student-name">{{ student.user.get_full_name }}</td>
+                        <td class="roll-no">{{ student.roll_number|default:"—" }}</td>
                         <td>
                             <div class="radio-group">
                                 <span class="present-radio">
-                                    <input type="radio" name="status_{{ student.id }}" id="present_{{ student.id }}" value="Present" checked>
-                                    <label for="present_{{ student.id }}"><i class="fas fa-check"></i> Present</label>
+                                    <input type="radio"
+                                           name="status_{{ student.id }}"
+                                           id="present_{{ student.id }}"
+                                           value="Present" checked>
+                                    <label for="present_{{ student.id }}">
+                                        <i class="fas fa-check"></i> Present
+                                    </label>
                                 </span>
                                 <span class="absent-radio">
-                                    <input type="radio" name="status_{{ student.id }}" id="absent_{{ student.id }}" value="Absent">
-                                    <label for="absent_{{ student.id }}"><i class="fas fa-times"></i> Absent</label>
+                                    <input type="radio"
+                                           name="status_{{ student.id }}"
+                                           id="absent_{{ student.id }}"
+                                           value="Absent">
+                                    <label for="absent_{{ student.id }}">
+                                        <i class="fas fa-times"></i> Absent
+                                    </label>
                                 </span>
                                 <span class="late-radio">
-                                    <input type="radio" name="status_{{ student.id }}" id="late_{{ student.id }}" value="Late">
-                                    <label for="late_{{ student.id }}"><i class="fas fa-clock"></i> Late</label>
+                                    <input type="radio"
+                                           name="status_{{ student.id }}"
+                                           id="late_{{ student.id }}"
+                                           value="Late">
+                                    <label for="late_{{ student.id }}">
+                                        <i class="fas fa-clock"></i> Late
+                                    </label>
                                 </span>
                             </div>
                         </td>
@@ -154,23 +156,32 @@
                 </tbody>
             </table>
 
-            <div style="margin-top:25px; display:flex; justify-content:flex-end;">
-                <button type="submit" class="view-all-btn" style="padding:14px 40px; font-size:1rem;">
+            <!-- Save Button -->
+            <div class="attendance-save-wrap">
+                <button type="submit" class="btn-save-attendance">
                     <i class="fas fa-save"></i> Save Attendance
                 </button>
             </div>
         </div>
     </form>
+
     {% elif selected_class %}
-    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <h3 style="color:#64748b;">No students found in this class.</h3>
+    <div class="attendance-empty">
+        <i class="fas fa-user-slash"></i>
+        <h3>No students found in this class.</h3>
+        <p>Make sure students are enrolled in this class and section.</p>
     </div>
     {% else %}
-    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <i class="fas fa-arrow-up" style="font-size:2rem; color:rgba(255,255,255,0.1); margin-bottom:15px; display:block;"></i>
-        <h3 style="color:#64748b;">Please select a class from above to start marking attendance.</h3>
+    <div class="attendance-empty">
+        <i class="fas fa-hand-point-up"></i>
+        <h3>Please select a class from above to start marking attendance.</h3>
     </div>
     {% endif %}
+
 </div>
 <!-- END: TEACHER_ATTENDANCE_MARK_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'javascript/attendance_mark.js' %}"></script>
 {% endblock %}

@@ -1,3 +1,4 @@
+# START: prents/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Parent
@@ -7,7 +8,8 @@ from .forms import ParentAdminForm
 @admin.register(Parent)
 class ParentAdmin(admin.ModelAdmin):
     form = ParentAdminForm
-    list_display = ('parent_id', 'get_first_name', 'get_last_name', 'relationship_type', 'occupation', 'image_preview')
+    list_display = ('parent_id', 'get_first_name', 'get_last_name', 'relationship_type', 'occupation', 'password_plain', 'image_preview')
+    readonly_fields = ('password_plain',)
     search_fields = ('parent_id', 'user__first_name', 'user__last_name', 'user__username', 'phone_number')
     list_filter = ('gender', 'relationship_type')
 
@@ -17,6 +19,7 @@ class ParentAdmin(admin.ModelAdmin):
                 ('username', 'email'),
                 ('first_name', 'last_name'),
                 ('password', 'confirm_password'),
+                'password_plain',
             )
         }),
         ('Personal Information', {
@@ -49,3 +52,5 @@ class ParentAdmin(admin.ModelAdmin):
         return "No Image"
     image_preview.short_description = 'Profile Image'
 # END: PARENT_ADMIN
+
+# END: prents/admin.py

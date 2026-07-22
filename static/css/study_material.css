@@ -1,0 +1,166 @@
+/* ============================================================
+   STUDY MATERIAL PAGE CSS — teacher/study_material.html
+   School Management System — Clean Registry Theme teacher
+   ============================================================ */
+
+/* ===== MATERIAL CONTAINER ===== */
+.material-container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.4s ease-out;
+}
+
+/* ===== MATERIAL HEADER ===== */
+.material-container>div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.material-container h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.material-container h2 i {
+    color: var(--indigo);
+}
+
+.material-container hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 1.25rem 0 1.75rem;
+}
+
+/* ===== UPLOAD BUTTON ===== */
+.btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-upload:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+/* ===== MATERIAL GRID ===== */
+.material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* ===== MATERIAL CARD ===== */
+.material-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.material-card:hover {
+    border-color: var(--indigo);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* ===== MATERIAL ICON ===== */
+.material-icon {
+    font-size: 2rem;
+    color: var(--indigo);
+    margin-bottom: 6px;
+}
+
+.material-icon .fa-file-pdf {
+    color: #dc2626;
+}
+
+.material-icon .fa-file-powerpoint {
+    color: #ea580c;
+}
+
+.material-icon .fa-file-word {
+    color: #2563eb;
+}
+
+.material-icon .fa-file-excel {
+    color: #16a34a;
+}
+
+.material-icon .fa-file-image {
+    color: #9333ea;
+}
+
+/* ===== MATERIAL INFO ===== */
+.material-title {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 0.97rem;
+    line-height: 1.4;
+}
+
+.material-meta {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+/* ===== DOWNLOAD BUTTON ===== */
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--indigo);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 6px;
+    align-self: flex-start;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-download:hover {
+    background: var(--indigo);
+    color: #fff;
+    border-color: var(--indigo);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .material-container {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .material-grid {
+        grid-template-columns: 1fr;
+    }
+}

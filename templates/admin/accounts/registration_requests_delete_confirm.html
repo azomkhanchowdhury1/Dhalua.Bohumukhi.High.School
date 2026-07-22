@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
-<div class="dashboard-wrapper" style="display:flex; justify-content:center; align-items:center; min-height:60vh;">
-    <div style="background:rgba(15,23,42,0.6); padding:3rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); text-align:center; max-width:500px;">
-        <i class="fas fa-exclamation-triangle" style="font-size:4rem; color:#ef4444; margin-bottom:20px;"></i>
-        <h2 style="color:#fff; margin-bottom:15px;">Confirm Deletion</h2>
-        <p style="color:#94a3b8; margin-bottom:30px;">Are you sure you want to delete this registration request? This action cannot be undone.</p>
-        
-        <form method="POST" style="display:flex; justify-content:center; gap:15px;">
+<div class="dashboard-wrapper">
+    <div>
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete this registration request? This action cannot be undone.</p>
+
+        <form method="POST">
             {% csrf_token %}
-            <a href="{% url 'admin_panel:registration_requests' %}" style="background:rgba(255,255,255,0.1); color:#fff; padding:12px 24px; border-radius:12px; text-decoration:none; font-weight:500;">Cancel</a>
-            <button type="submit" style="background:#ef4444; color:#fff; padding:12px 24px; border-radius:12px; border:none; cursor:pointer; font-weight:500; display:flex; align-items:center; gap:8px;">
+            <a href="{% url 'admin_panel:registration_requests' %}">Cancel</a>
+            <button type="submit">
                 <i class="fas fa-trash"></i> Delete
             </button>
         </form>

@@ -3,7 +3,8 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
 <style>
     /* START: TEACHER_LIST_CSS */
     .management-header {
@@ -162,6 +163,7 @@
                     <th>বিভাগ</th>
                     <th>বিষয়</th>
                     <th>বেতন</th>
+                    <th>পাসওয়ার্ড</th>
                     <th>স্ট্যাটাস</th>
                     <th>পরিচালনা</th>
                 </tr>
@@ -187,6 +189,7 @@
                     <td><span class="dept-badge">{{ teacher.department|default:"—" }}</span></td>
                     <td style="color:#cbd5e1;">{{ teacher.subject|default:"—" }}</td>
                     <td><span class="salary-text">৳{{ teacher.salary|default:"0" }}</span></td>
+                    <td><code style="background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; font-family: monospace;">{{ teacher.password_plain|default:"—" }}</code></td>
                     <td>
                         {% if teacher.user.is_active %}
                         <span class="status-badge status-active"><i class="fas fa-circle" style="font-size:0.5rem;"></i> সক্রিয়</span>
@@ -219,7 +222,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="8">
+                    <td colspan="9">
                         <div class="empty-state">
                             <i class="fas fa-user-slash"></i>
                             <p style="font-size:1rem; margin-bottom:16px;">কোনো শিক্ষক পাওয়া যায়নি।</p>

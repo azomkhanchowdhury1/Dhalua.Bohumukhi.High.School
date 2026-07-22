@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="delete-container">
+        <div class="delete-card">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <h3>Delete Class Test?</h3>
+            <p>আপনি কি সত্যিই Class Test <strong>"{{ exam.name }}"</strong> মুছে ফেলতে চান? <br>এই কাজটি আর ফেরত নেওয়া যাবে না এবং এর সাথে সম্পর্কিত রুটিন ও নম্বরসমূহও মুছে যাবে।</p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="delete-actions">
+                    <a href="{% url 'teacher:class_test_list' %}" class="btn-delete-confirm btn-cancel">বাতিল</a>
+                    <button type="submit" class="btn-delete-confirm btn-confirm">মুছে ফেলুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

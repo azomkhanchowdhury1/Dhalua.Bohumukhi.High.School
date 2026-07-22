@@ -2,139 +2,6 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* START: STAT_LEAVE_BALANCE_CSS */
-    .stat-page-container {
-        padding: 24px;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    .stat-page-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-    }
-    .stat-page-header .icon-box {
-        width: 52px;
-        height: 52px;
-        border-radius: 12px;
-        background: rgba(236, 72, 153, 0.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        color: #ec4899;
-    }
-    .stat-page-header h1 { font-size: 24px; font-weight: 700; color: #1e293b; margin: 0; }
-    .stat-page-header p  { color: #64748b; margin: 0; font-size: 14px; }
-    .back-btn {
-        margin-left: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #f1f5f9;
-        color: #475569;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-    }
-    .back-btn:hover { background: #e2e8f0; }
-
-    .leave-summary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-        margin-bottom: 30px;
-    }
-    .leave-card {
-        background: #fff;
-        border-radius: 14px;
-        padding: 22px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-    }
-    .leave-card .big-num {
-        font-size: 48px;
-        font-weight: 800;
-        line-height: 1;
-    }
-    .leave-card .lbl {
-        font-size: 13px;
-        color: #94a3b8;
-        margin-top: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-
-    .progress-bar-wrap {
-        background: #f3f4f6;
-        border-radius: 99px;
-        height: 10px;
-        margin: 16px 0;
-    }
-    .progress-bar-fill {
-        height: 100%;
-        border-radius: 99px;
-        background: linear-gradient(90deg, #ec4899, #f43f5e);
-        transition: width 1s ease;
-    }
-
-    .section-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #fce7f3;
-    }
-    .leave-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .leave-table th {
-        background: #fdf2f8;
-        padding: 12px 16px;
-        text-align: left;
-        font-size: 12px;
-        font-weight: 700;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid #fce7f3;
-    }
-    .leave-table td {
-        padding: 12px 16px;
-        border-bottom: 1px solid #fdf2f8;
-        font-size: 14px;
-        color: #374151;
-    }
-    .leave-table tr:last-child td { border-bottom: none; }
-
-    .apply-leave-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: #ec4899;
-        color: #fff;
-        text-decoration: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 24px;
-        transition: background 0.2s;
-    }
-    .apply-leave-btn:hover { background: #db2777; }
-    /* END: STAT_LEAVE_BALANCE_CSS */
-</style>
 {% endblock %}
 
 {% block content %}
@@ -146,28 +13,29 @@
             <h1>Leave Balance</h1>
             <p>Your annual leave overview and history</p>
         </div>
-        <a href="{% url 'teacher:teacher_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <a href="{% url 'teacher:teacher_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to
+            Dashboard</a>
     </div>
 
     <!-- Leave Summary Cards -->
     <div class="leave-summary">
         <div class="leave-card">
-            <div class="big-num" style="color:#10b981;">{{ leave_balance }}</div>
+            <div class="big-num">{{ leave_balance }}</div>
             <div class="lbl">Days Remaining</div>
         </div>
         <div class="leave-card">
-            <div class="big-num" style="color:#ef4444;">{{ leave_used }}</div>
+            <div class="big-num">{{ leave_used }}</div>
             <div class="lbl">Days Used</div>
         </div>
         <div class="leave-card">
-            <div class="big-num" style="color:#6366f1;">{{ leave_total }}</div>
+            <div class="big-num">{{ leave_total }}</div>
             <div class="lbl">Total Allocation</div>
         </div>
     </div>
 
     <!-- Progress Bar -->
-    <div style="background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); margin-bottom:24px;">
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#64748b; margin-bottom:6px;">
+    <div>
+        <div>
             <span>Leave Used</span>
             <span>{{ leave_used }} / {{ leave_total }} days</span>
         </div>
@@ -182,7 +50,7 @@
     </a>
 
     <!-- Payment / HR History -->
-    <div class="section-title"><i class="fas fa-history" style="color:#ec4899;"></i> Salary Payment History</div>
+    <div class="section-title"><i class="fas fa-history"></i> Salary Payment History</div>
     {% if salary_payments %}
     <table class="leave-table">
         <thead>
@@ -201,8 +69,7 @@
                 <td>{{ pay.year }}</td>
                 <td>{{ pay.amount }}</td>
                 <td>
-                    <span style="padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600;
-                        {% if pay.status == 'Paid' %}background:#d1fae5;color:#065f46;{% else %}background:#fef3c7;color:#92400e;{% endif %}">
+                    <span>
                         {{ pay.status }}
                     </span>
                 </td>
@@ -212,8 +79,8 @@
         </tbody>
     </table>
     {% else %}
-    <div style="text-align:center; padding:40px; color:#94a3b8; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-        <i class="fas fa-receipt" style="font-size:40px; display:block; margin-bottom:12px; opacity:0.4;"></i>
+    <div>
+        <i class="fas fa-receipt"></i>
         <p>No salary payment records found.</p>
     </div>
     {% endif %}

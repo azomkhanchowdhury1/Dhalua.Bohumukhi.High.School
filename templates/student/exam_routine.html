@@ -2,42 +2,73 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/exam_routine.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_EXAM_ROUTINE_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Exam Routine</h1>
+<div class="dashboard-wrapper exam-page">
+    <div class="exam-page-heading">
+        <h1><i class="fas fa-calendar-check"></i> Exam Routine</h1>
         <p>Upcoming examination schedule for {{ student.current_class }}.</p>
     </div>
 
-    <div style="background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:30px; border:1px solid rgba(255, 255, 255, 0.1);">
-        <table style="width:100%; border-collapse:collapse; color:#fff;">
-            <thead>
-                <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                    <th style="padding:15px;">Date</th>
-                    <th style="padding:15px;">Exam Name</th>
-                    <th style="padding:15px;">Subject</th>
-                    <th style="padding:15px;">Time</th>
-                    <th style="padding:15px;">Room</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for schedule in schedules %}
-                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <td style="padding:15px; font-weight:700; color:var(--home-primary);">{{ schedule.date|date:"d M, Y" }}</td>
-                    <td style="padding:15px;">{{ schedule.exam.name }}</td>
-                    <td style="padding:15px;">{{ schedule.subject.name }}</td>
-                    <td style="padding:15px;">{{ schedule.start_time|time:"H:i" }}</td>
-                    <td style="padding:15px;">Room {{ schedule.room_number }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No exam schedules found for your class.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="exam-container">
+        {% if schedules %}
+        <div class="exam-ticket-list">
+            {% for schedule in schedules %}
+            <div class="exam-ticket">
+
+                <!-- Left: date stub -->
+                <div class="exam-date-stub">
+                    <span class="stub-day">{{ schedule.date|date:"d" }}</span>
+                    <span class="stub-month">{{ schedule.date|date:"M" }}</span>
+                    <span class="stub-year">{{ schedule.date|date:"Y" }}</span>
+                </div>
+
+                <!-- Right: body -->
+                <div class="exam-ticket-body">
+
+                    <!-- Exam name + subject tag -->
+                    <div class="exam-main-info">
+                        <h3 class="exam-name">{{ schedule.exam.name }}</h3>
+                        <span class="exam-subject-tag">
+                            <i class="fas fa-book-open"></i>
+                            {{ schedule.subject.name }}
+                        </span>
+                    </div>
+
+                    <!-- Time and Room chips -->
+                    <div class="exam-meta-group">
+                        <div class="exam-meta-chip">
+                            <span class="meta-label">Time</span>
+                            <span class="meta-value">
+                                <i class="fas fa-clock"></i>
+                                {{ schedule.start_time|time:"H:i" }}
+                            </span>
+                        </div>
+                        <div class="exam-meta-chip">
+                            <span class="meta-label">Room</span>
+                            <span class="meta-value">
+                                <i class="fas fa-door-open"></i>
+                                {{ schedule.room_number }}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="exam-empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <p>No exam schedules found.</p>
+            <span>No examination schedule has been set for your class yet. Please check back later.</span>
+        </div>
+        {% endif %}
     </div>
 </div>
 <!-- END: STUDENT_EXAM_ROUTINE_SECTION -->

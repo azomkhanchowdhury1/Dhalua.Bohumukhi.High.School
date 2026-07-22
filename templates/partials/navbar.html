@@ -1,0 +1,138 @@
+{% load static %}
+<!-- START: TOP_HEADER_BAR -->
+<div class="top-header-bar">
+    <div class="top-bar-container">
+        {% if user.is_authenticated %}
+        <div class="top-bar-left">
+            <span><i class="far fa-clock"></i> School Hours: 8:00 AM - 4:00 PM</span>
+            <span><i class="fas fa-phone-alt"></i> +880 0160755120</span>
+        </div>
+        <div class="top-bar-right">
+            <a href="{% url 'notices:notice_list' %}">Notice Board</a>
+            <a href="{% url 'gallery' %}">Gallery</a>
+            <a href="{% url 'support' %}">Support</a>
+            <div class="search-box-container">
+                <div class="search-box" id="globalSearchBox">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search..." autocomplete="off">
+                    <i class="fas fa-times close-icon" id="closeSearch"></i>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+        {% else %}
+        <div class="top-bar-left">
+            <span><i class="far fa-clock"></i> School Hours: 8:00 AM - 4:00 PM</span>
+            <span><i class="fas fa-phone-alt"></i> +880 1814-994033</span>
+        </div>
+        <div class="top-bar-right">
+            <a href="{% url 'gallery' %}" class="{% if '/gallery/' in request.path %}active{% endif %}">Gallery</a>
+            <a href="{% url 'support' %}" class="{% if '/support/' in request.path %}active{% endif %}">Support</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- END: TOP_HEADER_BAR -->
+
+<!-- START: HEADER_SECTION -->
+<header class="main-header">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <img src="{% static 'image/logo.jpg' %}" alt="Dhalua-Bohumukhi-High-School Logo" class="logo-img">
+            <h2>Dhalua-Bohumukhi-High-School</h2>
+        </a>
+
+        <!-- START: MOBILE_MENU_TOGGLE -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <!-- END: MOBILE_MENU_TOGGLE -->
+
+        <div class="nav-right-section" id="navRightSection">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+
+                    {% if user.is_authenticated %}
+                    <!-- Common Auth Links -->
+                    {% if global_role == 'Admin' %}
+                    <li><a href="{% url 'admin_panel:dashboard' %}"
+                            class="{% if '/admin-dashboard/' in request.path %}active{% endif %}"><i
+                                class="fas fa-th-large"></i> Dashboard</a></li>
+                    {% elif global_role == 'Student' %}
+                    <li><a href="{% url 'student:student_dashboard' %}"
+                            class="{% if '/students/dashboard/' in request.path %}active{% endif %}"><i
+                                class="fas fa-th-large"></i> Dashboard</a></li>
+                    {% elif global_role == 'Teacher' %}
+                    <li><a href="{% url 'teacher:teacher_dashboard' %}"
+                            class="{% if '/teachers/dashboard/' in request.path %}active{% endif %}"><i
+                                class="fas fa-th-large"></i> Dashboard</a></li>
+                    {% elif global_role == 'Staff' %}
+                    <li><a href="{% url 'staff:staff_dashboard' %}"
+                            class="{% if '/staff/dashboard/' in request.path %}active{% endif %}"><i
+                                class="fas fa-th-large"></i> Dashboard</a></li>
+                    {% elif global_role == 'Parent' %}
+                    <li><a href="{% url 'prents:parent_dashboard' %}"
+                            class="{% if '/parents/dashboard/' in request.path %}active{% endif %}"><i
+                                class="fas fa-th-large"></i> Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'gallery' %}"
+                            class="{% if '/gallery/' in request.path %}active{% endif %}"><i
+                                class="fas fa-images"></i> Gallery</a></li>
+                    {% else %}
+                    <li><a href="{% url 'about' %}"
+                            class="{% if '/about/' in request.path %}active{% endif %}">About Us</a></li>
+                    <li><a href="{% url 'academics' %}"
+                            class="{% if '/academics/' in request.path %}active{% endif %}">Academics</a></li>
+                    <li><a href="{% url 'admission' %}"
+                            class="{% if '/admission/' in request.path %}active{% endif %}">Admission</a></li>
+                    <li><a href="{% url 'contact' %}"
+                            class="{% if '/contact/' in request.path %}active{% endif %}">Contact Us</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            {% if user.is_authenticated %}
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown-container">
+                <div class="profile-trigger" id="profileTrigger">
+                    {% if global_profile and global_profile.profile_image %}
+                    <img src="{{ global_profile.profile_image.url }}" alt="Profile Image">
+                    {% else %}
+                    <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <div class="dropdown-menu" id="profileDropdown">
+                    <div class="dropdown-header">
+                        <div class="header-info">
+                            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                            <span>{{ global_role }}</span>
+                        </div>
+                    </div>
+                    <a href="{% if global_role == 'Student' %}{% url 'student:profile' %}{% else %}{% url 'accounts:profile' %}{% endif %}"
+                        class="dropdown-item">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </a>
+                    <a href="{% url 'accounts:settings' %}" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    {% if global_role == 'Admin' %}
+                    <a href="{% url 'admin:index' %}" class="dropdown-item">
+                        <i class="fas fa-user-shield"></i> Admin Panel
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'accounts:logout' %}" class="dropdown-item logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn-login">Sign In</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+<!-- END: HEADER_SECTION -->

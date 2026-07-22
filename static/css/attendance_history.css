@@ -1,0 +1,475 @@
+/* ============================================================
+   ATTENDANCE HISTORY PAGE CSS — teacher/attendance_history.html
+   School Management System — Clean Registry Theme Redesign
+   ============================================================ */
+
+/* ===== PAGE HEADER ===== */
+.section-header {
+    margin-bottom: 2rem;
+    animation: slideUpFade 0.4s ease-out;
+    text-align: center;
+}
+
+.section-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+}
+
+.section-header p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ===== FILTER BAR ===== */
+.class-filter-bar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px 30px;
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.class-filter-bar>div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.class-filter-bar label {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ===== SELECT & INPUT STYLING - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select,
+.class-filter-bar input[type="date"] {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--paper) !important;
+}
+
+/* কাস্টম ড্রপডাউন অ্যারো - শুধু select এর জন্য */
+.class-filter-bar select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+}
+
+.class-filter-bar select:hover,
+.class-filter-bar input:hover {
+    border-color: var(--ink-faint);
+}
+
+.class-filter-bar select:focus,
+.class-filter-bar input:focus {
+    border-color: var(--indigo);
+    background-color: var(--surface) !important;
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ফোকাসে কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select:focus-visible,
+.class-filter-bar input:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    background-color: var(--surface) !important;
+}
+
+/* ===== SELECT OPTION - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select option {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+}
+
+/* অপশন হোভার এবং সিলেক্টেড স্টাইল - কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select option:hover,
+.class-filter-bar select option:checked,
+.class-filter-bar select option:active,
+.class-filter-bar select option:focus {
+    background: var(--indigo) !important;
+    background-color: var(--indigo) !important;
+    color: #ffffff !important;
+}
+
+/* ব্রাউজার ডিফল্ট কালো হাইলাইট রিমুভ */
+.class-filter-bar select::-webkit-list-button,
+.class-filter-bar select::-webkit-inner-spin-button,
+.class-filter-bar select::-webkit-calendar-picker-indicator {
+    background: transparent !important;
+}
+
+/* Date input এর ক্যালেন্ডার আইকন */
+.class-filter-bar input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.class-filter-bar input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ===== FIND RECORDS / UPDATE BUTTON ===== */
+.filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--indigo);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    justify-content: center;
+}
+
+.view-all-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 75, 140, 0.3);
+}
+
+.view-all-btn:focus-visible {
+    outline: 3px solid var(--indigo);
+    outline-offset: 3px;
+}
+
+/* ===== ATTENDANCE DATA BOX ===== */
+.attendance-history-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.6s ease-out;
+}
+
+/* Metadata Bar */
+.class-metadata-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: var(--paper);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--line-soft);
+}
+
+.class-metadata-bar h3 {
+    color: var(--ink);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* Switch Toggle widget */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.switch-label {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #10b981;
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+/* ===== ATTENDANCE TABLE ===== */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.attendance-table thead tr {
+    background: var(--paper);
+}
+
+.attendance-table th {
+    text-align: left;
+    padding: 14px 20px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--line);
+}
+
+.attendance-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink);
+    vertical-align: middle;
+    font-size: 0.92rem;
+    transition: all 0.2s ease;
+}
+
+.attendance-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+/* টেবিল রো ফোকাস - কালো রিমুভ */
+.attendance-table tbody tr:focus-within {
+    outline: none;
+}
+
+.attendance-table tbody tr:focus-within td {
+    background-color: var(--paper);
+}
+
+/* Row states based on selections */
+.attendance-table tbody tr.row-present td {
+    background-color: rgba(16, 185, 129, 0.03);
+}
+
+.attendance-table tbody tr.row-present td:first-child {
+    border-left: 4px solid #10b981;
+}
+
+.attendance-table tbody tr.row-absent td {
+    background-color: rgba(239, 68, 68, 0.03);
+}
+
+.attendance-table tbody tr.row-absent td:first-child {
+    border-left: 4px solid #ef4444;
+}
+
+.attendance-table tbody tr.row-late td {
+    background-color: rgba(245, 158, 11, 0.03);
+}
+
+.attendance-table tbody tr.row-late td:first-child {
+    border-left: 4px solid #f59e0b;
+}
+
+/* ===== RADIO BUTTONS ===== */
+.radio-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.radio-group input[type="radio"] {
+    display: none;
+}
+
+.radio-group label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: 1.5px solid var(--line);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.radio-group label:hover {
+    border-color: var(--ink-faint);
+    color: var(--ink);
+    background: var(--paper);
+}
+
+.present-radio input[type="radio"]:checked+label {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+}
+
+.absent-radio input[type="radio"]:checked+label {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+}
+
+.late-radio input[type="radio"]:checked+label {
+    background: #f59e0b;
+    color: #ffffff;
+    border-color: #f59e0b;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+}
+
+/* ===== EMPTY STATE ===== */
+.attendance-empty {
+    text-align: center;
+    padding: 80px 40px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 2px dashed var(--line);
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.attendance-empty h3 {
+    color: var(--ink);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    font-family: var(--font-display);
+}
+
+.attendance-empty a {
+    display: inline-block;
+    color: var(--indigo);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.attendance-empty a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .class-filter-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .class-filter-bar {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+        gap: 15px;
+    }
+
+    .class-filter-bar>div {
+        gap: 4px;
+    }
+
+    .class-filter-bar select,
+    .class-filter-bar input {
+        width: 100%;
+    }
+
+    .view-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .radio-group label {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .class-metadata-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

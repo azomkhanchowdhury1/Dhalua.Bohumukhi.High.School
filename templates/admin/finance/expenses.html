@@ -2,103 +2,273 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_finance.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: EXPENSES_SECTION -->
+
 <div class="dashboard-wrapper">
+
     <div class="section-header">
         <h1>Expenses Management</h1>
         <p>Track school expenditures and utility costs.</p>
     </div>
 
+
     {% if messages %}
-    <div style="margin-bottom:20px;">
+
+    <div>
         {% for message in messages %}
-        <div style="background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %}; border:1px solid {% if message.tags == 'error' %}#ef4444{% else %}#10b981{% endif %}; color:{% if message.tags == 'error' %}#ef4444{% else %}#10b981{% endif %}; padding:12px 20px; border-radius:12px; margin-bottom:8px;">{{ message }}</div>
+
+        <div>
+            {{ message }}
+        </div>
+
         {% endfor %}
     </div>
+
     {% endif %}
 
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px;">
+
+
+    <div>
+
+
         <!-- Add Expense Form -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); height:fit-content;">
-            <h3 style="margin-bottom:20px;">Record Expense</h3>
+
+        <div>
+
+            <h3>Record Expense</h3>
+
+
             <form method="POST">
+
                 {% csrf_token %}
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Title</label>
-                    <input type="text" name="title" id="expense_title" placeholder="e.g. Electricity Bill" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+
+                <div>
+
+                    <label>Title</label>
+
+                    <input type="text" name="title" id="expense_title" placeholder="e.g. Electricity Bill" required>
+
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Category</label>
-                    <select name="category" id="expense_category" required style="background:rgba(30,41,59,1); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+
+
+                <div>
+
+                    <label>Category</label>
+
+                    <select name="category" id="expense_category" required>
+
                         <option>Utility</option>
                         <option>Salary</option>
                         <option>Maintenance</option>
                         <option>Supplies</option>
                         <option>Others</option>
+
                     </select>
+
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Amount (৳)</label>
-                    <input type="number" step="0.01" name="amount" id="expense_amount" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+
+
+                <div>
+
+                    <label>Amount (৳)</label>
+
+                    <input type="number" step="0.01" name="amount" id="expense_amount" required>
+
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Date</label>
-                    <input type="date" name="date" id="expense_date" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+
+
+                <div>
+
+                    <label>Date</label>
+
+                    <input type="date" name="date" id="expense_date" required>
+
                 </div>
-                <button type="submit" id="save_expense_btn" class="view-all-btn" style="width:100%; margin-top:10px;">💾 Save Expense</button>
+
+
+
+                <button type="submit" id="save_expense_btn" class="view-all-btn">
+                    💾 Save Expense
+                </button>
+
+
             </form>
+
+
         </div>
 
+
+
+
+
         <!-- Expense List -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-            <h3 style="margin-bottom:20px;">Expenditure Records</h3>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+
+        <div>
+
+
+            <h3>Expenditure Records</h3>
+
+
+            <div>
+
+                <table>
+
+
                     <thead>
-                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:12px 15px;">Expense Title</th>
-                            <th style="padding:12px 15px;">Category</th>
-                            <th style="padding:12px 15px;">Amount</th>
-                            <th style="padding:12px 15px;">Date</th>
-                            <th style="padding:12px 15px;">Actions</th>
+
+                        <tr>
+
+                            <th>Expense Title</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+
                         </tr>
+
                     </thead>
+
+
+
                     <tbody>
+
+
                         {% for ex in expenses %}
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:12px 15px;">
-                                {% if ex.is_remembered %}<span style="color:#f59e0b; margin-right:4px;">★</span>{% endif %}
+
+
+                        <tr>
+
+
+                            <td>
+
+                                {% if ex.is_remembered %}
+                                <span>★</span>
+                                {% endif %}
+
                                 {{ ex.title }}
-                                {% if ex.reminder_note %}<br><small style="color:#64748b; font-size:0.78rem;">{{ ex.reminder_note }}</small>{% endif %}
+
+                                {% if ex.reminder_note %}
+                                <br>
+                                <small>{{ ex.reminder_note }}</small>
+                                {% endif %}
+
+
                             </td>
-                            <td style="padding:12px 15px;">
-                                <span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:4px 10px; border-radius:20px; font-size:0.8rem;">{{ ex.category }}</span>
+
+
+
+                            <td>
+
+                                <span>
+                                    {{ ex.category }}
+                                </span>
+
                             </td>
-                            <td style="padding:12px 15px; font-weight:700; color:#ef4444;">${{ ex.amount }}</td>
-                            <td style="padding:12px 15px; font-size:0.85rem; color:#94a3b8;">{{ ex.date|date:"d M, Y" }}</td>
-                            <td style="padding:12px 15px;">
-                                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                                    <a href="{% url 'admin_panel:expense_edit' ex.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;">✏️ Edit</a>
-                                    <form method="POST" action="{% url 'admin_panel:expense_toggle_remember' ex.id %}" style="display:inline; margin:0;">
+
+
+
+                            <td>
+                                ${{ ex.amount }}
+                            </td>
+
+
+
+                            <td>
+                                {{ ex.date|date:"d M, Y" }}
+                            </td>
+
+
+
+                            <td>
+
+
+                                <div>
+
+
+                                    <a href="{% url 'admin_panel:expense_edit' ex.id %}">
+                                        ✏️ Edit
+                                    </a>
+
+
+
+                                    <form method="POST" action="{% url 'admin_panel:expense_toggle_remember' ex.id %}">
                                         {% csrf_token %}
-                                        <button type="submit" style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:4px 10px; border-radius:8px; font-size:0.78rem; border:none; cursor:pointer;">{% if ex.is_remembered %}🔔 Unpin{% else %}📌 Pin{% endif %}</button>
+
+                                        <button type="submit">
+
+                                            {% if ex.is_remembered %}
+                                            🔔 Unpin
+                                            {% else %}
+                                            📌 Pin
+                                            {% endif %}
+
+                                        </button>
+
                                     </form>
-                                    <a href="{% url 'admin_panel:expense_delete' ex.id %}" style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;">🗑️ Delete</a>
+
+
+
+
+                                    <a href="{% url 'admin_panel:expense_delete' ex.id %}">
+                                        🗑️ Delete
+                                    </a>
+
+
+
                                 </div>
+
+
                             </td>
+
+
+
                         </tr>
+
+
+
                         {% empty %}
-                        <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No expense records yet.</td></tr>
+
+
+                        <tr>
+
+                            <td colspan="5">
+                                No expense records yet.
+                            </td>
+
+                        </tr>
+
+
                         {% endfor %}
+
+
                     </tbody>
+
+
                 </table>
+
+
             </div>
+
+
         </div>
+
+
     </div>
+
+
 </div>
+
+
 <!-- END: EXPENSES_SECTION -->
+
 {% endblock %}

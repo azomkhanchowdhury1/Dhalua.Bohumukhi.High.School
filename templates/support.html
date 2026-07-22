@@ -10,16 +10,12 @@
 {% block content %}
 <!-- START: SUPPORT_PAGE -->
 
-<!-- START: SUPPORT_HERO_SECTION -->
+<!-- START: SUPPORT_HERO_SECTION (Search removed) -->
 <section class="support-hero">
     <div class="container">
         <div class="hero-content animate-zoom">
-            <h1>Help & Support Center</h1>
-            <p>How can we assist you today? Find answers, submit tickets, or chat with our team.</p>
-            <div class="search-help animate-fade-up">
-                <input type="text" placeholder="Search for help articles...">
-                <button><i class="fas fa-search"></i> Search</button>
-            </div>
+            <h1>Help &amp; Support Center</h1>
+            <p>How can we assist you today? Find answers, submit tickets, or chat with our AI assistant.</p>
         </div>
     </div>
 </section>
@@ -29,34 +25,55 @@
 <section class="help-categories glass-container">
     <div class="container">
         <div class="category-grid">
-            <div class="category-card animate-slide-up">
+            <!-- Admission Help -->
+            <div class="category-card animate-slide-up" onclick="openCategoryModal('admission')">
                 <i class="fas fa-user-plus"></i>
                 <h3>Admission Help</h3>
                 <p>Guides on registration, fees, and requirements.</p>
-                <a href="#">Learn More</a>
+                <a href="#" class="cat-learn-more" onclick="openCategoryModal('admission'); return false;">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="category-card animate-slide-up" style="animation-delay: 0.1s;">
+            <!-- Academic Support -->
+            <div class="category-card animate-slide-up" style="animation-delay: 0.1s;" onclick="openCategoryModal('academic')">
                 <i class="fas fa-book-reader"></i>
                 <h3>Academic Support</h3>
                 <p>Syllabus, exams, and grading information.</p>
-                <a href="#">Learn More</a>
+                <a href="#" class="cat-learn-more" onclick="openCategoryModal('academic'); return false;">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="category-card animate-slide-up" style="animation-delay: 0.2s;">
+            <!-- Account & Security -->
+            <div class="category-card animate-slide-up" style="animation-delay: 0.2s;" onclick="openCategoryModal('account')">
                 <i class="fas fa-key"></i>
-                <h3>Account & Security</h3>
+                <h3>Account &amp; Security</h3>
                 <p>Password reset and profile management.</p>
-                <a href="#">Learn More</a>
+                <a href="#" class="cat-learn-more" onclick="openCategoryModal('account'); return false;">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="category-card animate-slide-up" style="animation-delay: 0.3s;">
+            <!-- Technical Issues -->
+            <div class="category-card animate-slide-up" style="animation-delay: 0.3s;" onclick="openCategoryModal('technical')">
                 <i class="fas fa-laptop-code"></i>
                 <h3>Technical Issues</h3>
                 <p>App usage and portal navigation help.</p>
-                <a href="#">Learn More</a>
+                <a href="#" class="cat-learn-more" onclick="openCategoryModal('technical'); return false;">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
 </section>
 <!-- END: HELP_CATEGORIES_SECTION -->
+
+<!-- START: CATEGORY_MODAL -->
+<div id="categoryModal" class="support-modal-overlay" onclick="if(event.target===this) closeCategoryModal();">
+    <div class="support-modal-content">
+        <div class="support-modal-header">
+            <div class="support-modal-icon-title">
+                <div class="support-modal-icon-circle" id="categoryModalIcon"></div>
+                <h3 id="categoryModalTitle">Help Guide</h3>
+            </div>
+            <button class="support-close-btn" onclick="closeCategoryModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="support-modal-body" id="categoryModalBody">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+</div>
+<!-- END: CATEGORY_MODAL -->
 
 <!-- START: FAQ_SECTION -->
 <section class="faq-section">
@@ -87,7 +104,25 @@
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>You can find and download the class routine in the Academics section under the "Class Routine" tab.</p>
+                    <p>You can find and download the class routine in the Academics section. Select your class from the dropdown and click Download.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I submit an online admission application?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Go to the Admission page, fill in your details including your email, and click "Submit Application". The admin will review and send your login credentials via email upon approval.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How can I view the syllabus?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Visit the Academics page and click "View Syllabus" under Science, Commerce, or Humanities. You can view and download each subject's syllabus file.</p>
                 </div>
             </div>
         </div>
@@ -106,9 +141,9 @@
                 <button class="btn-support" onclick="openTicketModal()">Create Ticket</button>
             </div>
             <div class="support-option animate-zoom">
-                <i class="fas fa-comments"></i>
-                <h3>Live Chat</h3>
-                <p>Chat with our support agents in real-time.</p>
+                <i class="fas fa-robot"></i>
+                <h3>AI Assistant</h3>
+                <p>Chat with our intelligent bot for instant answers.</p>
                 <button class="btn-support" onclick="toggleChat()">Start Chat</button>
             </div>
             <div class="support-option animate-slide-right">
@@ -164,23 +199,45 @@
 </div>
 <!-- END: TICKET_MODAL -->
 
-<!-- START: LIVE_CHAT_WIDGET -->
+<!-- START: LIVE_CHAT_WIDGET (AI Robot) -->
 <div id="chatWidget" class="chat-widget animate-slide-up">
     <div class="chat-header">
-        <span><i class="fas fa-circle" style="color: #50e3c2; font-size: 10px;"></i> Live Support</span>
-        <i class="fas fa-times" onclick="toggleChat()" style="cursor: pointer;"></i>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="bot-avatar-icon"><i class="fas fa-robot"></i></div>
+            <div>
+                <span style="font-weight:700; font-size:0.95rem;">Dhula AI Assistant</span>
+                <div style="font-size:0.75rem; color:#34d399;"><i class="fas fa-circle" style="font-size:8px;"></i> Online</div>
+            </div>
+        </div>
+        <i class="fas fa-times" onclick="toggleChat()" style="cursor: pointer; opacity: 0.7;"></i>
     </div>
     <div class="chat-body" id="chatBody">
         <div class="chat-msg bot">
-            <p>Hello! How can I help you today?</p>
+            <div class="bot-msg-avatar"><i class="fas fa-robot"></i></div>
+            <div class="bot-msg-bubble">
+                <p>👋 Hello! I'm the Dhula High School AI Assistant.</p>
+                <p style="margin-top:8px;">I can answer questions about:</p>
+                <ul style="margin: 8px 0 0 15px; font-size:0.85rem; color:#cbd5e1;">
+                    <li>Admissions & fees</li>
+                    <li>Syllabus & class routines</li>
+                    <li>Password & account help</li>
+                    <li>School history & info</li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="chat-footer">
-        <input type="text" id="chatInput" placeholder="Type a message...">
-        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        <input type="text" id="chatInput" placeholder="Ask me anything about the school...">
+        <button onclick="sendChatMessage()" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 <!-- END: LIVE_CHAT_WIDGET -->
+
+<!-- Floating Chat Button -->
+<button class="chat-float-btn" onclick="toggleChat()" id="chatFloatBtn" title="Chat with AI Assistant">
+    <i class="fas fa-robot"></i>
+    <span class="chat-float-badge">AI</span>
+</button>
 
 <!-- END: SUPPORT_PAGE -->
 {% endblock %}

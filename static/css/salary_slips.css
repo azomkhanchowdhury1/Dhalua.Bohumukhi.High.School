@@ -1,0 +1,331 @@
+/* ============================================================
+   SALARY SLIPS PAGE CSS — teacher/salary_slips.html
+   School Management System — Clean Registry Theme
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.salary-wrapper {
+    padding: 80px;
+    animation: slideUpFade 0.4s ease-out;
+    max-width: 60%;
+    margin: 0 auto;
+
+}
+
+/* ===== PAGE HEADER ===== */
+.salary-header {
+    margin-bottom: 28px;
+}
+
+.salary-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.salary-header h1 i {
+    color: #0ea5e9;
+}
+
+.salary-header p {
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.salary-header h1 i {
+    color: #0ea5e9;
+    margin-right: 8px;
+}
+
+/* ===== MESSAGES CONTAINER ===== */
+.messages-container {
+    margin-bottom: 16px;
+}
+
+/* ===== TABS ===== */
+.salary-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.stab {
+    padding: 9px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    background: var(--surface);
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.stab:hover {
+    border-color: var(--indigo);
+    color: var(--indigo);
+}
+
+.stab.active {
+    background: var(--indigo);
+    color: #fff;
+    border-color: var(--indigo);
+}
+
+.stab-panel {
+    display: none;
+}
+
+.stab-panel.active {
+    display: block;
+}
+
+/* ===== TABLE CONTAINER ===== */
+.salary-container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+/* ===== TABLE ===== */
+.salary-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.salary-table th {
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+}
+
+.salary-table td {
+    padding: 14px 20px;
+    color: var(--ink);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.salary-table tr:hover td {
+    background: var(--paper);
+}
+
+/* ===== STATUS BADGES ===== */
+.badge-paid {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-pending {
+    background: #fef9c3;
+    color: #854d0e;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-approved {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ===== WITHDRAWAL FORM CARD ===== */
+.withdraw-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.withdraw-card h3 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 22px;
+}
+
+/* ===== WITHDRAWAL FORM FIELDS ===== */
+.wf {
+    margin-bottom: 18px;
+}
+
+.wf label {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.wf input,
+.wf select,
+.wf textarea {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--ink);
+    font-size: 0.93rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wf input:hover,
+.wf select:hover,
+.wf textarea:hover {
+    border-color: var(--ink-faint);
+}
+
+.wf input:focus,
+.wf select:focus,
+.wf textarea:focus {
+    outline: none;
+    border-color: var(--indigo);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.btn-withdraw {
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    padding: 13px 26px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-withdraw:hover {
+    opacity: 0.88;
+}
+
+/* ===== INFO NOTE ===== */
+.info-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #1d4ed8;
+    font-size: 0.84rem;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* ===== ALERT MESSAGES ===== */
+.alert-msg {
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-msg.success {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #15803d;
+}
+
+.alert-msg.error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .withdraw-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .salary-table th,
+    .salary-table td {
+        padding: 12px 14px;
+        font-size: 0.83rem;
+    }
+}
+
+/* ===== EXTRA UTILITY CLASSES ===== */
+.acc-details {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+
+.txn-id {
+    font-family: monospace;
+    font-size: 0.78rem;
+    color: var(--indigo);
+}

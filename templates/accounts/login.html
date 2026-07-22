@@ -1,14 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - School Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
+
 <body>
     <!-- START: LOGIN_SECTION -->
     <div class="login-container">
@@ -19,7 +21,7 @@
 
         <form id="loginForm" method="POST" action="{% url 'accounts:login' %}">
             {% csrf_token %}
-            
+
             <div class="role-selector">
                 <input type="radio" id="roleStudent" name="role" value="Student" required>
                 <label for="roleStudent">Student</label>
@@ -42,7 +44,7 @@
             <div class="input-group">
                 <input type="password" id="password" name="password" required>
                 <label for="password">Password</label>
-                <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+                <i class="fas fa-eye toggle-password" id="togglePassword" title="Show Password"></i>
             </div>
 
             <div class="extra-features">
@@ -50,7 +52,10 @@
                     <input type="checkbox" id="rememberMe" name="remember_me">
                     Remember Me
                 </label>
-                <a href="{% url 'accounts:forgot_password' %}" class="forgot-password">Forgot Password?</a>
+
+                <a href="{% url 'accounts:forgot_password' %}" class="forgot-password">
+                    Forgot Password?
+                </a>
             </div>
 
             <button type="submit" class="login-btn">Sign In</button>
@@ -58,19 +63,26 @@
 
         <div class="social-login">
             <p>Or continue with</p>
+
             <div class="social-btns">
                 <button type="button" class="social-btn">
-                    <i class="fab fa-google" style="color: #ea4335;"></i> Google
+                    <i class="fab fa-google"></i>
+                    Google
                 </button>
+
                 <button type="button" class="social-btn">
-                    <i class="fab fa-microsoft" style="color: #00a4ef;"></i> Microsoft
+                    <i class="fab fa-microsoft"></i>
+                    Microsoft
                 </button>
             </div>
         </div>
 
         <div class="register-link">
-            No account? <a href="{% url 'accounts:register' %}">Sign up here</a>
+            No account?
+            <a href="{% url 'accounts:register' %}">Sign up here</a>
+
             <span class="divider">|</span>
+
             <a href="/" class="bottom-home">Back to Home</a>
         </div>
     </div>
@@ -78,4 +90,5 @@
 
     <script src="{% static 'javascript/login.js' %}"></script>
 </body>
+
 </html>

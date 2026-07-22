@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
 {% block content %}
 <!-- START: ACCOUNTS_USER_PROFILES_LIST_SECTION -->
 <div class="dashboard-wrapper">
@@ -14,53 +10,60 @@
     </div>
 
     {% if messages %}
-    <div style="margin-bottom:20px;">
+    <div>
         {% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">
+        <div>
             <i class="fas fa-check-circle"></i> {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 style="color:#fff; margin:0;"><i class="fas fa-id-card" style="color:#6366f1;"></i> Profiles List</h3>
-            <a href="{% url 'admin_panel:user_profiles_add' %}" class="view-all-btn" style="text-decoration:none;">
+    <div>
+        <div>
+            <h3><i class="fas fa-id-card"></i> Profiles List</h3>
+            <a href="{% url 'admin_panel:user_profiles_add' %}" class="view-all-btn">
                 <i class="fas fa-plus"></i> Add Profile
             </a>
         </div>
-        
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+        <div>
+            <table>
                 <thead>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; text-align:left;">
-                        <th style="padding:15px; font-weight:500;">User</th>
-                        <th style="padding:15px; font-weight:500;">Role</th>
-                        <th style="padding:15px; font-weight:500;">Phone</th>
-                        <th style="padding:15px; font-weight:500;">Remember</th>
-                        <th style="padding:15px; font-weight:500; text-align:right;">Actions</th>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Phone</th>
+                        <th>Remember</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for profile in profiles %}
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.3s; {% if profile.is_remembered %}background:rgba(234,179,8,0.05);{% endif %}" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='{% if profile.is_remembered %}rgba(234,179,8,0.05){% else %}transparent{% endif %}'">
-                        <td style="padding:15px;">{{ profile.user.username }} <br><small style="color:#94a3b8;">{{ profile.user.email }}</small></td>
-                        <td style="padding:15px;">{{ profile.role }}</td>
-                        <td style="padding:15px;">{{ profile.phone_number }}</td>
-                        <td style="padding:15px;">
-                            <a href="{% url 'admin_panel:user_profiles_toggle_remember' profile.id %}" style="color:{% if profile.is_remembered %}#eab308{% else %}#64748b{% endif %}; text-decoration:none;">
+                    <tr>
+                        <td>
+                            {{ profile.user.username }}<br>
+                            <small>{{ profile.user.email }}</small>
+                        </td>
+                        <td>{{ profile.role }}</td>
+                        <td>{{ profile.phone_number }}</td>
+                        <td>
+                            <a href="{% url 'admin_panel:user_profiles_toggle_remember' profile.id %}">
                                 <i class="fas fa-star"></i>
                             </a>
                         </td>
-                        <td style="padding:15px; text-align:right; display:flex; justify-content:flex-end; gap:10px;">
-                            <a href="{% url 'admin_panel:user_profiles_edit' profile.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'admin_panel:user_profiles_delete' profile.id %}" style="background:rgba(239,68,68,0.15); color:#f87171; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-trash"></i></a>
+                        <td>
+                            <a href="{% url 'admin_panel:user_profiles_edit' profile.id %}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:user_profiles_delete' profile.id %}">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" style="padding:20px; text-align:center; color:#94a3b8;">No profiles found.</td>
+                        <td colspan="5">No profiles found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

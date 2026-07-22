@@ -3,154 +3,704 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: MARKS_ADD_CSS */
-    .class-filter-bar {
-        background: rgba(15,23,42,0.6);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 20px;
-        padding: 1.5rem 2rem;
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    .class-filter-bar label { color: #94a3b8; font-size: 0.9rem; white-space:nowrap; }
-    .class-filter-bar select {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 12px;
-        padding: 11px 18px;
-        color: #fff;
-        font-size: 0.95rem;
-    }
-    .class-filter-bar select option { background: #0f172a; }
-    .marks-table { width: 100%; border-collapse: collapse; }
-    .marks-table th {
-        text-align: left;
-        padding: 14px 18px;
-        color: #94a3b8;
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .marks-table td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #e2e8f0; }
-    .mark-input {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 10px;
-        padding: 8px 14px;
-        color: #fff;
-        font-size: 0.95rem;
-        width: 120px;
-        transition: all 0.3s;
-    }
-    .mark-input:focus {
-        border-color: var(--home-primary, #6366f1);
-        box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
-        outline: none;
-    }
-    /* END: MARKS_ADD_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/add_exammarks.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: TEACHER_MARKS_ADD_SECTION -->
 <div class="dashboard-wrapper">
     <div class="section-header">
-        <h1>Add / Edit Exam Marks</h1>
-        <p>Select exam, class, and subject, then input marks for each student.</p>
+        <div class="header-top-bar">
+
+            {% if active_tab == 'class_tests' %}
+            <h1><i class="fas fa-clipboard-list"></i> Manage Class Tests</h1>
+            {% elif active_tab == 'add_marks' %}
+            <h1><i class="fas fa-pen"></i> Add / Edit Exam Marks</h1>
+            {% elif active_tab == 'results' %}
+            <h1><i class="fas fa-poll"></i> View Exam Results</h1>
+            {% elif active_tab == 'report' %}
+            <h1><i class="fas fa-chart-bar"></i> Progress Reports</h1>
+            {% endif %}
+        </div>
+        {% if active_tab == 'class_tests' %}
+        <p>নতুন ক্লাস টেস্ট পরীক্ষা তৈরি করুন এবং সময়, তারিখ ও সিলেবাস নির্ধারণ করুন।</p>
+        {% elif active_tab == 'add_marks' %}
+        <p>ক্লাস টেস্ট ও পরীক্ষার নম্বর এখানে দিন বা আপডেট করুন।</p>
+        {% elif active_tab == 'results' %}
+        <p>শিক্ষার্থীদের বিষয়ভিত্তিক ফলাফল ও গ্রেড দেখুন।</p>
+        {% elif active_tab == 'report' %}
+        <p>শিক্ষার্থীদের সামগ্রিক মেধা তালিকা ও অগ্রগতি প্রতিবেদন দেখুন।</p>
+        {% endif %}
     </div>
 
-    <!-- Filter Bar -->
-    <form method="GET" class="class-filter-bar">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label>Select Exam:</label>
-            <select name="exam_id" onchange="this.form.submit()" required>
-                <option value="">— Choose an exam —</option>
-                {% for exam in exams %}
-                <option value="{{ exam.id }}" {% if selected_exam == exam.id|stringformat:"s" %}selected{% endif %}>{{ exam.name }}</option>
-                {% endfor %}
-            </select>
+    {% if messages %}
+    <div class="msg-container">
+        {% for msg in messages %}
+        <div class="alert-msg {% if 'success' in msg.tags %}alert-success{% else %}alert-info{% endif %}">
+            <i class="fas fa-check-circle"></i> {{ msg }}
         </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label>Select Class:</label>
-            <select name="class_id" onchange="this.form.submit()" {% if not selected_exam %}disabled{% endif %}>
-                <option value="">— Choose a class —</option>
-                {% for cls in classes %}
-                <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }}</option>
-                {% endfor %}
-            </select>
+    <!-- ============================================================
+         TAB 1: CLASS TESTS
+    ============================================================ -->
+    {% if active_tab == 'class_tests' %}
+    <div class="tab-content" id="content-class-tests">
+        <div class="ct-container">
+
+            <!-- ---- ADD FORM ---- -->
+            <div class="ct-form-card">
+                <h3><i class="fas fa-plus-circle"></i> Create New Class Test</h3>
+                <form method="POST" id="create-ct-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_class_test">
+
+                    <div class="form-group">
+                        <label>Test Title *</label>
+                        <input type="text" name="title" class="form-ctrl" placeholder="e.g. CT-1 Math, Matrix Test"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Class *</label>
+                        <select name="class_id" class="form-ctrl" required>
+                            <option value=""> Select Class </option>
+                            {% for cls in classes %}
+                            <option value="{{ cls.id }}">{{ cls.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Section (Optional)</label>
+                        <select name="section_id" class="form-ctrl">
+                            <option value=""> Select Section (Optional) </option>
+                            {% for sec in sections %}
+                            <option value="{{ sec.id }}">{{ sec.name }} ({{ sec.school_class.name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Subject *</label>
+                        <select name="subject_id" class="form-ctrl" required>
+                            <option value=""> Select Subject </option>
+                            {% for sub in all_subjects %}
+                            <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exam Date *</label>
+                        <input type="date" name="date" class="form-ctrl" required>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Start Time *</label>
+                            <input type="time" name="start_time" class="form-ctrl" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" name="end_time" class="form-ctrl">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Marks *</label>
+                        <input type="number" name="total_marks" class="form-ctrl" value="20" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instructions (Optional)</label>
+                        <textarea name="instructions" class="form-ctrl" rows="3"
+                            placeholder="Any special instructions..."></textarea>
+                    </div>
+
+                    <div class="form-btn-group">
+                        <button type="submit" name="publish_btn" value="true" class="btn-publish">
+                            <i class="fas fa-paper-plane"></i> Publish
+                        </button>
+                        <button type="submit" class="btn-draft">
+                            <i class="fas fa-save"></i> Save Draft
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ---- TESTS LIST ---- -->
+            <div class="ct-list-section">
+                <h3><i class="fas fa-list"></i> My Class Tests ({{ tests|length }})</h3>
+                <div class="ct-grid">
+                    {% for test in tests %}
+                    <div class="test-card {% if test.is_published %}card-published{% endif %}">
+                        <div class="test-card-header">
+                            <h4 class="test-title"><strong>Test:</strong> {{ test.name }}</h4>
+                            <span
+                                class="status-pill {% if test.is_published %}pill-published{% else %}pill-draft{% endif %}">
+                                {% if test.is_published %}<i class="fas fa-eye"></i> Published{% else %}<i
+                                    class="fas fa-eye-slash"></i> Draft{% endif %}
+                            </span>
+                        </div>
+
+                        {% if test.schedule %}
+                        <div class="test-meta">
+                            <div class="meta-row">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span><strong>Class &amp; Section:</strong> {{ test.schedule.school_class.name }}
+                                    &mdash; {{ test.schedule.section.name|default:"All Sections" }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <i class="fas fa-book-open"></i>
+                                <span><strong>Subject:</strong> {{ test.schedule.subject.name }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <i class="fas fa-calendar-day"></i>
+                                <span><strong>Date:</strong> {{ test.schedule.date|date:"d M Y" }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <i class="fas fa-clock"></i>
+                                <span><strong>Time:</strong>
+                                    {% if test.schedule.start_time %}
+                                        {{ test.schedule.start_time|time:"H:i" }}
+                                        {% if test.schedule.end_time %}
+                                            &mdash; {{ test.schedule.end_time|time:"H:i" }}
+                                        {% else %}
+                                            &mdash; N/A
+                                        {% endif %}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="meta-row">
+                                <i class="fas fa-star"></i>
+                                <span><strong>Total Marks:</strong>
+                                    <strong>{{ test.schedule.total_marks|default:"—" }}</strong>
+                                </span>
+                            </div>
+                            {% if test.schedule.instructions %}
+                            <div class="meta-row">
+                                <i class="fas fa-info-circle"></i>
+                                <span><strong>Instructions:</strong> <em>{{ test.schedule.instructions }}</em></span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="test-actions">
+                            <!-- Publish/Draft Toggle -->
+                            <form method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="toggle_publish">
+                                <input type="hidden" name="test_id" value="{{ test.id }}">
+                                <button type="submit" class="action-btn btn-toggle" title="Toggle Publish">
+                                    <i
+                                        class="fas {% if test.is_published %}fa-eye-slash{% else %}fa-eye{% endif %}"></i>
+                                    {% if test.is_published %}Unpublish{% else %}Publish{% endif %}
+                                </button>
+                            </form>
+
+                            <!-- Grade/Add Marks -->
+                            {% if test.schedule %}
+                            <a href="?tab=add_marks&exam_id={{ test.id }}&class_id={{ test.schedule.school_class.id }}&subject_id={{ test.schedule.subject.id }}"
+                                class="action-btn btn-grade" title="Marks দিন">
+                                <i class="fas fa-pen"></i> Marks
+                            </a>
+                            {% endif %}
+
+                            <!-- Edit (inline modal) -->
+                            <button type="button" class="action-btn btn-edit edit-trigger" data-id="{{ test.id }}"
+                                data-title="{{ test.name|escapejs }}"
+                                data-class="{% if test.schedule %}{{ test.schedule.school_class.id }}{% endif %}"
+                                data-section="{% if test.schedule %}{{ test.schedule.section.id|default:0 }}{% endif %}"
+                                data-subject="{% if test.schedule %}{{ test.schedule.subject.id }}{% endif %}"
+                                data-date="{% if test.schedule %}{{ test.schedule.date|date:'Y-m-d' }}{% endif %}"
+                                data-start="{% if test.schedule %}{{ test.schedule.start_time|time:'H:i' }}{% endif %}"
+                                data-end="{% if test.schedule %}{{ test.schedule.end_time|time:'H:i'|default:'' }}{% endif %}"
+                                data-marks="{% if test.schedule %}{{ test.schedule.total_marks }}{% endif %}"
+                                data-instructions="{{ test.schedule.instructions|default:''|escapejs }}"
+                                data-published="{{ test.is_published|yesno:'1,0' }}" title="Edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+
+                            <!-- Delete (confirm) -->
+                            <button type="button" class="action-btn btn-delete delete-trigger" data-id="{{ test.id }}"
+                                data-name="{{ test.name|escapejs }}" title="Delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-card">
+                        <i class="fas fa-folder-open"></i>
+                        <p>এখনো কোনো Class Test তৈরি করা হয়নি। বাম পাশের ফর্ম ব্যবহার করুন।</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
+    </div>
 
-        {% if selected_class %}
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label>Select Subject:</label>
-            <select name="subject_id" onchange="this.form.submit()">
-                <option value="">— Choose a subject —</option>
-                {% for sub in subjects %}
-                <option value="{{ sub.id }}" {% if selected_subject == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }} ({{ sub.code }})</option>
-                {% endfor %}
-            </select>
+    <!-- ===== EDIT MODAL ===== -->
+    <div class="modal-overlay" id="edit-modal" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Class Test</h3>
+                <button type="button" class="modal-close" onclick="closeEditModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <form method="POST" id="edit-ct-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit_class_test">
+                <input type="hidden" name="test_id" id="edit-test-id">
+
+                <div class="form-group">
+                    <label>Test Title *</label>
+                    <input type="text" name="title" id="edit-title" class="form-ctrl" required>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Class *</label>
+                        <select name="class_id" id="edit-class" class="form-ctrl" required>
+                            {% for cls in classes %}
+                            <option value="{{ cls.id }}">{{ cls.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Section</label>
+                        <select name="section_id" id="edit-section" class="form-ctrl">
+                            <option value="">— Section —</option>
+                            {% for sec in sections %}
+                            <option value="{{ sec.id }}">{{ sec.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <select name="subject_id" id="edit-subject" class="form-ctrl" required>
+                        {% for sub in all_subjects %}
+                        <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Exam Date *</label>
+                        <input type="date" name="date" id="edit-date" class="form-ctrl" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Marks *</label>
+                        <input type="number" name="total_marks" id="edit-total-marks" class="form-ctrl" min="1"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Start Time *</label>
+                        <input type="time" name="start_time" id="edit-start-time" class="form-ctrl" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" name="end_time" id="edit-end-time" class="form-ctrl">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <textarea name="instructions" id="edit-instructions" class="form-ctrl" rows="3"></textarea>
+                </div>
+
+                <div class="form-btn-group">
+                    <button type="submit" name="publish_btn" value="true" id="edit-publish-btn" class="btn-publish">
+                        <i class="fas fa-paper-plane"></i> Publish & Save
+                    </button>
+                    <button type="submit" class="btn-draft">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeEditModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </form>
         </div>
-        {% endif %}
-    </form>
+    </div>
 
-    {% if selected_exam and selected_class and selected_subject %}
+    <!-- ===== DELETE CONFIRM MODAL ===== -->
+    <div class="modal-overlay" id="delete-modal" style="display:none;">
+        <div class="modal-box modal-sm">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> Delete Class Test</h3>
+                <button type="button" class="modal-close" onclick="closeDeleteModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <p class="delete-warning">Are you sure you want to delete <strong id="delete-test-name"></strong>? This
+                action cannot be undone.</p>
+            <form method="POST" id="delete-ct-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_class_test">
+                <input type="hidden" name="test_id" id="delete-test-id">
+                <div class="form-btn-group">
+                    <button type="submit" class="btn-delete-confirm">
+                        <i class="fas fa-trash"></i> Yes, Delete
+                    </button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeDeleteModal()">
+                        <i class="fas fa-times"></i> No, Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- ============================================================
+         TAB 2: ADD MARKS
+    ============================================================ -->
+    {% if active_tab == 'add_marks' %}
+    <div class="tab-content" id="content-add-marks">
+
+        <!-- Filter Bar -->
+        <form method="GET" class="filter-bar" id="marks-filter-form">
+            <input type="hidden" name="tab" value="add_marks">
+            <div class="filter-item">
+                <label><i class="fas fa-file-alt"></i> Exam Name:</label>
+                <select name="exam_id" onchange="this.form.submit()" required>
+                    <option value="">— Select Exam —</option>
+                    {% for exam in exams %}
+                    <option value="{{ exam.id }}" {% if exam.is_selected %}selected{% endif %}>{{ exam.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label><i class="fas fa-graduation-cap"></i> Class:</label>
+                <select name="class_id" onchange="this.form.submit()" {% if not selected_exam %}disabled{% endif %}>
+                    <option value="">— Select Class —</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if cls.is_selected %}selected{% endif %}>{{ cls.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if selected_class %}
+            <div class="filter-item">
+                <label><i class="fas fa-book"></i> Subject:</label>
+                <select name="subject_id" onchange="this.form.submit()">
+                    <option value="">— Select Subject —</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {% if sub.is_selected %}selected{% endif %}>{{ sub.name }}{% if sub.code %} ({{ sub.code }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+        </form>
+
+        {% if selected_exam and selected_class and selected_subject %}
         {% if students %}
         <form method="POST">
             {% csrf_token %}
+            <input type="hidden" name="action" value="save_marks">
             <input type="hidden" name="exam_id" value="{{ selected_exam }}">
             <input type="hidden" name="subject_id" value="{{ selected_subject }}">
-            
-            <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
-                <h3 style="color:#fff; margin-bottom:25px;">Students List ({{ students|length }})</h3>
+            <input type="hidden" name="class_id" value="{{ selected_class }}">
+
+            <div class="marks-panel">
+                <div class="marks-panel-header">
+                    <h3><i class="fas fa-users"></i> Students ({{ students|length }})</h3>
+                    <span class="total-marks-badge">Total Marks: {{ total_marks }}</span>
+                </div>
 
                 <table class="marks-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th class="col-num">#</th>
                             <th>Student Name</th>
                             <th>Roll No</th>
-                            <th>Marks Obtained (Out of 100)</th>
+                            <th>Marks Obtained (/ {{ total_marks }})</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for student in students %}
                         <tr>
-                            <td style="color:#64748b;">{{ forloop.counter }}</td>
-                            <td style="font-weight:600;">{{ student.user.get_full_name }}</td>
-                            <td style="color:#94a3b8;">{{ student.roll_number|default:"—" }}</td>
+                            <td class="col-num">{{ forloop.counter }}</td>
+                            <td class="student-name">{{ student.user.get_full_name }}</td>
+                            <td class="roll-no">{{ student.roll_number|default:"—" }}</td>
                             <td>
-                                <input type="number" name="marks_{{ student.id }}" min="0" max="100" class="mark-input" value="{{ student.existing_marks }}" placeholder="0-100" required>
+                                <input type="number" name="marks_{{ student.id }}" min="0" max="{{ total_marks }}"
+                                    step="0.5" class="mark-input" value="{{ student.existing_marks }}"
+                                    placeholder="0–{{ total_marks }}">
+                            </td>
+                            <td>
+                                {% if student.existing_marks != '' %}
+                                <span class="mark-status saved"><i class="fas fa-check-circle"></i> Saved</span>
+                                {% else %}
+                                <span class="mark-status pending"><i class="fas fa-clock"></i> Pending</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
 
-                <div style="margin-top:25px; display:flex; justify-content:flex-end;">
-                    <button type="submit" class="view-all-btn" style="padding:14px 40px; font-size:1rem; cursor:pointer; background: var(--home-primary, #6366f1); border: none; border-radius: 50px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-save"></i> Save Marks
+                <div class="save-wrap">
+                    <button type="submit" class="btn-save-marks">
+                        <i class="fas fa-save"></i> Save All Marks
                     </button>
                 </div>
             </div>
         </form>
         {% else %}
-        <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-            <h3 style="color:#64748b;">No students found in this class.</h3>
+        <div class="empty-state">
+            <i class="fas fa-user-slash"></i>
+            <h3>No students found in this class.</h3>
         </div>
         {% endif %}
-    {% else %}
-    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <i class="fas fa-arrow-up" style="font-size:2rem; color:rgba(255,255,255,0.1); margin-bottom:15px; display:block;"></i>
-        <h3 style="color:#64748b;">Please select an exam, a class, and a subject from above to start entering marks.</h3>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-arrow-up"></i>
+            <h3>Please select Exam, Class, and Subject above to enter marks.</h3>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
+
+    <!-- ============================================================
+         TAB 3: VIEW RESULTS
+    ============================================================ -->
+    {% if active_tab == 'results' %}
+    <div class="tab-content" id="content-results">
+
+        <form method="GET" class="filter-bar">
+            <input type="hidden" name="tab" value="results">
+            <div class="filter-item">
+                <label>Select Exam:</label>
+                <select name="res_exam_id" onchange="this.form.submit()">
+                    <option value="">— Select Exam —</option>
+                    {% for exam in exams %}
+                    <option value="{{ exam.id }}" {% if exam.res_selected %}selected{% endif %}>{{ exam.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>Select Class:</label>
+                <select name="res_class_id" onchange="this.form.submit()" {% if not res_exam_id %}disabled{% endif %}>
+                    <option value="">— Select Class —</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if cls.res_selected %}selected{% endif %}>{{ cls.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        {% if res_exam_id and res_class_id %}
+        {% if results %}
+        <div class="results-panel">
+            <div class="marks-panel-header">
+                <h3><i class="fas fa-table"></i> Results ({{ results|length }} records)</h3>
+            </div>
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th class="col-num">#</th>
+                        <th>Student Name</th>
+                        <th>Roll No</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td class="col-num">{{ forloop.counter }}</td>
+                        <td class="student-name">{{ result.student.user.get_full_name }}</td>
+                        <td class="roll-no">{{ result.student.roll_number|default:"—" }}</td>
+                        <td>{{ result.subject.name }}</td>
+                        <td class="marks-obtained">{{ result.marks_obtained }}</td>
+                        <td>
+                            <span class="grade-badge">{{ result.grade.name|default:"—" }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No results found for the selected Exam and Class.</h3>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-arrow-up"></i>
+            <h3>Please select Exam and Class above.</h3>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ============================================================
+         TAB 4: PROGRESS REPORT
+    ============================================================ -->
+    {% if active_tab == 'report' %}
+    <div class="tab-content" id="content-report">
+
+        <form method="GET" class="filter-bar">
+            <input type="hidden" name="tab" value="report">
+            <div class="filter-item">
+                <label>Select Exam:</label>
+                <select name="rpt_exam_id" onchange="this.form.submit()">
+                    <option value="">— Select Exam —</option>
+                    {% for exam in exams %}
+                    <option value="{{ exam.id }}" {% if exam.rpt_selected %}selected{% endif %}>{{ exam.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>Select Class:</label>
+                <select name="rpt_class_id" onchange="this.form.submit()" {% if not rpt_exam_id %}disabled{% endif %}>
+                    <option value="">— Select Class —</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if cls.rpt_selected %}selected{% endif %}>{{ cls.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        {% if rpt_exam_id and rpt_class_id %}
+        {% if report_data %}
+        <div class="report-panel">
+            <div class="marks-panel-header">
+                <h3><i class="fas fa-chart-bar"></i> Progress Reports ({{ report_data|length }} students)</h3>
+            </div>
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th class="col-num">#</th>
+                        <th>Student Name</th>
+                        <th>Roll No</th>
+                        <th>Subject Details (Marks)</th>
+                        <th>Total Marks</th>
+                        <th>Average</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data %}
+                    <tr>
+                        <td class="col-num">{{ forloop.counter }}</td>
+                        <td class="student-name">{{ item.student.user.get_full_name }}</td>
+                        <td class="roll-no">{{ item.student.roll_number|default:"—" }}</td>
+                        <td>
+                            {% for r in item.results %}
+                            <span class="subject-pill">
+                                <strong>{{ r.subject.name }}:</strong> {{ r.marks_obtained }}
+                                {% if r.grade %}<em>({{ r.grade.name }})</em>{% endif %}
+                            </span>
+                            {% empty %}
+                            <span class="text-muted">No marks found</span>
+                            {% endfor %}
+                        </td>
+                        <td class="marks-obtained">{{ item.total }}</td>
+                        <td>
+                            <span
+                                class="avg-pill {% if item.average >= 70 %}avg-good{% elif item.average >= 40 %}avg-mid{% else %}avg-low{% endif %}">
+                                {{ item.average|stringformat:".1f" }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No progress reports found for the selected Exam and Class.</h3>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-arrow-up"></i>
+            <h3>Please select Exam and Class above.</h3>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
 </div>
 <!-- END: TEACHER_MARKS_ADD_SECTION -->
+
+<script>
+    // ===== Edit Modal (via data attributes) =====
+    document.addEventListener('DOMContentLoaded', function () {
+        // Edit trigger
+        document.querySelectorAll('.edit-trigger').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const d = btn.dataset;
+                document.getElementById('edit-test-id').value = d.id;
+                document.getElementById('edit-title').value = d.title;
+                document.getElementById('edit-date').value = d.date || '';
+                document.getElementById('edit-start-time').value = d.start || '';
+                document.getElementById('edit-end-time').value = d.end || '';
+                document.getElementById('edit-total-marks').value = d.marks || '';
+                document.getElementById('edit-instructions').value = d.instructions || '';
+
+                const classSelect = document.getElementById('edit-class');
+                const sectionSelect = document.getElementById('edit-section');
+                const subjectSelect = document.getElementById('edit-subject');
+                if (classSelect) { for (let o of classSelect.options) o.selected = (o.value == d.class); }
+                if (sectionSelect) { for (let o of sectionSelect.options) o.selected = (o.value == d.section); }
+                if (subjectSelect) { for (let o of subjectSelect.options) o.selected = (o.value == d.subject); }
+
+                document.getElementById('edit-modal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Delete trigger
+        document.querySelectorAll('.delete-trigger').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('delete-test-id').value = btn.dataset.id;
+                document.getElementById('delete-test-name').textContent = btn.dataset.name;
+                document.getElementById('delete-modal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) {
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    });
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+</script>
 {% endblock %}
 <!-- END: templates/teacher/marks_add.html -->

@@ -4,15 +4,26 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from notices.models import Notice
 from student.models import Student, Attendance, ClassAttendance, StudentHomework
-from teacher.models import Teacher, SalaryPayment
+from teacher.models import Teacher, SalaryPayment, TeacherHomework
 from academics.models import SchoolClass, Section, Subject
 import datetime
 
 # START: TEACHER_VIEWS
 @login_required
 def dashboard(request):
+    # TEMPORARY AUTO MIGRATION
+    from django.core.management import call_command
+    try:
+        call_command('makemigrations', 'teacher')
+        call_command('migrate', 'teacher')
+        call_command('makemigrations', 'exams')
+        call_command('migrate', 'exams')
+    except Exception as e:
+        print("Auto-migration failed:", e)
+
     notices = Notice.objects.filter(Q(is_public=True) | Q(target_teacher=True)).distinct().order_by('-created_at')[:5]
     today = datetime.date.today()
+
 
     # Real stat data
     teacher = Teacher.objects.filter(user=request.user).first()
@@ -24,8 +35,8 @@ def dashboard(request):
     # Total Students: students in classes this teacher teaches
     total_students = Student.objects.count()
 
-    # Pending Submissions: StudentHomework items without a grade/review (simple count)
-    pending_submissions = StudentHomework.objects.count()
+    # Pending Submissions: StudentHomework items without a grade/review for this teacher
+    pending_submissions = StudentHomework.objects.filter(teacher=teacher, graded=False).count() if teacher else 0
 
     # Leave Balance: approved leaves this month (count used)
     leave_used = SalaryPayment.objects.filter(teacher=teacher).count() if teacher else 0  # placeholder until leave model exists
@@ -81,7 +92,8 @@ def stat_total_students(request):
 @login_required
 def stat_pending_submissions(request):
     """Shows pending homework/assignment submissions."""
-    submissions = StudentHomework.objects.select_related('student').order_by('-submitted_at')
+    teacher = Teacher.objects.filter(user=request.user).first()
+    submissions = StudentHomework.objects.filter(teacher=teacher, graded=False).select_related('student').order_by('-submitted_at') if teacher else StudentHomework.objects.none()
     return render(request, 'teacher/stat_pending_submissions.html', {
         'submissions': submissions,
         'count': submissions.count(),
@@ -374,108 +386,336 @@ def attendance_absentee(request):
     })
 
 # --- Marks Entry Views ---
-from exams.models import Exam, StudentResult, Grade
+from exams.models import Exam, StudentResult, Grade, ExamSchedule
 from academics.models import Subject
+
+def _get_students_for_class(school_class):
+    class_name_clean = school_class.name.strip()
+    alternatives = [class_name_clean]
+    mapping = {
+        'SIX': ['6', 'Class 6', 'Class Six', 'Six'],
+        'SEVEN': ['7', 'Class 7', 'Class Seven', 'Seven'],
+        'EIGHT': ['8', 'Class 8', 'Class Eight', 'Eight'],
+        'NINE': ['9', 'Class 9', 'Class Nine', 'Nine'],
+        'TEN': ['10', 'Class 10', 'Class Ten', 'Ten'],
+        '6': ['SIX', 'Class 6', 'Class Six', 'Six'],
+        '7': ['SEVEN', 'Class 7', 'Class Seven', 'Seven'],
+        '8': ['EIGHT', 'Class 8', 'Class Eight', 'Eight'],
+        '9': ['NINE', 'Class 9', 'Class Nine', 'Nine'],
+        '10': ['TEN', 'Class 10', 'Class Ten', 'Ten']
+    }
+    for key, vals in mapping.items():
+        if class_name_clean.upper() == key:
+            alternatives.extend(vals)
+            break
+    
+    query = Q()
+    for alt in alternatives:
+        query |= Q(current_class__iexact=alt) | Q(current_class__iexact=alt.strip())
+        
+    return Student.objects.filter(query)
 
 @login_required
 def marks_add(request):
-    exams = Exam.objects.filter(is_active=True)
+    teacher = get_object_or_404(Teacher, user=request.user)
+    active_tab = request.GET.get('tab', 'add_marks')  # class_tests | add_marks | results | report
+
+    # ============ COMMON DATA ============
+    all_class_tests = Exam.objects.filter(
+        exam_type='Class Test', created_by_teacher=teacher
+    ).prefetch_related('examschedule_set').order_by('-id')
+    for test in all_class_tests:
+        test.schedule = test.examschedule_set.first()
+
     classes = SchoolClass.objects.all()
+    sections = Section.objects.all()
+    all_subjects = Subject.objects.all()
+    grades = Grade.objects.all()
+
+    # Published exams for marks entry dropdown
+    exams = Exam.objects.filter(is_active=True, exam_type='Class Test', created_by_teacher=teacher)
+
+    # ============ TAB 1: CLASS TEST CREATION (POST) ============
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+
+        # --- Create new class test ---
+        if action == 'create_class_test':
+            title = request.POST.get('title')
+            class_id = request.POST.get('class_id')
+            section_id = request.POST.get('section_id')
+            subject_id = request.POST.get('subject_id')
+            exam_date = request.POST.get('date')
+            start_time = request.POST.get('start_time')
+            end_time = request.POST.get('end_time')
+            total_marks = request.POST.get('total_marks', 100)
+            instructions = request.POST.get('instructions', '')
+            publish = 'publish_btn' in request.POST
+
+            s_class = get_object_or_404(SchoolClass, id=class_id)
+            subject = get_object_or_404(Subject, id=subject_id)
+            section = get_object_or_404(Section, id=section_id) if section_id else None
+
+            current_year = str(datetime.date.today().year)
+            exam = Exam.objects.create(
+                name=title,
+                year=current_year,
+                exam_type='Class Test',
+                created_by_teacher=teacher,
+                is_published=publish,
+                is_active=True
+            )
+            ExamSchedule.objects.create(
+                exam=exam,
+                school_class=s_class,
+                section=section,
+                subject=subject,
+                date=exam_date,
+                start_time=start_time,
+                end_time=end_time or None,
+                total_marks=total_marks,
+                instructions=instructions
+            )
+            messages.success(request, f"Class Test '{title}' created successfully!")
+            return redirect(f"{request.path}?tab=class_tests")
+
+        # --- Edit existing class test ---
+        elif action == 'edit_class_test':
+            test_id = request.POST.get('test_id')
+            exam = get_object_or_404(Exam, id=test_id, created_by_teacher=teacher, exam_type='Class Test')
+            schedule = exam.examschedule_set.first()
+
+            title = request.POST.get('title')
+            class_id = request.POST.get('class_id')
+            section_id = request.POST.get('section_id')
+            subject_id = request.POST.get('subject_id')
+            exam_date = request.POST.get('date')
+            start_time = request.POST.get('start_time')
+            end_time = request.POST.get('end_time')
+            total_marks = request.POST.get('total_marks', 100)
+            instructions = request.POST.get('instructions', '')
+            publish = 'publish_btn' in request.POST
+
+            s_class = get_object_or_404(SchoolClass, id=class_id)
+            subject = get_object_or_404(Subject, id=subject_id)
+            section = get_object_or_404(Section, id=section_id) if section_id else None
+
+            exam.name = title
+            exam.is_published = publish
+            exam.save()
+
+            if schedule:
+                schedule.school_class = s_class
+                schedule.section = section
+                schedule.subject = subject
+                schedule.date = exam_date
+                schedule.start_time = start_time
+                schedule.end_time = end_time or None
+                schedule.total_marks = total_marks
+                schedule.instructions = instructions
+                schedule.save()
+            else:
+                ExamSchedule.objects.create(
+                    exam=exam, school_class=s_class, section=section, subject=subject,
+                    date=exam_date, start_time=start_time, end_time=end_time or None,
+                    total_marks=total_marks, instructions=instructions
+                )
+            messages.success(request, f"Class Test '{title}' updated successfully!")
+            return redirect(f"{request.path}?tab=class_tests")
+
+        # --- Delete class test ---
+        elif action == 'delete_class_test':
+            test_id = request.POST.get('test_id')
+            exam = get_object_or_404(Exam, id=test_id, created_by_teacher=teacher, exam_type='Class Test')
+            name = exam.name
+            exam.delete()
+            messages.success(request, f"Class Test '{name}' deleted successfully!")
+            return redirect(f"{request.path}?tab=class_tests")
+
+        # --- Toggle publish ---
+        elif action == 'toggle_publish':
+            test_id = request.POST.get('test_id')
+            exam = get_object_or_404(Exam, id=test_id, created_by_teacher=teacher, exam_type='Class Test')
+            exam.is_published = not exam.is_published
+            exam.save()
+            status = 'published' if exam.is_published else 'unpublished'
+            messages.success(request, f"Class Test '{exam.name}' is now {status}!")
+            return redirect(f"{request.path}?tab=class_tests")
+
+        # --- Save marks ---
+        elif action == 'save_marks':
+            exam_id = request.POST.get('exam_id')
+            subject_id = request.POST.get('subject_id')
+            class_id = request.POST.get('class_id')
+            exam = get_object_or_404(Exam, id=exam_id, created_by_teacher=teacher)
+            subject = get_object_or_404(Subject, id=subject_id)
+            schedule = exam.examschedule_set.first()
+
+            school_class = get_object_or_404(SchoolClass, id=class_id)
+            students_qs = _get_students_for_class(school_class)
+            if schedule and schedule.section:
+                students_qs = students_qs.filter(section=schedule.section.name)
+
+            saved_count = 0
+            for student in students_qs:
+                marks_key = f'marks_{student.id}'
+                marks_val = request.POST.get(marks_key)
+                if marks_val:
+                    marks = float(marks_val)
+                    norm_marks = marks
+                    if schedule and schedule.total_marks > 0:
+                        norm_marks = (marks / schedule.total_marks) * 100
+                    grade = Grade.objects.filter(min_mark__lte=norm_marks, max_mark__gte=norm_marks).first()
+                    StudentResult.objects.update_or_create(
+                        student=student, exam=exam, subject=subject,
+                        defaults={'marks_obtained': marks, 'grade': grade}
+                    )
+                    saved_count += 1
+            messages.success(request, f"{saved_count} জন শিক্ষার্থীর marks সফলভাবে সংরক্ষিত হয়েছে!")
+            return redirect(f"{request.path}?tab=add_marks&exam_id={exam_id}&class_id={class_id}&subject_id={subject_id}")
+
+    # ============ TAB 2: ADD MARKS — filter data ============
     selected_exam = request.GET.get('exam_id')
     selected_class = request.GET.get('class_id')
     selected_subject = request.GET.get('subject_id')
+    selected_exam = int(selected_exam) if selected_exam else None
+    selected_class = int(selected_class) if selected_class else None
+    selected_subject = int(selected_subject) if selected_subject else None
     students = []
     subjects = []
-    grades = Grade.objects.all()
+    total_marks = 100
 
     if selected_class:
         school_class = get_object_or_404(SchoolClass, id=selected_class)
         subjects = Subject.objects.filter(school_class=school_class)
-        if selected_subject:
-            students_qs = Student.objects.filter(current_class=school_class.name)
+
+        if selected_subject and selected_exam:
             subject = get_object_or_404(Subject, id=selected_subject)
-            exam = Exam.objects.filter(id=selected_exam).first() if selected_exam else None
-            
-            students = []
+            exam = Exam.objects.filter(id=selected_exam, created_by_teacher=teacher).first()
+            schedule = exam.examschedule_set.first() if exam else None
+
+            students_qs = _get_students_for_class(school_class)
+            if schedule and schedule.section:
+                students_qs = students_qs.filter(section=schedule.section.name)
+            if schedule:
+                total_marks = schedule.total_marks
+
             for s in students_qs:
-                existing_result = None
-                if exam and subject:
-                    existing_result = StudentResult.objects.filter(student=s, exam=exam, subject=subject).first()
-                s.existing_marks = existing_result.marks_obtained if existing_result else ""
+                existing_result = StudentResult.objects.filter(student=s, exam=exam, subject=subject).first() if exam else None
+                s.existing_marks = existing_result.marks_obtained if existing_result else ''
                 students.append(s)
 
-    if request.method == 'POST':
-        exam_id = request.POST.get('exam_id')
-        subject_id = request.POST.get('subject_id')
-        exam = get_object_or_404(Exam, id=exam_id)
-        subject = get_object_or_404(Subject, id=subject_id)
+    # ============ TAB 3: VIEW RESULTS ============
+    res_exam_id = request.GET.get('res_exam_id')
+    res_class_id = request.GET.get('res_class_id')
+    res_exam_id = int(res_exam_id) if res_exam_id else None
+    res_class_id = int(res_class_id) if res_class_id else None
+    results = []
+    if res_exam_id and res_class_id:
+        res_class = get_object_or_404(SchoolClass, id=res_class_id)
+        students_qs = _get_students_for_class(res_class)
+        results = StudentResult.objects.filter(
+            exam_id=res_exam_id,
+            exam__created_by_teacher=teacher,
+            student__in=students_qs
+        ).select_related('student', 'subject', 'grade', 'exam').order_by('subject__name', 'student__roll_number')
 
-        saved_count = 0
-        for student in Student.objects.filter(current_class=school_class.name):
-            marks_key = f'marks_{student.id}'
-            marks_val = request.POST.get(marks_key)
-            if marks_val:
-                marks = int(marks_val)
-                # Auto-assign grade
-                grade = Grade.objects.filter(min_mark__lte=marks, max_mark__gte=marks).first()
-                StudentResult.objects.update_or_create(
-                    student=student, exam=exam, subject=subject,
-                    defaults={'marks_obtained': marks, 'grade': grade}
-                )
-                saved_count += 1
-        messages.success(request, f"Marks saved for {saved_count} students successfully!")
-        return redirect(f"{request.path}?exam_id={exam_id}&class_id={selected_class}&subject_id={subject_id}")
+    # ============ TAB 4: PROGRESS REPORT ============
+    rpt_exam_id = request.GET.get('rpt_exam_id')
+    rpt_class_id = request.GET.get('rpt_class_id')
+    rpt_exam_id = int(rpt_exam_id) if rpt_exam_id else None
+    rpt_class_id = int(rpt_class_id) if rpt_class_id else None
+    rpt_students = []
+    report_data = []
+    if rpt_exam_id and rpt_class_id:
+        rpt_class = get_object_or_404(SchoolClass, id=rpt_class_id)
+        rpt_students = _get_students_for_class(rpt_class)
+        for student in rpt_students:
+            stu_results = StudentResult.objects.filter(
+                exam_id=rpt_exam_id, exam__created_by_teacher=teacher, student=student
+            ).select_related('subject', 'grade')
+            total = sum(r.marks_obtained for r in stu_results)
+            count = stu_results.count()
+            avg = total / count if count else 0
+            report_data.append({'student': student, 'results': stu_results, 'total': total, 'average': avg})
+
+    # Convert querysets to lists to store the annotated selection states securely
+    exams = list(exams)
+    classes = list(classes)
+    subjects = list(subjects)
+
+    for exam in exams:
+        exam.is_selected = (exam.id == selected_exam)
+        exam.res_selected = (exam.id == res_exam_id)
+        exam.rpt_selected = (exam.id == rpt_exam_id)
+
+    for cls in classes:
+        cls.is_selected = (cls.id == selected_class)
+        cls.res_selected = (cls.id == res_class_id)
+        cls.rpt_selected = (cls.id == rpt_class_id)
+
+    for sub in subjects:
+        sub.is_selected = (sub.id == selected_subject)
 
     return render(request, 'teacher/marks_add.html', {
-        'exams': exams, 'classes': classes, 'subjects': subjects,
-        'students': students, 'grades': grades,
-        'selected_exam': selected_exam, 'selected_class': selected_class, 'selected_subject': selected_subject,
+        # Tab state
+        'active_tab': active_tab,
+        # Tab 1 — class tests
+        'tests': all_class_tests,
+        'sections': sections,
+        'all_subjects': all_subjects,
+        # Tab 2 — add marks
+        'exams': exams,
+        'classes': classes,
+        'subjects': subjects,
+        'students': students,
+        'grades': grades,
+        'selected_exam': selected_exam,
+        'selected_class': selected_class,
+        'selected_subject': selected_subject,
+        'total_marks': total_marks,
+        # Tab 3 — results
+        'results': results,
+        'res_exam_id': res_exam_id,
+        'res_class_id': res_class_id,
+        # Tab 4 — report
+        'report_data': report_data,
+        'rpt_exam_id': rpt_exam_id,
+        'rpt_class_id': rpt_class_id,
     })
 
 @login_required
 def marks_results(request):
-    exams = Exam.objects.filter(is_active=True)
-    classes = SchoolClass.objects.all()
-    selected_exam = request.GET.get('exam_id')
-    selected_class = request.GET.get('class_id')
-    results = []
-
-    if selected_exam and selected_class:
-        school_class = get_object_or_404(SchoolClass, id=selected_class)
-        results = StudentResult.objects.filter(
-            exam_id=selected_exam,
-            student__current_class=school_class.name
-        ).select_related('student', 'subject', 'grade', 'exam').order_by('subject__name', 'student__roll_number')
-
-    return render(request, 'teacher/marks_results.html', {
-        'exams': exams, 'classes': classes,
-        'results': results,
-        'selected_exam': selected_exam, 'selected_class': selected_class,
-    })
+    # All results functionality is now in marks_add (tab=results)
+    return redirect('/teacher/marks/add/?tab=results')
 
 @login_required
 def marks_report(request):
-    exams = Exam.objects.filter(is_active=True)
-    classes = SchoolClass.objects.all()
-    selected_exam = request.GET.get('exam_id')
-    selected_class = request.GET.get('class_id')
-    report_data = []
+    # All report functionality is now in marks_add (tab=report)
+    return redirect('/teacher/marks/add/?tab=report')
 
-    if selected_exam and selected_class:
-        school_class = get_object_or_404(SchoolClass, id=selected_class)
-        students = Student.objects.filter(current_class=school_class.name)
-        for student in students:
-            results = StudentResult.objects.filter(exam_id=selected_exam, student=student).select_related('subject', 'grade')
-            total = sum(r.marks_obtained for r in results)
-            count = results.count()
-            avg = total / count if count else 0
-            report_data.append({'student': student, 'results': results, 'total': total, 'average': avg})
+# --- Class Test CRUD Views (now all handled inside marks_add) ---
+@login_required
+def class_test_list(request):
+    return redirect('/teacher/marks/add/?tab=class_tests')
 
-    return render(request, 'teacher/marks_report.html', {
-        'exams': exams, 'classes': classes,
-        'report_data': report_data,
-        'selected_exam': selected_exam, 'selected_class': selected_class,
-    })
+@login_required
+def class_test_edit(request, test_id):
+    return redirect('/teacher/marks/add/?tab=class_tests')
+
+@login_required
+def class_test_delete(request, test_id):
+    return redirect('/teacher/marks/add/?tab=class_tests')
+
+@login_required
+def class_test_toggle_publish(request, test_id):
+    teacher = get_object_or_404(Teacher, user=request.user)
+    exam = get_object_or_404(Exam, id=test_id, created_by_teacher=teacher, exam_type='Class Test')
+    exam.is_published = not exam.is_published
+    exam.save()
+    status = 'published' if exam.is_published else 'unpublished'
+    messages.success(request, f"Class Test '{exam.name}' is now {status}!")
+    return redirect('/teacher/marks/add/?tab=class_tests')
 
 # --- My Schedule Views ---
 @login_required
@@ -498,7 +738,7 @@ def create_assignment(request):
 @login_required
 def review_submissions(request):
     teacher = Teacher.objects.filter(user=request.user).first()
-    submissions = StudentHomework.objects.filter(teacher=teacher).select_related('student').order_by('-submitted_at') if teacher else StudentHomework.objects.none()
+    submissions = StudentHomework.objects.filter(teacher=teacher).select_related('student__user').order_by('-submitted_at') if teacher else StudentHomework.objects.none()
 
     if request.method == 'POST':
         hw_id = request.POST.get('homework_id')
@@ -648,5 +888,56 @@ def chat_student(request):
         'messages': msg_list,
         'current_user_id': request.user.id
     })
+
+# START: HOMEWORK_UPLOAD_VIEWS
+@login_required
+def upload_homework(request):
+    """Teacher can upload homework for students."""
+    teacher = Teacher.objects.filter(user=request.user).first()
+    classes = SchoolClass.objects.all()
+    subjects = Subject.objects.all()
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        school_class = request.POST.get('school_class', '').strip()
+        section = request.POST.get('section', '').strip()
+        description = request.POST.get('description', '').strip()
+        due_date = request.POST.get('due_date') or None
+        file = request.FILES.get('file')
+
+        if title and subject and school_class:
+            TeacherHomework.objects.create(
+                teacher=teacher,
+                title=title,
+                subject=subject,
+                school_class=school_class,
+                section=section,
+                description=description,
+                due_date=due_date,
+                file=file,
+            )
+            messages.success(request, f"Homework '{title}' uploaded successfully!")
+            return redirect('teacher:upload_homework')
+        else:
+            messages.error(request, "Please fill in all required fields.")
+
+    homeworks = TeacherHomework.objects.filter(teacher=teacher).order_by('-uploaded_at') if teacher else TeacherHomework.objects.none()
+    return render(request, 'teacher/upload_homework.html', {
+        'homeworks': homeworks,
+        'classes': classes,
+        'subjects': subjects,
+    })
+
+
+@login_required
+def delete_homework(request, hw_id):
+    """Delete a teacher-uploaded homework entry."""
+    teacher = Teacher.objects.filter(user=request.user).first()
+    hw = get_object_or_404(TeacherHomework, id=hw_id, teacher=teacher)
+    hw.delete()
+    messages.success(request, "Homework deleted successfully.")
+    return redirect('teacher:upload_homework')
+# END: HOMEWORK_UPLOAD_VIEWS
 
 # END: TEACHER_VIEWS

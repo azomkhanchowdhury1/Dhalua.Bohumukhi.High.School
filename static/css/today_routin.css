@@ -1,0 +1,145 @@
+/* ============================================================
+   TODAY'S ROUTINE PAGE CSS — teacher/today_routine.html
+   School Management System — Clean Registry Theme
+   ============================================================ */
+.dashboard-wrapper {
+    margin: auto;
+    padding: 10%;
+}
+
+/* ===== ROUTINE CONTAINER ===== */
+.routine-container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.4s ease-out;
+}
+
+/* ===== HEADER ===== */
+.routine-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.routine-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.routine-header h2 i {
+    color: var(--indigo);
+}
+
+/* ===== PRINT BUTTON ===== */
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-print:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+/* ===== ROUTINE TABLE ===== */
+.routine-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.routine-table thead tr {
+    background: var(--paper);
+}
+
+.routine-table th {
+    text-align: left;
+    padding: 13px 20px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 2px solid var(--line);
+}
+
+.routine-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink);
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.routine-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+/* ===== STATUS BADGES ===== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.status-badge.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-badge.upcoming {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-badge.ongoing {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+/* Fallback for plain badges (no class) */
+.status-badge:not(.completed):not(.upcoming):not(.ongoing) {
+    background: var(--paper);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .routine-header {
+        padding: 1.25rem 1.25rem;
+    }
+
+    .routine-table th,
+    .routine-table td {
+        padding: 12px 14px;
+        font-size: 0.83rem;
+    }
+}

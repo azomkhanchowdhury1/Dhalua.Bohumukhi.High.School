@@ -14,17 +14,17 @@ body {
     justify-content: center;
     align-items: center;
     /* Premium deep mesh gradient background matching login */
-    background: radial-gradient(circle at 85% 50%, #15103c, transparent 50%),
-                radial-gradient(circle at 15% 30%, #0c2045, transparent 50%),
-                radial-gradient(circle at 50% 80%, #300c3b, transparent 50%), #0a0a0a;
-    color: #e2e8f0;
-    padding: 20px; /* Reduced for 100% fit */
+    background: rgba(190, 238, 238, 0.336);
+    color: #000000;
+    padding: 20px;
+    /* Reduced for 100% fit */
     position: relative;
     overflow-x: hidden;
 }
 
 /* Subtle background glowing orbs - Reduced blur for better performance */
-body::before, body::after {
+body::before,
+body::after {
     content: '';
     position: absolute;
     border-radius: 50%;
@@ -34,44 +34,41 @@ body::before, body::after {
     animation: float 20s infinite ease-in-out alternate;
 }
 
-body::before {
-    width: 300px;
-    height: 300px;
-    background: #ec4899;
-    top: -50px;
-    right: -50px;
-}
-
-body::after {
-    width: 400px;
-    height: 400px;
-    background: #4f46e5;
-    bottom: -100px;
-    left: -50px;
-    animation-delay: -10s;
-}
 
 @keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-30px, -30px) scale(1.05); }
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(-30px, -30px) scale(1.05);
+    }
 }
 
 .register-container {
     position: relative;
     width: 100%;
-    max-width: 500px; /* Made box narrower */
-    padding: 30px 30px; /* Reduced padding */
+    max-width: 500px;
+    /* Made box narrower */
+    padding: 30px 30px;
+    /* Reduced padding */
     border-radius: 20px;
     z-index: 10;
     animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     margin: auto;
 }
 
 @keyframes fadeInScale {
-    0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+    0% {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 /* The Rotating Gradient */
@@ -83,7 +80,8 @@ body::after {
     width: 200%;
     height: 200%;
     background: conic-gradient(from 0deg, transparent 70%, #00d2ff 85%, #ff007f 100%);
-    animation: rotateBorder 6s linear infinite; /* Slower rotation */
+    animation: rotateBorder 6s linear infinite;
+    /* Slower rotation */
     z-index: 0;
 }
 
@@ -91,33 +89,42 @@ body::after {
 .register-container::after {
     content: '';
     position: absolute;
-    inset: 2px; /* Border thickness */
-    background: #0f1423; /* Solid color instead of blur */
+    inset: 2px;
+    /* Border thickness */
+    background: #e9e9e9a2;
+    border: 1px solid rgba(0, 0, 0, 0.24);
     border-radius: 19px;
     z-index: 1;
 }
 
 /* Bring all contents above the ::after background */
-.register-container > * {
+.register-container>* {
     position: relative;
     z-index: 2;
 }
 
 @keyframes rotateBorder {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .register-header {
     text-align: center;
-    margin-bottom: 25px; /* Reduced margin */
+    margin-bottom: 25px;
+    /* Reduced margin */
 }
 
 .register-header h1 {
-    font-size: 26px; /* Reduced */
+    font-size: 26px;
+    /* Reduced */
     font-weight: 700;
     margin-bottom: 6px;
-    background: linear-gradient(to right, #ffffff, #a5b4fc);
+    background: linear-gradient(to right, #000000, #032bf1);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -125,48 +132,55 @@ body::after {
 }
 
 .register-header p {
-    font-size: 13px; /* Reduced */
-    color: #94a3b8;
+    font-size: 13px;
+    /* Reduced */
+    color: #000000;
     font-weight: 300;
 }
 
 .role-selector {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px; /* Reduced */
-    background: rgba(15, 23, 42, 0.6);
+    margin-bottom: 20px;
+    background: rgb(255, 255, 255);
     border-radius: 10px;
-    padding: 5px; /* Reduced */
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 5px;
+
+    border: 1px solid rgba(0, 0, 0, 0.26);
 }
 
 .role-selector label {
     flex: 1;
     text-align: center;
-    padding: 8px 0; /* Reduced */
+    padding: 8px 0;
+    /* Reduced */
     cursor: pointer;
-    border-radius: 6px; /* Reduced */
-    font-size: 12px; /* Reduced */
+    border-radius: 6px;
+    /* Reduced */
+    font-size: 12px;
+    /* Reduced */
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #64748b;
+    color: #000000;
 }
 
 .role-selector input[type="radio"] {
     display: none;
 }
 
-.role-selector input[type="radio"]:checked + label {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+.role-selector input[type="radio"]:checked+label {
+    background: linear-gradient(135deg, #dbdbdbb4);
+    
+    
     transform: scale(1.02);
 }
 
 .form-row {
     display: flex;
-    gap: 15px; /* Reduced */
-    margin-bottom: 18px; /* Reduced */
+    gap: 15px;
+    /* Reduced */
+    margin-bottom: 18px;
+    /* Reduced */
 }
 
 .input-group {
@@ -175,17 +189,22 @@ body::after {
 }
 
 .input-group.full-width {
-    margin-bottom: 18px; /* Reduced */
+    margin-bottom: 18px;
+    /* Reduced */
 }
 
-.input-group input, .input-group textarea {
+.input-group input,
+.input-group textarea {
     width: 100%;
-    padding: 12px 14px; /* Reduced */
-    background: rgba(15, 23, 42, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px; /* Reduced */
-    color: #f8fafc;
-    font-size: 13px; /* Reduced */
+    padding: 12px 14px;
+    /* Reduced */
+    background: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.253);
+    border-radius: 10px;
+    /* Reduced */
+    color: #000000;
+    font-size: 13px;
+    /* Reduced */
     outline: none;
     transition: all 0.3s ease;
 }
@@ -194,63 +213,62 @@ body::after {
 .input-group input:-webkit-autofill:hover,
 .input-group input:-webkit-autofill:focus,
 .input-group textarea:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px #0f1423 inset !important;
-    -webkit-text-fill-color: #f8fafc !important;
+    -webkit-box-shadow: 0 0 0 1000px #fcfcfc00 inset !important;
+    -webkit-text-fill-color: #000000 !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
 .input-group textarea {
     resize: vertical;
-    min-height: 80px; /* Reduced */
+    min-height: 80px;
+    /* Reduced */
 }
 
-.input-group input:focus, .input-group textarea:focus {
-    border-color: #8b5cf6;
-    background: rgba(15, 23, 42, 0.6);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #00000041;
+    background: rgba(255, 255, 255, 0.342);
+    
 }
 
 .input-group label {
     position: absolute;
-    top: 14px; /* Reduced */
-    left: 14px; /* Reduced */
-    color: #64748b;
-    font-size: 13px; /* Reduced */
+    top: 12px;
+    left: 14px;
+    color: #000000;
+    font-size: 13px;
     pointer-events: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.input-group input:focus ~ label,
-.input-group input:valid ~ label,
-.input-group input.has-content ~ label,
-.input-group textarea:focus ~ label,
-.input-group textarea:valid ~ label,
-.input-group textarea.has-content ~ label {
-    top: -10px;
+.input-group input:focus~label,
+.input-group input:valid~label,
+.input-group input.has-content~label,
+.input-group textarea:focus~label,
+.input-group textarea:valid~label,
+.input-group textarea.has-content~label {
+    top: -16px;
     left: 12px;
     font-size: 11px;
     font-weight: 500;
-    color: #a5b4fc;
-    background: #0f1423; /* Match new background */
+    color: #000000;
     padding: 0 6px;
     border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    
 }
-
 .register-btn {
     width: 100%;
-    padding: 14px; /* Reduced */
-    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    padding: 14px;
+    background: linear-gradient(135deg, #8c8df7, #3b82f6);
     border: none;
-    border-radius: 10px; /* Reduced */
+    border-radius: 10px;
     color: #ffffff;
-    font-size: 15px; /* Reduced */
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.5px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
-    margin-top: 5px; /* Reduced */
+    margin-top: 5px;
     position: relative;
     overflow: hidden;
 }
@@ -267,7 +285,10 @@ body::after {
 .register-btn::after {
     content: '';
     position: absolute;
-    top: 0; left: -100%; width: 100%; height: 100%;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: 0.6s ease;
 }
@@ -278,13 +299,15 @@ body::after {
 
 .login-link {
     text-align: center;
-    margin-top: 20px; /* Reduced */
-    font-size: 13px; /* Reduced */
-    color: #94a3b8;
+    margin-top: 20px;
+    /* Reduced */
+    font-size: 13px;
+    /* Reduced */
+    color: #000000;
 }
 
 .login-link a {
-    color: #a5b4fc;
+    color: #0a2ae0;
     text-decoration: none;
     font-weight: 600;
     transition: 0.3s ease;
@@ -292,7 +315,7 @@ body::after {
 }
 
 .login-link a:hover {
-    color: #ffffff;
+    color: #000000;
     text-decoration: underline;
 }
 
@@ -302,4 +325,5 @@ body::after {
         gap: 25px;
     }
 }
+
 /* END: REGISTER_STYLE */

@@ -2,112 +2,96 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: LIBRARY_CSS */
-    .search-bar {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 50px;
-        padding: 14px 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 30px;
-    }
-    .search-bar input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: #fff;
-        font-size: 1rem;
-    }
-    .search-bar i { color: #94a3b8; font-size: 1.1rem; }
-    .book-table { width: 100%; border-collapse: collapse; }
-    .book-table th {
-        text-align: left;
-        padding: 14px 20px;
-        color: #94a3b8;
-        font-size: 0.85rem;
-        font-weight: 600;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .book-table td { padding: 16px 20px; color: #e2e8f0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .book-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .badge-available {
-        background: rgba(16,185,129,0.15);
-        color: #10b981;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.82rem;
-        font-weight: 600;
-    }
-    .badge-issued {
-        background: rgba(239,68,68,0.15);
-        color: #ef4444;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.82rem;
-        font-weight: 600;
-    }
-    /* END: LIBRARY_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/library_stutus.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_LIBRARY_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Library Status</h1>
+<div class="dashboard-wrapper library-page">
+
+    <div class="library-page-heading">
+        <h1><i class="fas fa-book-reader"></i> Library Status</h1>
         <p>Browse the school library catalogue and check book availability.</p>
     </div>
 
-    <div class="search-bar">
-        <i class="fas fa-search"></i>
-        <input type="text" id="librarySearch" placeholder="Search by title, author or category..." onkeyup="filterBooks()">
-    </div>
+    <div class="library-container">
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.08); overflow-x:auto;">
-        <table class="book-table" id="bookTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Book Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>Copies</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="bookTableBody">
-                {% for book in books %}
-                <tr>
-                    <td style="color:#64748b;">{{ forloop.counter }}</td>
-                    <td style="font-weight:600;">{{ book.title }}</td>
-                    <td>{{ book.author }}</td>
-                    <td>{{ book.category|default:"General" }}</td>
-                    <td>{{ book.copies_available }}</td>
-                    <td>
-                        {% if book.status == 'Available' %}
-                        <span class="badge-available"><i class="fas fa-check-circle"></i> Available</span>
-                        {% else %}
-                        <span class="badge-issued"><i class="fas fa-times-circle"></i> Issued</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" style="text-align:center; padding:60px; color:#94a3b8;">
-                        <i class="fas fa-book" style="font-size:2.5rem; opacity:0.2; display:block; margin-bottom:15px;"></i>
-                        No books found in the library catalogue.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Search Box -->
+        <div class="library-search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="librarySearch"
+                   placeholder="Search by title, author or category..."
+                   onkeyup="filterBooks()">
+        </div>
+
+        <p class="library-results-info" id="resultsInfo"></p>
+
+        <!-- Table -->
+        <div class="library-table-wrapper">
+            <table class="library-table" id="bookTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th style="text-align:center;">Copies</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTableBody">
+                    {% for book in books %}
+                    <tr>
+                        <td class="book-index">{{ forloop.counter }}</td>
+                        <td>
+                            <div class="book-title-cell">
+                                <i class="fas fa-book"></i>
+                                {{ book.title }}
+                            </div>
+                        </td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.category|default:"General" }}</td>
+                        <td class="book-copies">{{ book.copies_available }}</td>
+                        <td>
+                            {% if book.status == 'Available' %}
+                            <span class="book-status status-available">
+                                <span class="dot"></span> Available
+                            </span>
+                            {% elif book.copies_available == 1 %}
+                            <span class="book-status status-limited">
+                                <span class="dot"></span> Limited
+                            </span>
+                            {% else %}
+                            <span class="book-status status-issued">
+                                <span class="dot"></span> Issued
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr id="emptyRow">
+                        <td colspan="6">
+                            <div class="library-empty-state">
+                                <i class="fas fa-book-open"></i>
+                                <p>No books found in the library catalogue.</p>
+                                <span>The library catalogue is currently empty. Please check back later.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No search results -->
+        <div id="noSearchResult" class="library-empty-state" style="display:none;">
+            <i class="fas fa-search"></i>
+            <p>No matching books found.</p>
+            <span>Try a different title, author or category.</span>
+        </div>
+
     </div>
 </div>
 <!-- END: STUDENT_LIBRARY_SECTION -->
@@ -115,15 +99,34 @@
 
 {% block js %}
 <script>
-    // START: LIBRARY_SEARCH_SCRIPT
-    function filterBooks() {
-        const input = document.getElementById('librarySearch').value.toLowerCase();
-        const rows = document.querySelectorAll('#bookTableBody tr');
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(input) ? '' : 'none';
-        });
+// START: LIBRARY_SEARCH_SCRIPT
+function filterBooks() {
+    const input = document.getElementById('librarySearch').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#bookTableBody tr:not(#emptyRow)');
+    const noResult = document.getElementById('noSearchResult');
+    const resultInfo = document.getElementById('resultsInfo');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const show = text.includes(input);
+        row.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+    });
+
+    // Show/hide no-result message
+    if (rows.length > 0) {
+        noResult.style.display = visibleCount === 0 ? 'block' : 'none';
+        document.querySelector('.library-table-wrapper').style.display = visibleCount === 0 ? 'none' : '';
     }
-    // END: LIBRARY_SEARCH_SCRIPT
+
+    // Results info
+    if (input && rows.length > 0) {
+        resultInfo.textContent = visibleCount + ' result' + (visibleCount !== 1 ? 's' : '') + ' found';
+    } else {
+        resultInfo.textContent = '';
+    }
+}
+// END: LIBRARY_SEARCH_SCRIPT
 </script>
 {% endblock %}

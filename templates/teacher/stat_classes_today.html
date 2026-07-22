@@ -2,130 +2,6 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* START: STAT_CLASSES_TODAY_CSS */
-    .stat-page-container {
-        padding: 24px;
-        max-width: 1100px;
-        margin: 0 auto;
-    }
-    .stat-page-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 24px;
-    }
-    .stat-page-header .icon-box {
-        width: 52px;
-        height: 52px;
-        border-radius: 12px;
-        background: rgba(99, 102, 241, 0.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        color: #6366f1;
-    }
-    .stat-page-header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1e293b;
-        margin: 0;
-    }
-    .stat-page-header p {
-        color: #64748b;
-        margin: 0;
-        font-size: 14px;
-    }
-    .back-btn {
-        margin-left: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #f1f5f9;
-        color: #475569;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background 0.2s;
-    }
-    .back-btn:hover { background: #e2e8f0; }
-
-    .classes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 20px;
-    }
-    .class-card {
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-        padding: 20px;
-        border-left: 4px solid #6366f1;
-        transition: transform 0.2s;
-    }
-    .class-card:hover { transform: translateY(-3px); }
-    .class-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 14px;
-    }
-    .class-card-title {
-        font-size: 17px;
-        font-weight: 700;
-        color: #1e293b;
-    }
-    .class-card-sub {
-        font-size: 13px;
-        color: #64748b;
-        margin-top: 3px;
-    }
-    .time-badge {
-        background: #ede9fe;
-        color: #7c3aed;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    .class-stats {
-        display: flex;
-        gap: 16px;
-        margin-top: 12px;
-    }
-    .mini-stat {
-        flex: 1;
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
-    }
-    .mini-stat .val {
-        font-size: 22px;
-        font-weight: 700;
-    }
-    .mini-stat .lbl {
-        font-size: 11px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-    .present-val { color: #10b981; }
-    .absent-val  { color: #ef4444; }
-
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: #94a3b8;
-    }
-    .empty-state i { font-size: 50px; margin-bottom: 16px; opacity: 0.4; }
-    .empty-state p { font-size: 16px; }
-    /* END: STAT_CLASSES_TODAY_CSS */
-</style>
 {% endblock %}
 
 {% block content %}
@@ -167,7 +43,7 @@
                     <div class="lbl">Absent</div>
                 </div>
                 <div class="mini-stat">
-                    <div class="val" style="color:#6366f1;">
+                    <div class="val">
                         {% with p=present_counts|default_if_none:0 a=absent_counts|default_if_none:0 %}
                         {{ p|add:a }}
                         {% endwith %}
@@ -182,7 +58,7 @@
     <div class="empty-state">
         <i class="fas fa-calendar-times"></i>
         <p>No classes recorded for today yet.</p>
-        <a href="{% url 'teacher:attendance_mark' %}" style="color:#6366f1;">Mark Attendance Now →</a>
+        <a href="{% url 'teacher:attendance_mark' %}">Mark Attendance Now →</a>
     </div>
     {% endif %}
 </div>

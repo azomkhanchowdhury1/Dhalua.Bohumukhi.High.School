@@ -104,13 +104,29 @@ def attendance_detail(request):
 def academic_timetable(request):
     student = get_object_or_404(Student, user=request.user)
     school_class_obj = _get_school_class(student.current_class)
+    
+    timetable_qs = Timetable.objects.none()
     if school_class_obj:
-        timetable = Timetable.objects.filter(
-            section__school_class=school_class_obj
-        ).order_by('day', 'start_time')
-    else:
-        timetable = Timetable.objects.none()
-    return render(request, 'student/timetable.html', {'timetable': timetable, 'student': student})
+        timetable_qs = Timetable.objects.filter(section__school_class=school_class_obj)
+        if student.section:
+            timetable_qs = timetable_qs.filter(section__name__iexact=student.section)
+            
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+    routine_data = []
+    
+    for day in days:
+        slots = list(timetable_qs.filter(day=day).order_by('start_time').select_related('subject', 'section'))
+        padded_slots = slots[:6] + [None] * (6 - len(slots))
+        routine_data.append({
+            'day': day,
+            'slots': padded_slots
+        })
+        
+    return render(request, 'student/timetable.html', {
+        'routine_data': routine_data, 
+        'student': student,
+        'days': days,
+    })
 
 @login_required
 def academic_syllabus(request):
@@ -153,7 +169,11 @@ from exams.models import ExamSchedule, StudentResult, Exam, Grade
 @login_required
 def exam_routine(request):
     student = get_object_or_404(Student, user=request.user)
-    schedules = ExamSchedule.objects.filter(school_class__name=student.current_class).select_related('exam', 'subject').order_by('date', 'start_time')
+    school_class = _get_school_class(student.current_class)
+    if school_class:
+        schedules = ExamSchedule.objects.filter(school_class=school_class).select_related('exam', 'subject').order_by('date', 'start_time')
+    else:
+        schedules = ExamSchedule.objects.none()
     return render(request, 'student/exam_routine.html', {'schedules': schedules, 'student': student})
 
 @login_required

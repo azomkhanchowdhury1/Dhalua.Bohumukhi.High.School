@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/absentce_list.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -14,10 +16,10 @@
     </div>
 
     <!-- Filter Bar -->
-    <form method="GET" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:1.5rem 2rem; margin-bottom:30px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Class:</label>
-            <select name="class_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;" onchange="this.form.submit()">
+    <form method="GET" class="class-filter-bar">
+        <div>
+            <label>Class:</label>
+            <select name="class_id" onchange="this.form.submit()">
                 <option value="">— Select Class —</option>
                 {% for cls in classes %}
                 <option value="{{ cls.id }}" {% if selected_class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }} ({{ cls.code }})</option>
@@ -25,9 +27,9 @@
             </select>
         </div>
         {% if sections %}
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Section:</label>
-            <select name="section_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;" onchange="this.form.submit()">
+        <div>
+            <label>Section:</label>
+            <select name="section_id" onchange="this.form.submit()">
                 <option value="">— All Sections —</option>
                 {% for sec in sections %}
                 <option value="{{ sec.id }}" {% if selected_section_id == sec.id|stringformat:"s" %}selected{% endif %}>{{ sec.name }}</option>
@@ -36,9 +38,9 @@
         </div>
         {% endif %}
         {% if subjects %}
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem; white-space:nowrap;">Subject:</label>
-            <select name="subject_id" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+        <div>
+            <label>Subject:</label>
+            <select name="subject_id">
                 <option value="">— All Subjects —</option>
                 {% for sub in subjects %}
                 <option value="{{ sub.id }}" {% if selected_subject_id == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
@@ -46,54 +48,54 @@
             </select>
         </div>
         {% endif %}
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label style="color:#94a3b8; font-size:0.9rem;">Date:</label>
-            <input type="date" name="date" value="{{ selected_date }}" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:11px 18px; color:#fff;">
+        <div>
+            <label>Date:</label>
+            <input type="date" name="date" value="{{ selected_date }}">
         </div>
-        <button type="submit" class="view-all-btn" style="padding:11px 28px;">
+        <button type="submit" class="view-all-btn">
             <i class="fas fa-search"></i> Search
         </button>
     </form>
 
     {% if absentees %}
     <!-- Alert Banner -->
-    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:16px; padding:16px 22px; margin-bottom:25px; display:flex; align-items:center; gap:12px; color:#ef4444;">
-        <i class="fas fa-exclamation-triangle" style="font-size:1.3rem; flex-shrink:0;"></i>
+    <div class="alert-banner">
+        <i class="fas fa-exclamation-triangle"></i>
         <div>
             <strong>{{ absentees|length }} student(s) absent</strong> on {{ selected_date }}.
             Please notify parents or administration if necessary.
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+    <div class="absentees-grid">
         {% for record in absentees %}
-        <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.15); border-radius:20px; padding:1.5rem; display:flex; align-items:center; gap:18px;">
-            <div style="position:relative; flex-shrink:0;">
+        <div class="absentee-card">
+            <div class="avatar-wrapper">
                 <img src="{% if record.student.profile_image %}{{ record.student.profile_image.url }}{% else %}{% load static %}{% static 'images/default-avatar.png' %}{% endif %}"
                      alt="{{ record.student.user.get_full_name }}"
-                     style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid rgba(239,68,68,0.4);">
-                <span style="position:absolute; bottom:-2px; right:-2px; background:#ef4444; width:16px; height:16px; border-radius:50%; border:2px solid #0f172a; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-times" style="font-size:7px; color:#fff;"></i>
+                     class="avatar-img">
+                <span class="badge-cross">
+                    <i class="fas fa-times"></i>
                 </span>
             </div>
-            <div style="flex:1;">
-                <h3 style="color:#fff; margin:0 0 4px; font-size:1rem;">{{ record.student.user.get_full_name }}</h3>
-                <p style="color:#94a3b8; margin:0; font-size:0.82rem;">Roll: {{ record.student.roll_number|default:"N/A" }} &bull; ID: {{ record.student.student_id }}</p>
-                <p style="color:#94a3b8; margin:4px 0 0; font-size:0.82rem;">Class: {{ record.student.current_class }}</p>
+            <div class="card-info">
+                <h3>{{ record.student.user.get_full_name }}</h3>
+                <p>Roll: {{ record.student.roll_number|default:"N/A" }} &bull; ID: {{ record.student.student_id }}</p>
+                <p class="class-tag">Class: {{ record.student.current_class }}</p>
             </div>
-            <span style="background:rgba(239,68,68,0.15); color:#ef4444; padding:5px 14px; border-radius:20px; font-size:0.82rem; font-weight:700; flex-shrink:0;">Absent</span>
+            <span class="status-badge">Absent</span>
         </div>
         {% endfor %}
     </div>
     {% elif selected_class %}
-    <div style="text-align:center; padding:70px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(16,185,129,0.15);">
-        <i class="fas fa-check-circle" style="font-size:3.5rem; color:#10b981; margin-bottom:18px; display:block;"></i>
-        <h2 style="color:#10b981; margin-bottom:8px;">Great News!</h2>
-        <h3 style="color:#94a3b8; font-weight:400;">No absentees found for the selected class on {{ selected_date }}.</h3>
+    <div class="empty-green-state">
+        <i class="fas fa-check-circle"></i>
+        <h2>Great News!</h2>
+        <h3>No absentees found for the selected class on {{ selected_date }}.</h3>
     </div>
     {% else %}
-    <div style="text-align:center; padding:60px; background:rgba(15,23,42,0.4); border-radius:24px; border:1px dashed rgba(255,255,255,0.08);">
-        <h3 style="color:#64748b;">Select a class and date to view the absentee list.</h3>
+    <div class="empty-neutral-state">
+        <h3>Select a class and date to view the absentee list.</h3>
     </div>
     {% endif %}
 </div>

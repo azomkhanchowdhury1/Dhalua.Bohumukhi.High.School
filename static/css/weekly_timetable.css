@@ -1,0 +1,123 @@
+/* ============================================================
+   WEEKLY TIMETABLE PAGE CSS — teacher/weekly_timetable.html
+   School Management System — Clean Registry Theme
+   ============================================================ */
+.dashboard-wrapper {
+    margin: auto;
+    padding: 60px;
+    justify-content: center;
+}
+
+/* ===== TIMETABLE CONTAINER ===== */
+.timetable-container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.4s ease-out;
+}
+
+/* ===== HEADER ===== */
+.timetable-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+
+}
+
+.timetable-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timetable-header h2 i {
+    color: var(--indigo);
+    padding-left: 40%;
+}
+
+/* ===== TIMETABLE SCROLL WRAPPER ===== */
+.timetable-scroll {
+    overflow-x: auto;
+}
+
+/* ===== TIMETABLE TABLE ===== */
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.timetable-table thead tr {
+    background: var(--paper);
+}
+
+.timetable-table th {
+    padding: 13px 16px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 2px solid var(--line);
+    white-space: nowrap;
+}
+
+/* Day column — first column */
+.timetable-table th:first-child,
+.timetable-table td:first-child {
+    text-align: left;
+    padding-left: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--paper);
+    border-right: 2px solid var(--line);
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+.timetable-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    border-right: 1px solid var(--line-soft);
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+}
+
+.timetable-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+/* ===== SUBJECT BLOCK ===== */
+.subject-block {
+    display: inline-block;
+    background: var(--indigo);
+    color: #fff;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.class-info {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .timetable-header {
+        padding: 1.25rem 1.25rem;
+    }
+}

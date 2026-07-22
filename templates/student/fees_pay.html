@@ -2,322 +2,88 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: FEES_PAY_CSS */
-    .payment-form-card {
-        background: rgba(15, 23, 42, 0.6);
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.1);
-        overflow: hidden;
-        max-width: 760px;
-        margin: 0 auto;
-    }
-    .payment-header {
-        padding: 2.5rem;
-        background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.05));
-        border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .payment-header h2 { color: #fff; margin: 0 0 6px; }
-    .payment-header p { color: #94a3b8; margin: 0; font-size: 0.9rem; }
-    .payment-body { padding: 2.5rem; }
-    .form-field { margin-bottom: 22px; }
-    .form-field label { display: block; color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.03em; }
-    .form-field select, .form-field input {
-        width: 100%;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 14px;
-        padding: 14px 18px;
-        color: #fff;
-        font-size: 0.95rem;
-        box-sizing: border-box;
-        transition: border-color 0.2s;
-    }
-    .form-field select:focus, .form-field input:focus { outline: none; border-color: #10b981; }
-    .form-field select option { background: #0f172a; }
-
-    /* Gateway Selector */
-    .gateway-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
-    .gateway-card {
-        border: 2px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        padding: 18px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        background: rgba(255,255,255,0.03);
-    }
-    .gateway-card:hover { border-color: rgba(255,255,255,0.3); }
-    .gateway-card.selected { border-color: #10b981; background: rgba(16,185,129,0.1); }
-    .gateway-card .gw-icon { font-size: 1.8rem; margin-bottom: 6px; }
-    .gateway-card .gw-name { color: #fff; font-weight: 700; font-size: 1rem; }
-    .gateway-card .gw-sub { color: #64748b; font-size: 0.78rem; }
-    .gateway-card.bkash .gw-icon { color: #e40c7b; }
-    .gateway-card.bank .gw-icon { color: #38bdf8; }
-
-    /* bKash Overlay */
-    .gateway-modal-overlay {
-        display: none;
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.85);
-        z-index: 3000;
-        align-items: center;
-        justify-content: center;
-    }
-    .gateway-modal-overlay.active { display: flex; }
-    .bkash-modal {
-        width: 360px;
-        background: #fff;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    }
-    .bkash-header {
-        background: #e40c7b;
-        padding: 22px 24px;
-        text-align: center;
-    }
-    .bkash-header .bk-logo { font-size: 2rem; color: #fff; font-weight: 900; letter-spacing: 1px; }
-    .bkash-header p { color: rgba(255,255,255,0.85); font-size: 0.85rem; margin: 4px 0 0; }
-    .bkash-body { padding: 24px; }
-    .bkash-body .bk-field { margin-bottom: 16px; }
-    .bkash-body .bk-field label { color: #555; font-size: 0.82rem; margin-bottom: 6px; display: block; }
-    .bkash-body .bk-field input {
-        width: 100%;
-        border: 1.5px solid #ddd;
-        border-radius: 10px;
-        padding: 12px 14px;
-        font-size: 0.95rem;
-        color: #222;
-        box-sizing: border-box;
-        background: #f9f9f9;
-    }
-    .bkash-body .bk-field input:focus { border-color: #e40c7b; outline: none; background: #fff; }
-    .bk-amount-display {
-        background: #fdf0f6;
-        border: 1px solid #f7b3d8;
-        border-radius: 10px;
-        padding: 14px;
-        text-align: center;
-        margin-bottom: 18px;
-    }
-    .bk-amount-display .bk-amt-label { color: #888; font-size: 0.78rem; }
-    .bk-amount-display .bk-amt { color: #e40c7b; font-size: 1.6rem; font-weight: 800; }
-    .btn-bkash-pay {
-        width: 100%;
-        background: #e40c7b;
-        color: #fff;
-        border: none;
-        padding: 14px;
-        border-radius: 12px;
-        font-size: 1.05rem;
-        font-weight: 700;
-        cursor: pointer;
-        margin-bottom: 10px;
-        transition: background 0.2s;
-    }
-    .btn-bkash-pay:hover { background: #c0065f; }
-    .btn-cancel-bkash {
-        width: 100%;
-        background: none;
-        border: 1.5px solid #ddd;
-        color: #888;
-        padding: 11px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 0.9rem;
-    }
-    .bk-pin-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
-    .bk-pin-dot {
-        width: 12px; height: 12px;
-        border-radius: 50%;
-        background: #e40c7b;
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
-    .bk-pin-dot.filled { opacity: 1; }
-    .bk-pin-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-    .bk-key {
-        background: #f4f4f4;
-        border: none;
-        border-radius: 10px;
-        padding: 14px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.1s;
-        color: #222;
-    }
-    .bk-key:hover { background: #e8e8e8; }
-    .bk-key.bk-del { background: #fdf0f6; color: #e40c7b; }
-
-    /* Bank Modal */
-    .bank-modal {
-        width: 400px;
-        background: #0a1628;
-        border: 1px solid rgba(56,189,248,0.2);
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    }
-    .bank-header {
-        background: linear-gradient(135deg, #1e40af, #0369a1);
-        padding: 22px 24px;
-        text-align: center;
-    }
-    .bank-header .bk-logo { font-size: 1.3rem; color: #fff; font-weight: 800; }
-    .bank-header p { color: rgba(255,255,255,0.8); font-size: 0.83rem; margin: 4px 0 0; }
-    .bank-body { padding: 24px; }
-    .bank-info-box {
-        background: rgba(56,189,248,0.08);
-        border: 1px solid rgba(56,189,248,0.2);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 18px;
-    }
-    .bank-info-box .bank-info-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .bank-info-box .bank-info-row:last-child { margin-bottom: 0; }
-    .bank-info-box .bk-lbl { color: #64748b; font-size: 0.8rem; }
-    .bank-info-box .bk-val { color: #e2e8f0; font-size: 0.88rem; font-weight: 600; }
-    .bank-body .bk-field { margin-bottom: 16px; }
-    .bank-body .bk-field label { color: #94a3b8; font-size: 0.82rem; margin-bottom: 6px; display: block; }
-    .bank-body .bk-field input, .bank-body .bk-field select {
-        width: 100%;
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 10px;
-        padding: 12px 14px;
-        color: #fff;
-        font-size: 0.95rem;
-        box-sizing: border-box;
-    }
-    .bank-body .bk-field input:focus, .bank-body .bk-field select:focus { border-color: #38bdf8; outline: none; }
-    .bank-body .bk-field select option { background: #0f172a; }
-    .btn-bank-pay {
-        width: 100%;
-        background: linear-gradient(135deg, #1e40af, #0369a1);
-        color: #fff;
-        border: none;
-        padding: 14px;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        margin-bottom: 10px;
-    }
-    .btn-cancel-bank {
-        width: 100%;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        color: #94a3b8;
-        padding: 11px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 0.9rem;
-    }
-
-    /* Success Screen */
-    .success-overlay {
-        display: none;
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.9);
-        z-index: 4000;
-        align-items: center;
-        justify-content: center;
-    }
-    .success-overlay.active { display: flex; }
-    .success-box {
-        background: #0f172a;
-        border: 1px solid rgba(52,211,153,0.4);
-        border-radius: 24px;
-        padding: 40px;
-        text-align: center;
-        max-width: 380px;
-        width: 90%;
-    }
-    .success-icon { font-size: 3.5rem; color: #34d399; margin-bottom: 16px; }
-    .success-box h3 { color: #fff; font-size: 1.4rem; margin: 0 0 8px; }
-    .success-box p { color: #94a3b8; font-size: 0.9rem; margin: 0 0 6px; }
-    .txn-display { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); border-radius: 10px; padding: 12px; margin: 18px 0; color: #34d399; font-size: 0.85rem; word-break: break-all; }
-
-    .btn-confirm-pay { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 14px 28px; border-radius: 12px; font-size: 1rem; cursor: pointer; font-weight: 700; width: 100%; }
-    /* END: FEES_PAY_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/pay_fees_online.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_FEES_PAY_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Pay Fees Online</h1>
+<div class="dashboard-wrapper pay-page">
+
+    <!-- Page Heading -->
+    <div class="pay-page-heading">
+        <h1><i class="fas fa-credit-card"></i> Pay Fees Online</h1>
         <p>বিকাশ বা ব্যাংক ট্রান্সফারের মাধ্যমে নিরাপদে ফি জমা দিন।</p>
     </div>
 
+    <!-- Flash Messages -->
     {% if messages %}
-    <div style="max-width:760px; margin: 0 auto 20px;">
+    <div>
         {% for msg in messages %}
-        <div style="background:rgba({% if msg.tags == 'error' %}239,68,68{% else %}52,211,153{% endif %},0.1); border:1px solid {% if msg.tags == 'error' %}#ef4444{% else %}#34d399{% endif %}; border-radius:10px; padding:12px 18px; color:{% if msg.tags == 'error' %}#ef4444{% else %}#34d399{% endif %}; margin-bottom:8px;">
-            <i class="fas fa-{% if msg.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i> {{ msg }}
+        <div class="pay-alert {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+            <i class="fas fa-{% if msg.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+            {{ msg }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div class="payment-form-card">
-        <div class="payment-header">
-            <h2><i class="fas fa-shield-alt" style="color:#10b981; margin-right:10px;"></i> Secure Fee Payment</h2>
-            <p>পেমেন্ট পদ্ধতি বেছে নিন এবং ধাপে ধাপে ফি পরিশোধ করুন।</p>
+    <!-- Payment Form Card -->
+    <div class="pay-card">
+
+        <!-- Card Title -->
+        <div class="pay-card-title">
+            <i class="fas fa-shield-alt"></i>
+            <p>Secure Fee Payment</p>
         </div>
-        <div class="payment-body">
+        <p class="pay-desc">পেমেন্ট পদ্ধতি বেছে নিন এবং ধাপে ধাপে ফি পরিশোধ করুন।</p>
 
-            <!-- Step 1: Fee Type & Amount -->
-            <div class="form-field">
-                <label>ফি ক্যাটাগরি বেছে নিন *</label>
-                <select id="feeTypeSelect" onchange="updateAmount(this)">
-                    <option value="" data-amount="">— ফি ক্যাটাগরি —</option>
-                    {% for fee in fee_types %}
-                    <option value="{{ fee.id }}" data-amount="{{ fee.amount }}">{{ fee.name }} — ৳{{ fee.amount }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-field">
-                <label>পরিমাণ (৳) *</label>
-                <input type="number" id="amountInput" placeholder="ফি সিলেক্ট করলে স্বয়ংক্রিয়ভাবে হবে" min="1" step="0.01">
-            </div>
+        <!-- Fee Category -->
+        <label for="feeTypeSelect">ফি ক্যাটাগরি বেছে নিন <span class="required">*</span></label>
+        <select id="feeTypeSelect" onchange="updateAmount(this)">
+            <option value="" data-amount="">— ফি ক্যাটাগরি —</option>
+            {% for fee in fee_types %}
+            <option value="{{ fee.id }}" data-amount="{{ fee.amount }}">{{ fee.name }} — ৳{{ fee.amount }}</option>
+            {% endfor %}
+        </select>
 
-            <!-- Step 2: Gateway Selection -->
-            <div class="form-field">
-                <label>পেমেন্ট পদ্ধতি বেছে নিন *</label>
-            </div>
-            <div class="gateway-row">
-                <div class="gateway-card bkash" id="gwBkash" onclick="selectGateway('bkash')">
-                    <div class="gw-icon">📱</div>
-                    <div class="gw-name">বিকাশ</div>
-                    <div class="gw-sub">bKash Mobile Banking</div>
-                </div>
-                <div class="gateway-card bank" id="gwBank" onclick="selectGateway('bank')">
-                    <div class="gw-icon">🏦</div>
-                    <div class="gw-name">ব্যাংক ট্রান্সফার</div>
-                    <div class="gw-sub">NPSB / BEFTN Transfer</div>
-                </div>
-            </div>
+        <!-- Amount -->
+        <label for="amountInput">পরিমাণ (৳) <span class="required">*</span></label>
+        <input type="number" id="amountInput" placeholder="ফি সিলেক্ট করলে স্বয়ংক্রিয়ভাবে হবে" min="1" step="0.01" readonly>
 
-            <button onclick="proceedPayment()" class="view-all-btn" id="btnProceed" style="width:100%; text-align:center; font-size:1rem; padding:16px; opacity:0.5; pointer-events:none;">
-                <i class="fas fa-lock"></i> পেমেন্ট করুন
-            </button>
-
-            <div style="margin-top:20px; text-align:center;">
-                <a href="{% url 'student:fees_history' %}" style="color:#94a3b8; font-size:0.9rem; text-decoration:none;">
-                    <i class="fas fa-history"></i> আগের পেমেন্ট দেখুন
-                </a>
+        <!-- Payment Method -->
+        <label>পেমেন্ট পদ্ধতি বেছে নিন <span class="required">*</span></label>
+        <div class="payment-methods">
+            <div class="payment-method" id="gwBkash" onclick="selectGateway('bkash')">
+                <div>📱</div>
+                <p class="method-name">বিকাশ</p>
+                <p class="method-sub">bKash Mobile Banking</p>
+            </div>
+            <div class="payment-method" id="gwBank" onclick="selectGateway('bank')">
+                <div>🏦</div>
+                <p class="method-name">ব্যাংক ট্রান্সফার</p>
+                <p class="method-sub">NPSB / BEFTN Transfer</p>
             </div>
         </div>
-    </div>
+
+        <!-- Submit Button -->
+        <button class="pay-submit-btn" id="btnProceed" onclick="proceedPayment()" disabled>
+            <i class="fas fa-lock"></i> পেমেন্ট করুন
+        </button>
+
+        <!-- History Link -->
+        <div class="pay-history-link">
+            <a href="{% url 'student:fees_history' %}">
+                <i class="fas fa-history"></i> আগের পেমেন্ট দেখুন
+            </a>
+        </div>
+
+    </div><!-- /pay-card -->
 </div>
 
-<!-- Hidden final form (submitted after payment simulation) -->
-<form id="finalPayForm" method="POST" style="display:none;">
+<!-- Hidden final submit form -->
+<form id="finalPayForm" method="POST">
     {% csrf_token %}
     <input type="hidden" name="fee_type" id="finalFeeType">
     <input type="hidden" name="amount" id="finalAmount">
@@ -340,7 +106,7 @@
                 <label>আপনার বিকাশ নম্বর</label>
                 <input type="tel" id="bkPhoneInput" maxlength="11" placeholder="01XXXXXXXXX" oninput="this.value=this.value.replace(/\D/g,'')">
             </div>
-            <div style="color:#888; font-size:0.8rem; text-align:center; margin-bottom:12px;">PIN দিন</div>
+            <div>PIN দিন</div>
             <div class="bk-pin-dots">
                 <div class="bk-pin-dot" id="bkd1"></div>
                 <div class="bk-pin-dot" id="bkd2"></div>
@@ -352,7 +118,7 @@
                 {% for n in "123456789" %}<button class="bk-key" onclick="bkPin('{{ n }}')">{{ n }}</button>{% endfor %}
                 <button class="bk-key bk-del" onclick="bkPinDel()">⌫</button>
                 <button class="bk-key" onclick="bkPin('0')">0</button>
-                <button class="bk-key" style="background:#f4f4f4;"></button>
+                <button class="bk-key"></button>
             </div>
             <button class="btn-bkash-pay" id="btnBkashPay" onclick="confirmBkashPay()" disabled>
                 <i class="fas fa-check"></i> পেমেন্ট নিশ্চিত করুন
@@ -370,9 +136,9 @@
             <p>NPSB / BEFTN অনলাইন ব্যাংকিং</p>
         </div>
         <div class="bank-body">
-            <div class="bk-amount-display" style="background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.3); margin-bottom:18px; border-radius:10px; padding:14px; text-align:center;">
-                <div style="color:#64748b; font-size:0.78rem;">পরিমাণ</div>
-                <div style="color:#38bdf8; font-size:1.5rem; font-weight:800;" id="bankAmtDisplay">৳0</div>
+            <div class="bank-amt-display">
+                <div class="bk-amt-label">পরিমাণ</div>
+                <div class="bk-amt" id="bankAmtDisplay">৳0</div>
             </div>
             <div class="bank-info-box">
                 <div class="bank-info-row">
@@ -420,7 +186,7 @@
 <!-- Success Screen -->
 <div class="success-overlay" id="successOverlay">
     <div class="success-box">
-        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <span class="success-icon"><i class="fas fa-check-circle"></i></span>
         <h3>পেমেন্ট সফল হয়েছে!</h3>
         <p>আপনার পেমেন্ট সফলভাবে রেকর্ড করা হয়েছে।</p>
         <p>ট্র্যানজেকশন আইডি:</p>
@@ -453,13 +219,10 @@ function selectGateway(gw) {
 function checkProceedReady() {
     const hasFee = document.getElementById('feeTypeSelect').value !== '';
     const hasAmt = parseFloat(document.getElementById('amountInput').value) > 0;
-    const hasGw = selectedGateway !== '';
+    const hasGw  = selectedGateway !== '';
     const btn = document.getElementById('btnProceed');
-    btn.style.opacity = (hasFee && hasAmt && hasGw) ? '1' : '0.5';
-    btn.style.pointerEvents = (hasFee && hasAmt && hasGw) ? 'auto' : 'none';
+    btn.disabled = !(hasFee && hasAmt && hasGw);
 }
-
-document.getElementById('amountInput').addEventListener('input', checkProceedReady);
 
 function proceedPayment() {
     const amt = parseFloat(document.getElementById('amountInput').value);
@@ -511,27 +274,24 @@ function generateTxnId(prefix) {
 function confirmBkashPay() {
     const phone = document.getElementById('bkPhoneInput').value.trim();
     if (!phone || phone.length < 11) { alert('সঠিক বিকাশ নম্বর দিন।'); return; }
-    const txn = generateTxnId('BKH');
-    finishPayment(txn);
+    finishPayment(generateTxnId('BKH'));
 }
 
 function confirmBankPay() {
-    const acc = document.getElementById('bankAccInput').value.trim();
+    const acc  = document.getElementById('bankAccInput').value.trim();
     const bank = document.getElementById('bankNameSelect').value;
-    if (!acc) { alert('অ্যাকাউন্ট নম্বর দিন।'); return; }
+    if (!acc)  { alert('অ্যাকাউন্ট নম্বর দিন।'); return; }
     if (!bank) { alert('ব্যাংক বেছে নিন।'); return; }
-    const txn = generateTxnId('BNKT');
-    finishPayment(txn);
+    finishPayment(generateTxnId('BNKT'));
 }
 
 function finishPayment(txn) {
     document.getElementById('bkashOverlay').classList.remove('active');
     document.getElementById('bankOverlay').classList.remove('active');
     document.getElementById('txnDisplay').textContent = txn;
-    // Prepare hidden form
     document.getElementById('finalFeeType').value = document.getElementById('feeTypeSelect').value;
-    document.getElementById('finalAmount').value = document.getElementById('amountInput').value;
-    document.getElementById('finalTxnId').value = txn;
+    document.getElementById('finalAmount').value   = document.getElementById('amountInput').value;
+    document.getElementById('finalTxnId').value    = txn;
     document.getElementById('successOverlay').classList.add('active');
 }
 

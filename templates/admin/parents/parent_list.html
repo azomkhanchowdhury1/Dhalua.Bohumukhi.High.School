@@ -1,0 +1,195 @@
+<!-- START: templates/admin/parents/parent_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<!-- START: PARENT_LIST_SECTION -->
+<div class="dashboard-wrapper">
+
+    <div class="management-header">
+        <div class="welcome-text">
+            <h1>Parent Management</h1>
+            <p>সকল অভিভাবকের তথ্য দেখুন, আপডেট করুন এবং পরিচালনা করুন।</p>
+        </div>
+
+        <div class="header-actions">
+            <form class="search-form" method="GET">
+                <input type="text" name="search" placeholder="নাম বা ID দিয়ে খুঁজুন..." value="{{ search }}">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <a href="{% url 'admin_panel:parent_add' %}" class="btn-primary-add">
+                <i class="fas fa-user-plus"></i> নতুন অভিভাবক যোগ করুন
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Stats Summary -->
+    <div>
+        <div>
+            <i class="fas fa-users"></i>
+
+            <div>
+                <div>{{ parents|length }}</div>
+                <div>মোট অভিভাবক</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="parent-table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Parent ID</th>
+                    <th>নাম ও ইমেইল</th>
+                    <th>সম্পর্ক</th>
+                    <th>পেশা</th>
+                    <th>মোবাইল নম্বর</th>
+                    <th>সংযুক্ত ছাত্র/ছাত্রী</th>
+                    <th>পাসওয়ার্ড</th>
+                    <th>পরিচালনা</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for parent in parents %}
+
+                <tr>
+
+                    <td>{{ forloop.counter }}</td>
+
+                    <td>
+                        <strong>#{{ parent.parent_id|default:"N/A" }}</strong>
+                    </td>
+
+
+                    <td>
+                        <div class="profile-info">
+
+                            {% if parent.profile_image %}
+                            <img src="{{ parent.profile_image.url }}" alt="" class="profile-avatar">
+                            {% else %}
+                            <div class="profile-avatar-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+
+                            <div>
+                                <div class="parent-name">
+                                    {{ parent.user.get_full_name }}
+                                </div>
+
+                                <div class="parent-email">
+                                    {{ parent.user.email }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+
+
+                    <td>
+                        <span class="rel-badge">
+                            {{ parent.relationship_type|default:"—" }}
+                        </span>
+                    </td>
+
+
+                    <td>
+                        {{ parent.occupation|default:"—" }}
+                    </td>
+
+
+                    <td>
+                        {{ parent.phone_number|default:"—" }}
+                    </td>
+
+
+                    <td>
+
+                        {% if parent.linked_student %}
+                        {{ parent.linked_student.user.get_full_name }} ({{ parent.linked_student.student_id }})
+                        {% else %}
+                        —
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        <code>
+                            {{ parent.password_plain|default:"—" }}
+                        </code>
+                    </td>
+
+
+                    <td>
+
+                        <div class="action-btns">
+
+                            <a href="{% url 'admin_panel:parent_edit' parent.id %}" class="btn-action btn-edit" title="সম্পাদনা করুন">
+                                <i class="fas fa-edit"></i> সম্পাদনা
+                            </a>
+
+
+                            <a href="{% url 'admin_panel:parent_delete' parent.id %}" class="btn-action btn-delete" title="মুছে ফেলুন">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="9">
+
+                        <div class="empty-state">
+
+                            <i class="fas fa-user-slash"></i>
+
+                            <p>
+                                কোনো অভিভাবক পাওয়া যায়নি।
+                            </p>
+
+                            <a href="{% url 'admin_panel:parent_add' %}" class="btn-primary-add">
+                                <i class="fas fa-user-plus"></i> প্রথম অভিভাবক যোগ করুন
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<!-- END: PARENT_LIST_SECTION -->
+{% endblock %}
+<!-- END: templates/admin/parents/parent_list.html -->

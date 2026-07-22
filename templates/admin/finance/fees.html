@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
 {% block content %}
 <!-- START: FEE_COLLECTION_SECTION -->
 <div class="dashboard-wrapper">
@@ -14,13 +10,11 @@
     </div>
 
     {% if messages %}
-    <div style="margin-bottom:20px;">
+    <div>
         {% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px;
-            background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %};
-            color:{% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %};
-            border:1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.3){% else %}rgba(16,185,129,0.3){% endif %};">
-            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+        <div>
+            <i
+                class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
             {{ message }}
         </div>
         {% endfor %}
@@ -28,25 +22,27 @@
     {% endif %}
 
     <!-- Fee Types Section -->
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px; margin-bottom:30px;">
+    <div>
         <!-- Add Fee Type Form -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); height:fit-content;">
-            <h3 style="color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-plus-circle" style="color:#6366f1;"></i> Add Fee Type
+        <div>
+            <h3>
+                <i class="fas fa-plus-circle"></i> Add Fee Type
             </h3>
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="add_fee_type" value="1">
-                <div style="display:flex; flex-direction:column; gap:15px;">
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                        <label style="color:#94a3b8; font-size:0.82rem;">Name (e.g. Tuition Fee)</label>
-                        <input type="text" name="name" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <div>
+                        <label>Name (e.g. Tuition Fee)</label>
+                        <input type="text" name="name" required>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                        <label style="color:#94a3b8; font-size:0.82rem;">Amount</label>
-                        <input type="number" step="0.01" name="amount" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                    <div>
+                        <label>Amount</label>
+                        <input type="number" step="0.01" name="amount" required>
                     </div>
-                    <button type="submit" class="view-all-btn" style="width:100%; margin-top:6px;">
+
+                    <button type="submit" class="view-all-btn">
                         <i class="fas fa-save"></i> Save Fee Type
                     </button>
                 </div>
@@ -54,42 +50,59 @@
         </div>
 
         <!-- Fee Types Management Table -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-            <h3 style="margin-bottom:20px; color:#fff; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-tags" style="color:#6366f1;"></i> Fee Types
+        <div>
+            <h3>
+                <i class="fas fa-tags"></i> Fee Types
             </h3>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+            <div>
+                <table>
                     <thead>
-                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:12px 15px;">Name</th>
-                            <th style="padding:12px 15px;">Amount</th>
-                            <th style="padding:12px 15px;">Reminder Note</th>
-                            <th style="padding:12px 15px;">Actions</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>
+                            <th>Reminder Note</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for ft in fee_types %}
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:12px 15px;">
-                                {% if ft.is_remembered %}<span style="color:#f59e0b; margin-right:6px;">★</span>{% endif %}
+                        <tr>
+                            <td>
+                                {% if ft.is_remembered %}<span>★</span>{% endif %}
                                 {{ ft.name }}
                             </td>
-                            <td style="padding:12px 15px; color:#10b981; font-weight:700;">${{ ft.amount }}</td>
-                            <td style="padding:12px 15px; font-size:0.82rem; color:#94a3b8;">{{ ft.reminder_note|default:"-" }}</td>
-                            <td style="padding:12px 15px;">
-                                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                                    <a href="{% url 'admin_panel:fee_type_edit' ft.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:5px 12px; border-radius:8px; font-size:0.82rem; text-decoration:none;"><i class="fas fa-edit"></i> Edit</a>
-                                    <form method="POST" action="{% url 'admin_panel:fee_type_toggle_remember' ft.id %}" style="display:inline; margin:0;">
+                            <td>${{ ft.amount }}</td>
+                            <td>{{ ft.reminder_note|default:"-" }}</td>
+                            <td>
+                                <div>
+                                    <a href="{% url 'admin_panel:fee_type_edit' ft.id %}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+
+                                    <form method="POST" action="{% url 'admin_panel:fee_type_toggle_remember' ft.id %}">
                                         {% csrf_token %}
-                                        <button type="submit" style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:5px 12px; border-radius:8px; font-size:0.82rem; border:none; cursor:pointer;">{% if ft.is_remembered %}<i class="fas fa-bell-slash"></i> Unpin{% else %}<i class="fas fa-bell"></i> Pin{% endif %}</button>
+                                        <button type="submit">
+                                            {% if ft.is_remembered %}
+                                            <i class="fas fa-bell-slash"></i> Unpin
+                                            {% else %}
+                                            <i class="fas fa-bell"></i> Pin
+                                            {% endif %}
+                                        </button>
                                     </form>
-                                    <a href="{% url 'admin_panel:fee_type_delete' ft.id %}" style="background:rgba(239,68,68,0.15); color:#ef4444; padding:5px 12px; border-radius:8px; font-size:0.82rem; text-decoration:none;"><i class="fas fa-trash"></i> Delete</a>
+
+                                    <a href="{% url 'admin_panel:fee_type_delete' ft.id %}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
                                 </div>
                             </td>
                         </tr>
+
                         {% empty %}
-                        <tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8;">No fee types defined. Add one below.</td></tr>
+                        <tr>
+                            <td colspan="4">No fee types defined. Add one below.</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -97,87 +110,129 @@
         </div>
     </div>
 
+
     <!-- Payments Section -->
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px;">
+    <div>
         <!-- Collect Fee Form -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1); height:fit-content;">
-            <h3 style="margin-bottom:20px; color:#fff; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-money-bill-wave" style="color:#10b981;"></i> Record Payment
+        <div>
+            <h3>
+                <i class="fas fa-money-bill-wave"></i> Record Payment
             </h3>
+
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="add_payment" value="1">
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Student ID</label>
-                    <input type="text" name="student_id" id="fee_student_id" placeholder="e.g. STU101" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+                <div>
+                    <label>Student ID</label>
+                    <input type="text" name="student_id" id="fee_student_id" placeholder="e.g. STU101" required>
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Fee Type</label>
-                    <select name="fee_type" id="fee_type_select" required style="background:rgba(30,41,59,1); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+                <div>
+                    <label>Fee Type</label>
+                    <select name="fee_type" id="fee_type_select" required>
                         <option value="" disabled selected>-- Select Fee Type --</option>
+
                         {% for type in fee_types %}
-                        <option value="{{ type.id }}" style="background:#1e293b; color:#fff;">{{ type.name }} (${{ type.amount }})</option>
+                        <option value="{{ type.id }}">
+                            {{ type.name }} (${{ type.amount }})
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Amount Paid</label>
-                    <input type="number" step="0.01" name="amount" id="fee_amount" placeholder="500.00" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+                <div>
+                    <label>Amount Paid</label>
+                    <input type="number" step="0.01" name="amount" id="fee_amount" placeholder="500.00" required>
                 </div>
-                <div style="margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.9rem;">Transaction ID</label>
-                    <input type="text" name="transaction_id" id="fee_txn_id" placeholder="TXN-XXXXXX" required style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); width:100%; box-sizing:border-box;">
+
+                <div>
+                    <label>Transaction ID</label>
+                    <input type="text" name="transaction_id" id="fee_txn_id" placeholder="TXN-XXXXXX" required>
                 </div>
-                <button type="submit" id="confirm_payment_btn" class="view-all-btn" style="width:100%; margin-top:10px;">✅ Confirm Payment</button>
+
+                <button type="submit" id="confirm_payment_btn" class="view-all-btn">
+                    ✅ Confirm Payment
+                </button>
             </form>
         </div>
 
+
         <!-- All Transactions -->
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-            <h3 style="margin-bottom:20px; color:#fff; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-list" style="color:#10b981;"></i> Recent Transactions
+        <div>
+            <h3>
+                <i class="fas fa-list"></i> Recent Transactions
             </h3>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+            <div>
+                <table>
                     <thead>
-                        <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:12px 15px;">Student</th>
-                            <th style="padding:12px 15px;">Type</th>
-                            <th style="padding:12px 15px;">Amount</th>
-                            <th style="padding:12px 15px;">Date</th>
-                            <th style="padding:12px 15px;">Actions</th>
+                        <tr>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for pay in recent_payments %}
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:12px 15px;">
-                                {% if pay.is_remembered %}<span style="color:#f59e0b; margin-right:4px;">★</span>{% endif %}
+                        <tr>
+                            <td>
+                                {% if pay.is_remembered %}<span>★</span>{% endif %}
+
                                 {{ pay.student.user.first_name }} (#{{ pay.student.student_id }})
-                                {% if pay.reminder_note %}<br><small style="color:#64748b; font-size:0.78rem;">{{ pay.reminder_note }}</small>{% endif %}
+
+                                {% if pay.reminder_note %}
+                                <br>
+                                <small>{{ pay.reminder_note }}</small>
+                                {% endif %}
                             </td>
-                            <td style="padding:12px 15px;">{{ pay.fee_type.name }}</td>
-                            <td style="padding:12px 15px; color:#10b981; font-weight:700;">${{ pay.amount_paid }}</td>
-                            <td style="padding:12px 15px; font-size:0.82rem; color:#94a3b8;">{{ pay.payment_date|date:"d M, Y" }}</td>
-                            <td style="padding:12px 15px;">
-                                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                                    <a href="{% url 'admin_panel:payment_edit' pay.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;"><i class="fas fa-edit"></i></a>
-                                    <form method="POST" action="{% url 'admin_panel:payment_toggle_remember' pay.id %}" style="display:inline; margin:0;">
+
+                            <td>{{ pay.fee_type.name }}</td>
+
+                            <td>${{ pay.amount_paid }}</td>
+
+                            <td>{{ pay.payment_date|date:"d M, Y" }}</td>
+
+                            <td>
+                                <div>
+                                    <a href="{% url 'admin_panel:payment_edit' pay.id %}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <form method="POST" action="{% url 'admin_panel:payment_toggle_remember' pay.id %}">
                                         {% csrf_token %}
-                                        <button type="submit" style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:4px 10px; border-radius:8px; font-size:0.78rem; border:none; cursor:pointer;">{% if pay.is_remembered %}<i class="fas fa-bell-slash"></i>{% else %}<i class="fas fa-bell"></i>{% endif %}</button>
+
+                                        <button type="submit">
+                                            {% if pay.is_remembered %}
+                                            <i class="fas fa-bell-slash"></i>
+                                            {% else %}
+                                            <i class="fas fa-bell"></i>
+                                            {% endif %}
+                                        </button>
                                     </form>
-                                    <a href="{% url 'admin_panel:payment_delete' pay.id %}" style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 10px; border-radius:8px; font-size:0.78rem; text-decoration:none;"><i class="fas fa-trash"></i></a>
+
+                                    <a href="{% url 'admin_panel:payment_delete' pay.id %}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
+
                         {% empty %}
-                        <tr><td colspan="5" style="text-align:center; padding:50px; color:#94a3b8;">No payment records yet.</td></tr>
+                        <tr>
+                            <td colspan="5">No payment records yet.</td>
+                        </tr>
+
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
 </div>
 <!-- END: FEE_COLLECTION_SECTION -->
 {% endblock %}

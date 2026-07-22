@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="section-header">
+        <h1><i class="fas fa-edit"></i> Class Test Management</h1>
+        <p>নতুন ক্লাস টেস্ট তৈরি করুন এবং পরিচালনা করুন। শিক্ষার্থীরা তাদের রুটিন পেজে প্রকাশিত পরীক্ষাগুলো দেখতে পাবে।
+        </p>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom: 20px;">
+        {% for msg in messages %}
+        <div class="alert {% if msg.tags %}alert-{{ msg.tags }}{% endif %}">
+            <i class="fas fa-check-circle"></i> {{ msg }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ct-container">
+        <!-- Add Class Test Form -->
+        <div class="ct-card ct-form">
+            <h3>Add New Class Test</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Test Title *</label>
+                    <input type="text" name="title" class="form-control" placeholder="যেমন: CT-1 Math, Matrix Test"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Class *</label>
+                    <select name="class_id" class="form-control" required>
+                        <option value="">— Choose Class —</option>
+                        {% for cls in classes %}
+                        <option value="{{ cls.id }}">{{ cls.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Section *</label>
+                    <select name="section_id" class="form-control" required>
+                        <option value="">— Choose Section —</option>
+                        {% for sec in sections %}
+                        <option value="{{ sec.id }}">{{ sec.name }} ({{ sec.school_class.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <select name="subject_id" class="form-control" required>
+                        <option value="">— Choose Subject —</option>
+                        {% for sub in subjects %}
+                        <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.school_class.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Exam Date *</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Start Time *</label>
+                        <input type="time" name="start_time" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time *</label>
+                        <input type="time" name="end_time" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Marks *</label>
+                    <input type="number" name="total_marks" class="form-control" value="20" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <textarea name="instructions" class="form-control" rows="3"
+                        placeholder="যেকোনো বিশেষ নির্দেশনা (ঐচ্ছিক)..."></textarea>
+                </div>
+
+                <div class="btn-submit-group">
+                    <button type="submit" name="publish_btn" value="true" class="btn-ct btn-primary-ct">
+                        <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                    <button type="submit" name="draft_btn" value="true" class="btn-ct btn-secondary-ct">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Class Tests List -->
+        <div class="ct-list-section">
+            <h3>My Class Tests</h3>
+            <div class="ct-grid">
+                {% for test in tests %}
+                <div class="test-card {% if test.is_published %}published{% endif %}">
+                    <div class="test-header">
+                        <h4 class="test-title">{{ test.name }}</h4>
+                        <span
+                            class="status-badge {% if test.is_published %}badge-published{% else %}badge-draft{% endif %}">
+                            {% if test.is_published %}Published{% else %}Draft{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="test-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Class: <strong>{{ test.schedule.school_class.name }}</strong> (Section: {{
+                                test.schedule.section.name|default:"All" }})</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-book"></i>
+                            <span>Subject: <strong>{{ test.schedule.subject.name }}</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Date: {{ test.schedule.date|date:"d M Y" }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Time: {{ test.schedule.start_time|time:"H:i" }} - {{
+                                test.schedule.end_time|time:"H:i"|default:"N/A" }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span>Total Marks: {{ test.schedule.total_marks }}</span>
+                        </div>
+                        {% if test.schedule.instructions %}
+                        <div class="meta-item" style="margin-top: 8px; font-style: italic;">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ test.schedule.instructions }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="test-actions">
+                        <a href="{% url 'teacher:class_test_toggle_publish' test.id %}" class="action-link link-publish"
+                            title="Publish/Draft Toggle">
+                            <i class="fas {% if test.is_published %}fa-eye-slash{% else %}fa-eye{% endif %}"></i>
+                            {% if test.is_published %}Draft{% else %}Publish{% endif %}
+                        </a>
+                        <a href="{% url 'teacher:marks_add' %}?exam_id={{ test.id }}&class_id={{ test.schedule.school_class.id }}&subject_id={{ test.schedule.subject.id }}"
+                            class="action-link link-grade" title="Grade Marks">
+                            <i class="fas fa-star"></i> Grade
+                        </a>
+                        <a href="{% url 'teacher:class_test_edit' test.id %}" class="action-link link-edit"
+                            title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'teacher:class_test_delete' test.id %}" class="action-link link-delete"
+                            title="Delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="ct-card" style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px;">
+                    <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;"></i>
+                    <p>আপনি এখনো কোনো ক্লাস টেস্ট তৈরি করেননি। বাম পাশের ফর্ম ব্যবহার করে প্রথম ক্লাস টেস্ট তৈরি করুন।
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -84,80 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(statsSection);
     }
 
-    // 3. Welcome Title Animation Logic (Load, Hover, 15s Idle Cycle)
-    const welcomeTitle = document.querySelector('.welcome-title');
-    if (welcomeTitle) {
-        const text = welcomeTitle.textContent.trim();
-        welcomeTitle.innerHTML = ''; // Clear original text
-        
-        // Split text into words, then letters to prevent breaking layout on wrap
-        const words = text.split(' ');
-        words.forEach((wordText, wordIdx) => {
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'word';
-            
-            const letters = wordText.split('');
-            letters.forEach((char) => {
-                const charSpan = document.createElement('span');
-                charSpan.className = 'letter';
-                charSpan.textContent = char;
-                wordSpan.appendChild(charSpan);
-            });
-            
-            welcomeTitle.appendChild(wordSpan);
-            
-            // Add space between words (except the last one)
-            if (wordIdx < words.length - 1) {
-                const space = document.createTextNode(' ');
-                welcomeTitle.appendChild(space);
-            }
-        });
+    // 3. Welcome Title - simple display, no heavy animation
+    // (letter-by-letter animation removed for performance)
 
-        const letterSpans = welcomeTitle.querySelectorAll('.letter');
-        let idleTimer = null;
-
-        // Function to trigger/replay the letter-by-letter welcome animation
-        const playWelcomeAnimation = () => {
-            letterSpans.forEach((span, index) => {
-                span.classList.remove('animate-letter');
-                // Force reflow
-                void span.offsetWidth;
-                // Staggered delay for each letter (0.04s interval)
-                span.style.animationDelay = `${index * 0.04}s`;
-                span.classList.add('animate-letter');
-            });
-        };
-
-        // Function to start the 15-second idle interval
-        const startIdleTimer = () => {
-            if (idleTimer) clearInterval(idleTimer);
-            idleTimer = setInterval(() => {
-                playWelcomeAnimation();
-            }, 15000); // 15 seconds
-        };
-
-        // Function to stop the idle timer
-        const stopIdleTimer = () => {
-            if (idleTimer) {
-                clearInterval(idleTimer);
-                idleTimer = null;
-            }
-        };
-
-        // Event listener for mouse enter (hover)
-        welcomeTitle.addEventListener('mouseenter', () => {
-            stopIdleTimer(); // Pause idle timer on hover to avoid overlapping animations
-            playWelcomeAnimation();
-        });
-
-        // Event listener for mouse leave
-        welcomeTitle.addEventListener('mouseleave', () => {
-            startIdleTimer(); // Resume/restart idle timer when mouse leaves
-        });
-
-        // Initialize: Trigger animation immediately on load and start the idle timer
-        playWelcomeAnimation();
-        startIdleTimer();
-    }
 });
 /* END: HOME_JS */

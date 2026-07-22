@@ -1,0 +1,284 @@
+/* ============================================================
+   VIEW EXAM RESULTS PAGE CSS — teacher/marks_results.html
+   School Management System — Clean Registry Theme Redesign
+   ============================================================ */
+.dashboard-wrapper {
+    margin: auto;
+    padding: 4%;
+}
+
+/* ===== PAGE HEADER ===== */
+.section-header {
+    margin-bottom: 2rem;
+    animation: slideUpFade 0.4s ease-out;
+    padding-left: 0%;
+    text-align: center;
+
+}
+
+.section-header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+
+}
+
+.section-header p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ===== FILTER BAR ===== */
+.class-filter-bar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.class-filter-bar>div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.class-filter-bar label {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ===== SELECT STYLING - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    min-width: 180px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+    background-color: var(--paper) !important;
+}
+
+.class-filter-bar select:hover {
+    border-color: var(--ink-faint);
+}
+
+.class-filter-bar select:focus {
+    border-color: var(--indigo);
+    background-color: var(--surface) !important;
+    box-shadow: 0 0 0 3px rgba(59, 75, 140, 0.1);
+}
+
+/* ফোকাসে কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    background-color: var(--surface) !important;
+}
+
+.class-filter-bar select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ===== SELECT OPTION - সম্পূর্ণ কালো ব্যাকগ্রাউন্ড রিমুভ ===== */
+.class-filter-bar select option {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+}
+
+/* অপশন হোভার এবং সিলেক্টেড স্টাইল - কালো ব্যাকগ্রাউন্ড রিমুভ */
+.class-filter-bar select option:hover,
+.class-filter-bar select option:checked,
+.class-filter-bar select option:active,
+.class-filter-bar select option:focus {
+    background: var(--indigo) !important;
+    background-color: var(--indigo) !important;
+    color: #ffffff !important;
+}
+
+/* ব্রাউজার ডিফল্ট কালো হাইলাইট রিমুভ */
+.class-filter-bar select::-webkit-list-button,
+.class-filter-bar select::-webkit-inner-spin-button,
+.class-filter-bar select::-webkit-calendar-picker-indicator {
+    background: transparent !important;
+}
+
+/* ===== RESULTS PANEL ===== */
+.results-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    animation: slideUpFade 0.6s ease-out;
+}
+
+.results-panel h3 {
+    color: var(--ink);
+    margin: 0 0 25px 0;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* ===== TABLE ===== */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table thead tr {
+    background: var(--paper);
+}
+
+.results-table th {
+    text-align: left;
+    padding: 14px 20px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--line);
+}
+
+.results-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink);
+    vertical-align: middle;
+    font-size: 0.92rem;
+}
+
+/* টেবিল রো ফোকাস - কালো রিমুভ */
+.results-table tbody tr:hover td {
+    background-color: var(--paper);
+}
+
+.results-table tbody tr:focus-within {
+    outline: none;
+}
+
+.results-table tbody tr:focus-within td {
+    background-color: var(--paper);
+}
+
+.results-table td.row-num {
+    color: var(--ink-faint);
+    font-weight: 600;
+    width: 60px;
+}
+
+.results-table td.student-name {
+    font-weight: 600;
+}
+
+.results-table td.roll-no {
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+.results-table td.marks {
+    font-weight: 700;
+    color: var(--ink);
+}
+
+/* ===== GRADE BADGE ===== */
+.badge-grade {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: var(--brass-tint);
+    color: var(--brass-deep);
+    border: 1px solid rgba(184, 134, 59, 0.2);
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 70px 40px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 2px dashed var(--line);
+    box-shadow: var(--shadow-sm);
+    animation: slideUpFade 0.5s ease-out;
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: var(--ink-faint);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.empty-state h3 {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .class-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.25rem;
+        gap: 15px;
+    }
+
+    .class-filter-bar>div {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .class-filter-bar select {
+        width: 100%;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

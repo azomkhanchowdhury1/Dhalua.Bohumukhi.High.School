@@ -1,0 +1,524 @@
+/* ============================================================
+   PERFORMANCE ANALYTICS — analytics.html
+   Theme: "Registry Ledger" — Light metric card + progress bar
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.analytics-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff !important;
+  /* সম্পূর্ণ সাদা */
+  padding: 36px 28px 80px 28px !important;
+  min-height: 100vh;
+}
+
+/* ===== ANALYTICS WRAPPER ===== */
+.analytics-wrapper {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ===== HEADER ===== */
+.analytics-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.analytics-header h2 {
+  font-weight: 800;
+  font-size: 26px;
+  margin: 0 0 8px 0;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.analytics-header h2 i {
+  width: 42px;
+  height: 42px;
+  background: #eef2ff;
+  color: #6366f1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.analytics-header .subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ===== METRIC CARDS GRID ===== */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.metric-card .metric-label {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.metric-card .metric-label i {
+  font-size: 14px;
+  color: #6366f1;
+  width: 20px;
+  text-align: center;
+}
+
+.metric-card .metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.metric-card .metric-caption {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 4px 0 0;
+}
+
+/* ===== SUBJECT PERFORMANCE CARD ===== */
+.subject-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  width: 30%;
+}
+
+.subject-card h3 {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 16px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subject-card h3 i {
+  color: #6366f1;
+  font-size: 18px;
+}
+
+/* ===== SUBJECT ROW ===== */
+.subject-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.subject-row:last-child {
+  border-bottom: none;
+}
+
+.subject-row .subject-name {
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 120px;
+  color: #0f172a;
+}
+
+.subject-row .progress-track {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.subject-row .progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+  transition: width 0.6s ease;
+}
+
+.subject-row .progress-percent {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ===== SUBJECT COLOR VARIANTS ===== */
+.subject-row:nth-child(1) .progress-fill {
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.subject-row:nth-child(2) .progress-fill {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.subject-row:nth-child(3) .progress-fill {
+  background: linear-gradient(90deg, #ec4899, #f472b6);
+}
+
+.subject-row:nth-child(4) .progress-fill {
+  background: linear-gradient(90deg, #14b8a6, #2dd4bf);
+}
+
+.subject-row:nth-child(5) .progress-fill {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.subject-row:nth-child(6) .progress-fill {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+/* ===== EMPTY STATE ===== */
+.analytics-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.analytics-empty-state i {
+  font-size: 48px;
+  color: #c7d2fe;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.analytics-empty-state p {
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.analytics-empty-state span {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* ===== 1024px - ল্যাপটপ ===== */
+@media (max-width: 1024px) {
+  .analytics-wrapper {
+    max-width: 95%;
+  }
+}
+
+/* ===== 768px - ট্যাবলেট ===== */
+@media (max-width: 768px) {
+  .dashboard-wrapper.analytics-page {
+    padding: 24px 20px 60px 20px !important;
+  }
+
+  .metric-grid {
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 16px 20px;
+  }
+
+  .metric-card .metric-value {
+    font-size: 24px;
+  }
+
+  .subject-card {
+    padding: 20px 24px;
+  }
+
+  .subject-row .subject-name {
+    min-width: 100px;
+    font-size: 13px;
+  }
+}
+
+/* ===== 640px - বড় মোবাইল ===== */
+@media (max-width: 640px) {
+  .dashboard-wrapper.analytics-page {
+    padding: 16px 12px 50px 12px !important;
+  }
+
+  .analytics-header h2 {
+    font-size: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .analytics-header h2 i {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .analytics-header .subtitle {
+    font-size: 13px;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric-card {
+    padding: 14px 16px;
+    border-radius: 10px;
+  }
+
+  .metric-card .metric-value {
+    font-size: 22px;
+  }
+
+  .metric-card .metric-label {
+    font-size: 12px;
+  }
+
+  .metric-card .metric-caption {
+    font-size: 11px;
+  }
+
+  .subject-card {
+    padding: 16px 18px;
+    border-radius: 10px;
+  }
+
+  .subject-card h3 {
+    font-size: 15px;
+  }
+
+  .subject-row {
+    gap: 10px;
+    padding: 6px 0;
+  }
+
+  .subject-row .subject-name {
+    min-width: 80px;
+    font-size: 12px;
+  }
+
+  .subject-row .progress-percent {
+    font-size: 12px;
+    min-width: 36px;
+  }
+
+  .subject-row .progress-track {
+    height: 6px;
+  }
+}
+
+/* ===== 480px - ছোট মোবাইল ===== */
+@media (max-width: 480px) {
+  .dashboard-wrapper.analytics-page {
+    padding: 12px 8px 40px 8px !important;
+  }
+
+  .analytics-header h2 {
+    font-size: 20px;
+    gap: 8px;
+  }
+
+  .analytics-header h2 i {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .analytics-header .subtitle {
+    font-size: 12px;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .metric-card {
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .metric-card .metric-value {
+    font-size: 20px;
+  }
+
+  .metric-card .metric-label {
+    font-size: 11px;
+  }
+
+  .metric-card .metric-label i {
+    font-size: 12px;
+    width: 16px;
+  }
+
+  .metric-card .metric-caption {
+    font-size: 10px;
+  }
+
+  .subject-card {
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .subject-card h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .subject-card h3 i {
+    font-size: 15px;
+  }
+
+  .subject-row {
+    gap: 8px;
+    padding: 5px 0;
+    flex-wrap: wrap;
+  }
+
+  .subject-row .subject-name {
+    min-width: 70px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .subject-row .progress-track {
+    height: 5px;
+    min-width: 60px;
+  }
+
+  .subject-row .progress-percent {
+    font-size: 11px;
+    min-width: 32px;
+  }
+
+  .analytics-empty-state {
+    padding: 40px 16px;
+  }
+
+  .analytics-empty-state i {
+    font-size: 36px;
+  }
+}
+
+/* ===== DARK MODE SUPPORT (ঐচ্ছিক) ===== */
+@media (prefers-color-scheme: dark) {
+  .dashboard-wrapper.analytics-page {
+    background: #ffffff !important;
+    /* ডার্ক মোডেও সাদা থাকবে */
+  }
+
+  .analytics-header h2 {
+    color: #0f172a;
+  }
+
+  .analytics-header .subtitle {
+    color: #64748b;
+  }
+
+  .analytics-header h2 i {
+    background: #eef2ff;
+    color: #6366f1;
+  }
+
+  .metric-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+  }
+
+  .metric-card .metric-label {
+    color: #64748b;
+  }
+
+  .metric-card .metric-value {
+    color: #0f172a;
+  }
+
+  .metric-card .metric-caption {
+    color: #94a3b8;
+  }
+
+  .subject-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    width: 30%;
+  }
+
+  .subject-card h3 {
+    color: #0f172a;
+  }
+
+  .subject-row .subject-name {
+    color: #0f172a;
+  }
+
+  .subject-row {
+    border-bottom-color: #f1f5f9;
+  }
+
+  .subject-row .progress-track {
+    background: #f1f5f9;
+  }
+
+  .subject-row .progress-percent {
+    color: #64748b;
+  }
+
+  .analytics-empty-state {
+    background: #ffffff;
+    border-color: #e2e8f0;
+  }
+
+  .analytics-empty-state p {
+    color: #334155;
+  }
+
+  .analytics-empty-state span {
+    color: #94a3b8;
+  }
+
+  .analytics-empty-state i {
+    color: #c7d2fe;
+  }
+}

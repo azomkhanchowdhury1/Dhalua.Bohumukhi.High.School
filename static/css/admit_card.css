@@ -1,0 +1,1120 @@
+/* ============================================================
+   ADMIT CARD — admit.html (Premium Design)
+   Theme: "Registry Ledger" — Premium A4 Admit Card with Photo
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.admit-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff !important;
+    padding: 40px 28px 80px 28px !important;
+    min-height: 100vh;
+}
+
+/* ===== ADMIT WRAPPER ===== */
+.admit-wrapper {
+    max-width: 210mm;
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ===== HEADER ===== */
+.admit-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+    width: 100%;
+}
+
+.admit-header h2 {
+    font-weight: 800;
+    font-size: 28px;
+    margin: 0 0 6px 0;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+}
+
+.admit-header h2 i {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.admit-header .subtitle {
+    font-size: 15px;
+    color: #64748b;
+    margin: 0;
+}
+
+.admit-header .subtitle i {
+    color: #6366f1;
+    margin-right: 4px;
+}
+
+/* ===== EXAM ROW WITH PRINT BUTTON ===== */
+.exam-row {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+}
+
+.exam-row .exam-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.exam-row .exam-name i {
+    color: #6366f1;
+    font-size: 20px;
+}
+
+.exam-row .exam-select {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    background: #ffffff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.exam-row .exam-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+}
+
+.print-btn i {
+    font-size: 18px;
+}
+
+.print-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+
+/* ============================================================
+   ADMIT CARD - Premium Design
+   ============================================================ */
+.admit-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 44px;
+    box-shadow: 
+        0 20px 60px rgba(15, 23, 42, 0.06),
+        0 0 0 1px rgba(226, 232, 240, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Premium Border Decoration */
+.admit-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa, #8b5cf6, #6366f1);
+    background-size: 200% 100%;
+    animation: gradientMove 4s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Watermark Effect */
+.admit-card::after {
+    content: '📜';
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-size: 120px;
+    opacity: 0.04;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+/* ===== ADMIT CARD HEADER ===== */
+.admit-card-header {
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 24px;
+    margin-bottom: 28px;
+    position: relative;
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Left: School Info */
+.school-info {
+    flex: 1;
+}
+
+.institute-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 4px;
+}
+
+.logo-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #6366f1;
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+.school-name {
+    font-weight: 800;
+    font-size: 24px;
+    margin: 0;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+}
+
+.school-meta {
+    font-size: 13px;
+    color: #64748b;
+    margin: 4px 0 12px;
+    letter-spacing: 0.3px;
+}
+
+.school-meta i {
+    color: #6366f1;
+    margin: 0 4px;
+}
+
+.badge-title {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 32px;
+    border-radius: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* Right: Student Photo */
+.header-photo {
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+}
+
+.header-photo::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.admit-photo {
+    width: 120px;
+    height: 150px;
+    border: 4px solid #ffffff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
+}
+
+.admit-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admit-photo .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #94a3b8;
+}
+
+.admit-photo .photo-placeholder i {
+    font-size: 48px;
+    color: #c7d2fe;
+}
+
+.admit-photo .photo-placeholder span {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.photo-label {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== ADMIT DETAILS GRID ===== */
+.admit-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 32px;
+    margin-bottom: 28px;
+}
+
+.admit-details .detail-item {
+    padding: 8px 0;
+    border-bottom: 1px dashed #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.admit-details .detail-item:hover {
+    border-bottom-color: #6366f1;
+}
+
+.admit-details .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    margin: 0 0 4px;
+}
+
+.admit-details .field-value {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #0f172a;
+}
+
+.admit-details .field-value i {
+    color: #6366f1;
+    margin-right: 8px;
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+}
+
+/* ===== EXAM SCHEDULE ===== */
+.exam-details-table {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.exam-details-table h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.exam-details-table h4 i {
+    color: #6366f1;
+    font-size: 18px;
+}
+
+.exam-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.exam-schedule-grid .schedule-item {
+    padding: 10px 14px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.exam-schedule-grid .schedule-item:hover {
+    border-color: #6366f1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.exam-schedule-grid .schedule-item .s-label {
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.exam-schedule-grid .schedule-item .s-value {
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 4px;
+    display: block;
+    font-size: 14px;
+}
+
+/* ===== INSTRUCTIONS BOX ===== */
+.instructions-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 5px solid #6366f1;
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+}
+
+.instructions-box .instructions-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.instructions-box .instructions-title i {
+    color: #6366f1;
+    font-size: 18px;
+}
+
+.instructions-box ol {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: #475569;
+    line-height: 2.2;
+}
+
+.instructions-box ol li::marker {
+    color: #6366f1;
+    font-weight: 700;
+}
+
+/* ===== SIGNATURE ROW ===== */
+.signature-row {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 2px solid #f1f5f9;
+    margin-bottom: 16px;
+}
+
+.signature-box {
+    text-align: center;
+    flex: 1;
+}
+
+.signature-line {
+    width: 180px;
+    margin: 0 auto;
+    border-top: 2px solid #1e293b;
+    padding-top: 10px;
+    position: relative;
+}
+
+.signature-line::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #6366f1;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.signature-line p {
+    font-size: 13px;
+    color: #0f172a;
+    margin: 0;
+    font-weight: 600;
+}
+
+.signature-line .sig-sub {
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* ===== FOOTER ===== */
+.admit-card-footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.admit-card-footer i {
+    color: #22c55e;
+    margin-right: 4px;
+}
+
+/* ============================================================
+   PRINT MEDIA
+   ============================================================ */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .dashboard-wrapper.admit-page {
+        padding: 0 !important;
+        background: #ffffff !important;
+        min-height: auto !important;
+    }
+    
+    .admit-header,
+    .exam-row {
+        display: none !important;
+    }
+    
+    .admit-wrapper {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .admit-card {
+        border: 2px solid #1e293b;
+        border-radius: 8px;
+        padding: 32px 36px;
+        box-shadow: none !important;
+        min-height: auto;
+        margin: 0;
+        width: 100%;
+    }
+    
+    .admit-card::before,
+    .admit-card::after {
+        display: none !important;
+    }
+    
+    .admit-card-header {
+        border-bottom-color: #1e293b !important;
+    }
+    
+    .badge-title {
+        background: #1e293b !important;
+        color: #ffffff !important;
+    }
+    
+    .exam-schedule-grid .schedule-item {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+    }
+    
+    .exam-details-table {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+    }
+    
+    .instructions-box {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+    }
+    
+    .signature-line {
+        border-top-color: #1e293b !important;
+    }
+    
+    .print-btn {
+        display: none !important;
+    }
+    
+    @page {
+        size: A4;
+        margin: 0;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+@media (max-width: 1024px) {
+    .admit-wrapper {
+        max-width: 95%;
+    }
+    
+    .admit-card {
+        padding: 32px 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper.admit-page {
+        padding: 24px 20px 60px 20px !important;
+    }
+
+    .admit-header h2 {
+        font-size: 24px;
+    }
+    
+    .admit-header h2 i {
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+
+    .admit-card {
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+    
+    .header-flex {
+        gap: 20px;
+    }
+    
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .school-name {
+        font-size: 20px;
+    }
+    
+    .admit-photo {
+        width: 100px;
+        height: 130px;
+    }
+    
+    .admit-photo .photo-placeholder i {
+        font-size: 38px;
+    }
+    
+    .exam-schedule-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .signature-line {
+        width: 140px;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-wrapper.admit-page {
+        padding: 16px 12px 50px 12px !important;
+    }
+
+    .admit-header h2 {
+        font-size: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .admit-header h2 i {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .admit-header .subtitle {
+        font-size: 13px;
+    }
+
+    .exam-row {
+        flex-direction: column;
+        gap: 14px;
+        padding: 16px;
+        text-align: center;
+    }
+    
+    .exam-row .exam-select {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .print-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .admit-card {
+        padding: 18px 14px;
+        border-radius: 14px;
+    }
+    
+    .header-flex {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .school-info {
+        text-align: center;
+    }
+    
+    .institute-logo {
+        justify-content: center;
+    }
+    
+    .school-name {
+        font-size: 18px;
+    }
+    
+    .badge-title {
+        font-size: 12px;
+        padding: 6px 20px;
+    }
+    
+    .header-photo {
+        order: -1;
+    }
+    
+    .admit-photo {
+        width: 90px;
+        height: 115px;
+    }
+    
+    .admit-photo .photo-placeholder i {
+        font-size: 34px;
+    }
+
+    .admit-details {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 16px;
+    }
+
+    .admit-details .field-value {
+        font-size: 14px;
+    }
+
+    .admit-details .field-label {
+        font-size: 10px;
+    }
+    
+    .exam-details-table {
+        padding: 14px 16px;
+    }
+    
+    .exam-schedule-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+    
+    .exam-schedule-grid .schedule-item {
+        padding: 8px 10px;
+    }
+    
+    .exam-schedule-grid .schedule-item .s-value {
+        font-size: 13px;
+    }
+
+    .instructions-box {
+        padding: 14px 16px;
+    }
+    
+    .instructions-box ol {
+        font-size: 12px;
+        padding-left: 16px;
+        line-height: 1.8;
+    }
+
+    .signature-row {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .signature-line {
+        width: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-wrapper.admit-page {
+        padding: 12px 8px 40px 8px !important;
+    }
+
+    .admit-header h2 {
+        font-size: 18px;
+        gap: 8px;
+    }
+
+    .admit-header h2 i {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    .admit-header .subtitle {
+        font-size: 12px;
+    }
+
+    .admit-card {
+        padding: 14px 10px;
+        border-radius: 12px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .school-name {
+        font-size: 16px;
+    }
+    
+    .school-meta {
+        font-size: 11px;
+    }
+    
+    .badge-title {
+        font-size: 10px;
+        padding: 4px 16px;
+        letter-spacing: 1px;
+    }
+    
+    .admit-photo {
+        width: 75px;
+        height: 95px;
+    }
+    
+    .admit-photo .photo-placeholder i {
+        font-size: 28px;
+    }
+    
+    .photo-label {
+        font-size: 9px;
+    }
+
+    .admit-details {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .admit-details .detail-item {
+        padding: 4px 0;
+    }
+
+    .admit-details .field-value {
+        font-size: 13px;
+    }
+    
+    .exam-details-table h4 {
+        font-size: 13px;
+    }
+    
+    .exam-schedule-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+    
+    .exam-schedule-grid .schedule-item {
+        padding: 6px 8px;
+    }
+    
+    .exam-schedule-grid .schedule-item .s-value {
+        font-size: 12px;
+    }
+    
+    .exam-schedule-grid .schedule-item .s-label {
+        font-size: 9px;
+    }
+
+    .exam-row .exam-name {
+        font-size: 13px;
+    }
+
+    .instructions-box ol {
+        font-size: 11px;
+        line-height: 1.6;
+    }
+    
+    .signature-line {
+        width: 120px;
+    }
+    
+    .signature-line p {
+        font-size: 11px;
+    }
+
+    .admit-empty-state {
+        padding: 40px 16px;
+    }
+
+    .admit-empty-state i {
+        font-size: 36px;
+    }
+}
+
+/* ============================================================
+   DARK MODE SUPPORT (White Background)
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+    .dashboard-wrapper.admit-page {
+        background: #ffffff !important;
+    }
+
+    .admit-header h2 {
+        color: #0f172a;
+    }
+    
+    .admit-header h2 i {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+    }
+
+    .admit-header .subtitle {
+        color: #64748b;
+    }
+
+    .exam-row {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+
+    .exam-row .exam-name {
+        color: #0f172a;
+    }
+    
+    .exam-row .exam-select {
+        background: #ffffff;
+        border-color: #e2e8f0;
+        color: #0f172a;
+    }
+    
+    .exam-row .exam-select:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .admit-card {
+        background: #ffffff;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.06);
+    }
+    
+    .admit-card::before {
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa, #8b5cf6, #6366f1);
+    }
+
+    .admit-card-header {
+        border-bottom-color: #f1f5f9;
+    }
+    
+    .logo-icon {
+        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+        border-color: rgba(99, 102, 241, 0.2);
+    }
+    
+    .school-name {
+        color: #0f172a;
+    }
+
+    .school-meta {
+        color: #64748b;
+    }
+
+    .badge-title {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+    }
+    
+    .header-photo::before {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+        opacity: 0.15;
+    }
+    
+    .admit-photo {
+        background: #f8fafc;
+        border-color: #ffffff;
+    }
+    
+    .admit-photo .photo-placeholder {
+        color: #94a3b8;
+    }
+    
+    .admit-photo .photo-placeholder i {
+        color: #c7d2fe;
+    }
+    
+    .photo-label {
+        color: #64748b;
+    }
+
+    .admit-details .field-label {
+        color: #94a3b8;
+    }
+
+    .admit-details .field-value {
+        color: #0f172a;
+    }
+    
+    .admit-details .detail-item {
+        border-bottom-color: #f1f5f9;
+    }
+    
+    .exam-details-table {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+    
+    .exam-details-table h4 {
+        color: #0f172a;
+    }
+    
+    .exam-schedule-grid .schedule-item {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+    
+    .exam-schedule-grid .schedule-item .s-value {
+        color: #0f172a;
+    }
+    
+    .exam-schedule-grid .schedule-item:hover {
+        border-color: #6366f1;
+    }
+
+    .instructions-box {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        border-left-color: #6366f1;
+    }
+
+    .instructions-box .instructions-title {
+        color: #0f172a;
+    }
+
+    .instructions-box ol {
+        color: #475569;
+    }
+    
+    .instructions-box ol li::marker {
+        color: #6366f1;
+    }
+
+    .signature-row {
+        border-top-color: #f1f5f9;
+    }
+    
+    .signature-line {
+        border-top-color: #1e293b;
+    }
+    
+    .signature-line::before {
+        background: #6366f1;
+        opacity: 0.3;
+    }
+
+    .signature-line p {
+        color: #0f172a;
+    }
+    
+    .signature-line .sig-sub {
+        color: #94a3b8;
+    }
+    
+    .admit-card-footer {
+        border-top-color: #f1f5f9;
+        color: #94a3b8;
+    }
+
+    .admit-empty-state {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+
+    .admit-empty-state p {
+        color: #0f172a;
+    }
+
+    .admit-empty-state span {
+        color: #94a3b8;
+    }
+
+    .admit-empty-state i {
+        color: #c7d2fe;
+    }
+}

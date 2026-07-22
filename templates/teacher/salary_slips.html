@@ -2,85 +2,23 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* START: SALARY_SLIPS */
-    .salary-wrapper { padding: 30px 20px; }
-    .salary-header { margin-bottom: 28px; }
-    .salary-header h1 { color: #fff; font-size: 1.8rem; margin: 0 0 6px; }
-    .salary-header p { color: #94a3b8; margin: 0; }
-
-    .salary-tabs { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-    .stab {
-        padding: 9px 20px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        font-size: 0.88rem;
-        font-weight: 600;
-        transition: all 0.2s;
-        background: rgba(255,255,255,0.07);
-        color: #94a3b8;
-    }
-    .stab.active { background: linear-gradient(135deg,#0ea5e9,#0284c7); color:#fff; }
-    .stab-panel { display:none; }
-    .stab-panel.active { display:block; }
-
-    .salary-container { background: rgba(15,23,42,0.6); border-radius:18px; border:1px solid rgba(255,255,255,0.08); overflow:hidden; }
-    .salary-table { width:100%; border-collapse:collapse; }
-    .salary-table th { background:rgba(255,255,255,0.05); color:#94a3b8; font-size:0.82rem; padding:14px 16px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.08); }
-    .salary-table td { padding:14px 16px; color:#e2e8f0; font-size:0.88rem; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .salary-table tr:hover td { background:rgba(255,255,255,0.02); }
-    .badge-paid { background:rgba(52,211,153,0.15); color:#34d399; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
-    .badge-pending { background:rgba(251,191,36,0.15); color:#fbbf24; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
-    .badge-approved { background:rgba(52,211,153,0.15); color:#34d399; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
-    .badge-rejected { background:rgba(239,68,68,0.15); color:#f87171; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:700; }
-
-    /* Withdrawal Form */
-    .withdraw-card {
-        background: rgba(15,23,42,0.6);
-        border: 1px solid rgba(139,92,246,0.2);
-        border-radius: 20px;
-        padding: 28px;
-    }
-    .withdraw-card h3 { color:#fff; font-size:1.2rem; margin:0 0 20px; }
-    .wf { margin-bottom: 18px; }
-    .wf label { display:block; color:#94a3b8; font-size:0.82rem; margin-bottom:7px; }
-    .wf input, .wf select, .wf textarea {
-        width:100%;
-        background:rgba(255,255,255,0.06);
-        border:1px solid rgba(255,255,255,0.1);
-        border-radius:12px;
-        padding:13px 16px;
-        color:#fff;
-        font-size:0.93rem;
-        box-sizing:border-box;
-        resize:vertical;
-    }
-    .wf input:focus, .wf select:focus, .wf textarea:focus { outline:none; border-color:#7c3aed; }
-    .wf select option { background:#0f172a; }
-    .btn-withdraw { background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; border:none; padding:13px 26px; border-radius:12px; font-size:0.95rem; font-weight:700; cursor:pointer; width:100%; }
-    .btn-withdraw:hover { opacity:0.88; }
-
-    .info-note { background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:12px; padding:14px 18px; color:#a78bfa; font-size:0.84rem; margin-bottom:20px; }
-
-    .empty-state { text-align:center; padding:50px 20px; color:#64748b; }
-    .empty-state i { font-size:2.5rem; margin-bottom:12px; display:block; }
-    /* END: SALARY_SLIPS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_teachers.css' %}">
+<link rel="stylesheet" href="{% static 'css/salary_slips.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: SALARY_SLIPS_CONTENT -->
 <div class="salary-wrapper">
     <div class="salary-header">
-        <h1><i class="fas fa-money-check-alt" style="color:#0ea5e9; margin-right:10px;"></i> Salary & Payouts</h1>
+        <h1><i class="fas fa-money-check-alt"></i> Salary & Payouts</h1>
         <p>আপনার বেতন স্লিপ দেখুন এবং টাকা তোলার অনুরোধ করুন।</p>
     </div>
 
     {% if messages %}
-    <div style="margin-bottom:16px;">
+    <div class="messages-container">
         {% for msg in messages %}
-        <div style="background:rgba({% if 'error' in msg.tags %}239,68,68{% else %}52,211,153{% endif %},0.1); border:1px solid {% if 'error' in msg.tags %}#ef4444{% else %}#34d399{% endif %}; border-radius:10px; padding:12px 16px; color:{% if 'error' in msg.tags %}#ef4444{% else %}#34d399{% endif %}; margin-bottom:8px; font-size:0.88rem;">
+        <div class="alert-msg {% if 'error' in msg.tags %}error{% else %}success{% endif %}">
             <i class="fas fa-{% if 'error' in msg.tags %}exclamation-circle{% else %}check-circle{% endif %}"></i> {{ msg }}
         </div>
         {% endfor %}
@@ -131,7 +69,7 @@
     <!-- Withdrawal Tab -->
     <div class="stab-panel" id="spWithdraw">
         <div class="withdraw-card">
-            <h3><i class="fas fa-hand-holding-usd" style="color:#7c3aed;"></i> টাকা তোলার আবেদন</h3>
+            <h3><i class="fas fa-hand-holding-usd"></i> টাকা তোলার আবেদন</h3>
             <div class="info-note">
                 <i class="fas fa-info-circle"></i>
                 আবেদন করলে অ্যাডমিন অনুমোদন দেবেন। অনুমোদনের পর বিকাশ বা ব্যাংক একাউন্টে টাকা পাঠানো হবে।
@@ -182,14 +120,14 @@
                         <td>{{ pr.requested_at|date:"d M Y" }}</td>
                         <td><strong>৳{{ pr.amount }}</strong></td>
                         <td>{{ pr.payment_method }}</td>
-                        <td style="font-size:0.78rem; color:#94a3b8;">{{ pr.account_details|truncatechars:40 }}</td>
+                        <td class="acc-details">{{ pr.account_details|truncatechars:40 }}</td>
                         <td>
                             {% if pr.status == 'Approved' %}<span class="badge-approved">Approved</span>
                             {% elif pr.status == 'Rejected' %}<span class="badge-rejected">Rejected</span>
                             {% else %}<span class="badge-pending">Pending</span>
                             {% endif %}
                         </td>
-                        <td style="font-family:monospace; font-size:0.78rem; color:#a78bfa;">{{ pr.transaction_id|default:"—" }}</td>
+                        <td class="txn-id">{{ pr.transaction_id|default:"—" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -2,40 +2,56 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
+<link rel="stylesheet" href="{% static 'css/subject_syllabus.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: STUDENT_SYLLABUS_SECTION -->
-<div class="dashboard-wrapper">
-    <div class="section-header">
-        <h1>Subject Syllabus</h1>
+<div class="dashboard-wrapper syllabus-page">
+    <div class="syllabus-page-heading">
+        <h1><i class="fas fa-file-invoice"></i> Subject Syllabus</h1>
         <p>Download and review course materials for {{ student.current_class }}.</p>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:25px;">
-        {% for item in syllabus %}
-        <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255, 255, 255, 0.1); display:flex; flex-direction:column; gap:15px;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div style="background:rgba(99, 102, 241, 0.1); color:#6366f1; padding:12px; border-radius:12px; font-size:1.5rem;">
-                    <i class="fas fa-file-pdf"></i>
+    <div class="syllabus-container">
+        {% if syllabus %}
+        <div class="syllabus-list">
+            {% for item in syllabus %}
+            <div class="syllabus-card">
+                <!-- Date block -->
+                <div class="syllabus-date-block">
+                    <span class="date-day">{{ item.uploaded_at|date:"d" }}</span>
+                    <span class="date-month">{{ item.uploaded_at|date:"M" }}</span>
+                    <span class="date-year">{{ item.uploaded_at|date:"Y" }}</span>
                 </div>
-                <span style="font-size:0.75rem; color:#94a3b8;">{{ item.uploaded_at|date:"d M, Y" }}</span>
+
+                <!-- Content -->
+                <div class="syllabus-content">
+                    <h3 class="syllabus-class-title">{{ item.title }}</h3>
+                    <span class="syllabus-subject-tag">
+                        <i class="fas fa-book-open"></i>
+                        Subject: {{ item.subject.name }}
+                    </span>
+                </div>
+
+                <!-- Download button -->
+                <div class="syllabus-action">
+                    <a href="{{ item.file.url }}" download class="btn-download-syllabus">
+                        <i class="fas fa-download"></i> Download Syllabus
+                    </a>
+                </div>
             </div>
-            <div>
-                <h3 style="color:#fff; margin-bottom:5px;">{{ item.title }}</h3>
-                <p style="color:#94a3b8; font-size:0.9rem;">Subject: {{ item.subject.name }}</p>
-            </div>
-            <div style="margin-top:auto;">
-                <a href="{{ item.file.url }}" download class="view-all-btn" style="width:100%; text-align:center;"><i class="fas fa-download"></i> Download Syllabus</a>
-            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div style="grid-column:1/-1; text-align:center; padding:100px; background:rgba(15,23,42,0.6); border-radius:30px; border:1px dashed rgba(255,255,255,0.1);">
-            <i class="fas fa-book-open" style="font-size:4rem; color:rgba(255,255,255,0.1); margin-bottom:20px;"></i>
-            <h3 style="color:#94a3b8;">No syllabus available for your class yet.</h3>
+        {% else %}
+        <div class="syllabus-empty-state">
+            <i class="fas fa-book-reader"></i>
+            <p>No syllabus available yet.</p>
+            <span>Your course syllabus is not available yet. Please check back later.</span>
         </div>
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
 <!-- END: STUDENT_SYLLABUS_SECTION -->

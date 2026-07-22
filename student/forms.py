@@ -1,3 +1,4 @@
+# START: student/forms.py
 from django import forms
 from django.contrib.auth.models import User
 from .models import Student
@@ -55,6 +56,7 @@ class StudentAdminForm(forms.ModelForm):
                 last_name=self.cleaned_data['last_name']
             )
             student.user = user
+            student.password_plain = self.cleaned_data['password']
         else:
             user = student.user
             user.username = self.cleaned_data['username']
@@ -63,8 +65,11 @@ class StudentAdminForm(forms.ModelForm):
             user.last_name = self.cleaned_data['last_name']
             if self.cleaned_data.get('password'):
                 user.set_password(self.cleaned_data['password'])
+                student.password_plain = self.cleaned_data['password']
             user.save()
             
         if commit:
             student.save()
         return student
+
+# END: student/forms.py

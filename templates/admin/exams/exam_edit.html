@@ -1,44 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    .edit-container {
-        max-width: 500px;
-        margin: 40px auto;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        padding: 2.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .edit-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 24px;
-        background: linear-gradient(to right, #ffffff, #a5b4fc);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .form-group {
-        display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;
-    }
-    .form-group label {
-        color: #94a3b8; font-size: 0.85rem; font-weight: 500;
-    }
-    .form-control {
-        background: rgba(255, 255, 255, 0.05); color: #fff; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); outline: none; transition: all 0.3s ease;
-    }
-    .form-control:focus { border-color: rgba(99, 102, 241, 0.5); }
-    .btn-container { display: flex; gap: 15px; margin-top: 30px; }
-    .btn-submit { flex: 1; padding: 12px 24px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; }
-    .btn-cancel { flex: 1; padding: 12px 24px; background: rgba(255, 255, 255, 0.05); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="dashboard-wrapper">
     <div class="edit-container">
@@ -53,9 +15,9 @@
                 <label>Year</label>
                 <input type="text" name="year" required class="form-control" value="{{ exam.year }}">
             </div>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-                <input type="checkbox" name="is_active" id="is_active" {% if exam.is_active %}checked{% endif %} style="width:18px; height:18px; accent-color:#10b981;">
-                <label for="is_active" style="color:#e2e8f0; cursor:pointer;">Is Active?</label>
+            <div>
+                <input type="checkbox" name="is_active" id="is_active" {% if exam.is_active %}checked{% endif %}>
+                <label for="is_active">Is Active?</label>
             </div>
             <div class="btn-container">
                 <a href="{% url 'admin_panel:exam_list' %}" class="btn-cancel">Cancel</a>

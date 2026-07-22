@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile', null=True, blank=True)
+    password_plain = models.CharField(max_length=128, blank=True, null=True, verbose_name="Current Password")
     profile_image = models.ImageField(upload_to='staff/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)

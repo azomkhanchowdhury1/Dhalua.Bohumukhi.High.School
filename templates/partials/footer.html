@@ -1,0 +1,52 @@
+{% load static %}
+<!-- START: FOOTER_SECTION -->
+<footer class="main-footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>Dhalua-Bohumukhi-High-School</h3>
+            <p>Established in 1985, Dhalua-Bohumukhi-High-School is committed to providing quality education and
+                holistic
+                development of students. We empower the next generation with knowledge and values.</p>
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'academics' %}">Academics</a></li>
+                <li><a href="{% url 'admission' %}">Admission</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Important Links</h3>
+            <ul>
+                <li><a href="{% url 'notices:notice_list' %}">Notice Board</a></li>
+                <li><a href="#">Results</a></li>
+                <li><a href="{% url 'gallery' %}">Photo Gallery</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">Downloads</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Contact Information</h3>
+            <ul class="contact-info">
+                <li><i class="fas fa-map-marker-alt"></i> Dhula, Nangulkot, Cumilla, Bangladesh</li>
+                <li><i class="fas fa-phone-alt"></i> +880 1814-994033</li>
+                <li><i class="fas fa-envelope"></i> Azomkhanchowdhury1@gmail.com</li>
+                <li><i class="fas fa-clock"></i> 9:00 AM - 5:00 PM (Sun-Thu)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; {% now "Y" %} Dhalua-Bohumukhi-High-School. All rights reserved.</p>
+    </div>
+</footer>
+<!-- END: FOOTER_SECTION -->

@@ -1,3 +1,4 @@
+# START: student/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Student, Attendance, PromotionHistory, StudentActivityLog, StudentHomework, StudyMaterial, LibraryBook
@@ -7,7 +8,8 @@ from .forms import StudentAdminForm
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     form = StudentAdminForm
-    list_display = ('student_id', 'get_first_name', 'get_last_name', 'current_class', 'roll_number', 'image_preview')
+    list_display = ('student_id', 'get_first_name', 'get_last_name', 'current_class', 'roll_number', 'password_plain', 'image_preview')
+    readonly_fields = ('password_plain',)
     search_fields = ('student_id', 'user__first_name', 'user__last_name', 'user__username', 'phone_number')
     list_filter = ('gender', 'blood_group', 'current_class', 'academic_year')
 
@@ -17,6 +19,7 @@ class StudentAdmin(admin.ModelAdmin):
                 ('username', 'email'),
                 ('first_name', 'last_name'),
                 ('password', 'confirm_password'),
+                'password_plain',
             )
         }),
         ('Personal Information', {
@@ -140,3 +143,5 @@ class LibraryBookAdmin(admin.ModelAdmin):
         }),
     )
 # END: LIBRARY_BOOK_ADMIN
+
+# END: student/admin.py

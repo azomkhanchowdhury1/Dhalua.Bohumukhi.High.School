@@ -1,90 +1,128 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block css %}
+{% endblock %}
+
 {% block content %}
 <!-- START: STAFF_EDIT_SECTION -->
 <div class="dashboard-wrapper">
+
     <div class="section-header">
         <h1>{% if mode == 'add' %}Add New Staff{% else %}Edit Staff{% endif %}</h1>
-        <p>{% if mode == 'add' %}Register a new staff member.{% else %}Update staff details for {{ staff.user.first_name }}.{% endif %}</p>
+        <p>{% if mode == 'add' %}Register a new staff member.{% else %}Update staff details for {{ staff.user.first_name
+            }}.{% endif %}</p>
     </div>
-    <div style="max-width:750px; margin:0 auto; background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        {% if messages %}{% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:16px; background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %}; color:{% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %}; border:1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.3){% else %}rgba(16,185,129,0.3){% endif %};">{{ message }}</div>
-        {% endfor %}{% endif %}
+
+    <div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+
+            <div>
+
                 {% if mode == 'add' %}
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Username *</label>
-                    <input type="text" name="username" required style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <label>Username *</label>
+                    <input type="text" name="username" required>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Password *</label>
-                    <input type="password" name="password" required style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Password *</label>
+                    <input type="password" name="password" required>
                 </div>
                 {% endif %}
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">First Name *</label>
-                    <input type="text" name="first_name" value="{{ staff.user.first_name }}" required style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>First Name *</label>
+                    <input type="text" name="first_name" value="{{ staff.user.first_name }}" required>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Last Name</label>
-                    <input type="text" name="last_name" value="{{ staff.user.last_name }}" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" value="{{ staff.user.last_name }}">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Email</label>
-                    <input type="email" name="email" value="{{ staff.user.email }}" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ staff.user.email }}">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Phone Number</label>
-                    <input type="text" name="phone_number" value="{{ staff.phone_number }}" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Phone Number</label>
+                    <input type="text" name="phone_number" value="{{ staff.phone_number }}">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Gender</label>
-                    <select name="gender" style="background:rgba(30,41,59,1); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Gender</label>
+                    <select name="gender">
                         <option value="">-- Select --</option>
-                        <option value="Male" {% if staff.gender == 'Male' %}selected{% endif %}>Male</option>
-                        <option value="Female" {% if staff.gender == 'Female' %}selected{% endif %}>Female</option>
-                        <option value="Other" {% if staff.gender == 'Other' %}selected{% endif %}>Other</option>
+                        <option value="Male" {% if staff.gender=='Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if staff.gender=='Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if staff.gender=='Other' %}selected{% endif %}>Other</option>
                     </select>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Designation</label>
-                    <input type="text" name="designation" value="{{ staff.designation }}" placeholder="e.g. Accountant" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Designation</label>
+                    <input type="text" name="designation" value="{{ staff.designation }}" placeholder="e.g. Accountant">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Department</label>
-                    <input type="text" name="department" value="{{ staff.department }}" placeholder="e.g. Finance" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Department</label>
+                    <input type="text" name="department" value="{{ staff.department }}" placeholder="e.g. Finance">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Salary</label>
-                    <input type="number" step="0.01" name="salary" value="{{ staff.salary }}" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Salary</label>
+                    <input type="number" step="0.01" name="salary" value="{{ staff.salary }}">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Joining Date</label>
-                    <input type="date" name="joining_date" value="{{ staff.joining_date|date:'Y-m-d' }}" style="background:rgba(30,41,59,1); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Joining Date</label>
+                    <input type="date" name="joining_date" value="{{ staff.joining_date|date:'Y-m-d' }}">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Work Shift</label>
-                    <input type="text" name="work_shift" value="{{ staff.work_shift }}" placeholder="e.g. Morning" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Work Shift</label>
+                    <input type="text" name="work_shift" value="{{ staff.work_shift }}" placeholder="e.g. Morning">
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px; grid-column:1/-1;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Address</label>
-                    <textarea name="address" rows="2" style="background:rgba(255,255,255,0.05); color:#fff; padding:13px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); resize:vertical;">{{ staff.address }}</textarea>
+
+                <div>
+                    <label>Address</label>
+                    <textarea name="address" rows="2">{{ staff.address }}</textarea>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px; grid-column:1/-1;">
-                    <label style="color:#94a3b8; font-size:0.82rem;">Profile Image</label>
-                    <input type="file" name="profile_image" accept="image/*" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+                <div>
+                    <label>Profile Image</label>
+                    <input type="file" name="profile_image" accept="image/*">
                 </div>
+
             </div>
-            <div style="display:flex; gap:12px; margin-top:24px;">
-                <button type="submit" class="view-all-btn" style="flex:1;"><i class="fas fa-save"></i> {% if mode == 'add' %}Add Staff{% else %}Save Changes{% endif %}</button>
-                <a href="{% url 'admin_panel:staff_list' %}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(255,255,255,0.05); color:#94a3b8; text-decoration:none; border-radius:12px; border:1px solid rgba(255,255,255,0.1); font-weight:600; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Cancel</a>
+
+            <div>
+                <button type="submit">
+                    <i class="fas fa-save"></i>
+                    {% if mode == 'add' %}Add Staff{% else %}Save Changes{% endif %}
+                </button>
+
+                <a href="{% url 'admin_panel:staff_list' %}">
+                    Cancel
+                </a>
             </div>
+
         </form>
+
     </div>
+
 </div>
 <!-- END: STAFF_EDIT_SECTION -->
 {% endblock %}

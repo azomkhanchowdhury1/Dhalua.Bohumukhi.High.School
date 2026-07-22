@@ -2,85 +2,13 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: ADMISSION_FORM_CSS */
-    .form-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 32px;
-        padding: 3rem;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin-top: 2rem;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .form-group.full-width {
-        grid-column: 1 / -1;
-    }
-
-    .form-group label {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 12px 16px;
-        border-radius: 12px;
-        color: #fff;
-        outline: none;
-        transition: border-color 0.3s;
-    }
-
-    .form-group input:focus {
-        border-color: var(--home-primary);
-    }
-
-    .submit-btn {
-        margin-top: 2rem;
-        width: 100%;
-        padding: 15px;
-        background: var(--home-primary);
-        color: #fff;
-        border: none;
-        border-radius: 14px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .submit-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
-    }
-
-    /* END: ADMISSION_FORM_CSS */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_students.css' %}">
 {% endblock %}
 
 {% block content %}
-<!-- START: ADMISSION_SECTION -->
 <div class="dashboard-wrapper">
-    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+    <div class="section-header">
         <h1>New Student Admission</h1>
         <p>Register a new student to the system.</p>
     </div>
@@ -128,5 +56,4 @@
         </form>
     </div>
 </div>
-<!-- END: ADMISSION_SECTION -->
 {% endblock %}

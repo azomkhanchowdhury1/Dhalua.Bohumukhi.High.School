@@ -1,0 +1,242 @@
+/* ============================================================
+   FEE STRUCTURE — fees_structure.html
+   Theme: "Registry Ledger — Dark Ledger" (নতুন ডিজাইন)
+   ব্যাগরাউন্ড: সাদা পেজ | বক্স: কালো | টেক্সট: মাঝখানে
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.fee-structure-page {
+    background: #ffffff !important;
+    padding: 36px 28px 80px 28px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* ===== PAGE HEADING ===== */
+.fee-structure-page-heading {
+    margin-bottom: 28px;
+    width: 100%;
+    text-align: center;
+}
+
+.fee-structure-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.fee-structure-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #111111;
+    color: #22c55e;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.fee-structure-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+/* ===== PAY BUTTON ===== */
+.fee-pay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #111111;
+    color: #ffffff;
+    padding: 12px 32px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.fee-pay-btn:hover {
+    background: #000000;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+/* ===== WRAPPER — মাঝখানে বসানো ===== */
+.fee-structure-wrapper {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    text-align: center;
+}
+
+.fee-structure-header {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.fee-structure-header h2 {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.fee-structure-header .subtitle {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 2px 0 0;
+}
+
+/* ===== EMPTY STATE CARD — কালো ব্যাগরাউন্ড ===== */
+.fee-structure-empty {
+    background: #111111;
+    border: 1px solid #000000;
+    border-radius: 16px;
+    padding: 3.5rem 1.5rem;
+    text-align: center;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.fee-structure-empty .empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #222222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.fee-structure-empty .empty-icon i {
+    font-size: 26px;
+    color: #9ca3af;
+}
+
+.fee-structure-empty p {
+    font-size: 14px;
+    color: #d1d5db;
+    margin: 0;
+    text-align: center;
+}
+
+/* ===== FEE TABLE CARD — কালো ব্যাগরাউন্ড ===== */
+.fee-table-card {
+    background: #111111;
+    border: 1px solid #000000;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.fee-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.fee-table th {
+    text-align: center;
+    padding: 12px;
+    color: #9ca3af;
+    font-weight: 500;
+    font-size: 12px;
+    border-bottom: 1px solid #2a2a2a;
+    background: #1a1a1a;
+}
+
+.fee-table th:last-child {
+    text-align: center;
+}
+
+.fee-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #2a2a2a;
+    color: #f1f5f9;
+    text-align: center;
+}
+
+.fee-table td:last-child {
+    text-align: center;
+    font-weight: 600;
+    color: #22c55e;
+}
+
+.fee-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.fee-table tbody tr:hover td {
+    background: #1c1c1c;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .dashboard-wrapper.fee-structure-page {
+        padding: 20px 16px 60px 16px !important;
+    }
+
+    .fee-structure-empty {
+        padding: 2.5rem 1rem;
+    }
+}
+
+/* ===== Dark mode override — ডিজাইন অপরিবর্তিত রাখা হলো ===== */
+@media (prefers-color-scheme: dark) {
+
+    .dashboard-wrapper.fee-structure-page {
+        background: #ffffff !important;
+    }
+
+    .fee-structure-header h2 {
+        color: #1a1a1a !important;
+    }
+
+    .fee-structure-header .subtitle {
+        color: #6b6b68 !important;
+    }
+
+    .fee-structure-empty,
+    .fee-table-card {
+        background: #111111 !important;
+        border-color: #000000 !important;
+    }
+
+    .fee-structure-empty p {
+        color: #d1d5db !important;
+    }
+
+    .fee-table th {
+        color: #9ca3af !important;
+        background: #1a1a1a !important;
+    }
+
+    .fee-table td {
+        color: #f1f5f9 !important;
+    }
+
+    .fee-table th,
+    .fee-table td {
+        border-color: #2a2a2a !important;
+    }
+
+    .fee-table tbody tr:hover td {
+        background: #1c1c1c !important;
+    }
+}

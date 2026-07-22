@@ -2,22 +2,8 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-    /* START: PARENT_DASHBOARD_SPECIFIC */
-    .stat-icon.child { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
-    .stat-icon.attendance { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .stat-icon.results { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
-    .stat-icon.fees { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-    
-    .module-header.progress { color: #6366f1; }
-    .module-header.attendance { color: #10b981; }
-    .module-header.finance { color: #f59e0b; }
-    .module-header.exams { color: #8b5cf6; }
-    .module-header.schedule { color: #0ea5e9; }
-    .module-header.communication { color: #ec4899; }
-    /* END: PARENT_DASHBOARD_SPECIFIC */
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_parents.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -162,13 +148,13 @@
                 <li>
                     <a href="{% url 'notices:notice_list' %}"><i class="fas fa-bullhorn"></i> {{ notice.title|truncatechars:20 }}</a>
                     {% if notice.attachment %}
-                    <a href="{{ notice.attachment.url }}" download style="margin-left: auto; color: #94a3b8;"><i class="fas fa-download"></i></a>
+                    <a href="{{ notice.attachment.url }}" download><i class="fas fa-download"></i></a>
                     {% endif %}
                 </li>
                 {% empty %}
                 <li><a href="#"><i class="fas fa-info-circle"></i> No new notices</a></li>
                 {% endfor %}
-                <hr style="opacity: 0.1; margin: 10px 0;">
+                <hr>
                 <li><a href="{% url 'notices:notice_list' %}"><i class="fas fa-star"></i> View All Notices</a></li>
             </ul>
         </div>
@@ -178,26 +164,5 @@
 {% endblock %}
 
 {% block js %}
-<script>
-    // START: DASHBOARD_SCRIPT
-    document.addEventListener('DOMContentLoaded', () => {
-        // Set current date
-        const dateSpan = document.getElementById('dateText');
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateSpan.innerText = new Date().toLocaleDateString('en-US', options);
-
-        // Animation for cards
-        const cards = document.querySelectorAll('.stat-card, .module-card');
-        cards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-    // END: DASHBOARD_SCRIPT
-</script>
+<script src="{% static 'javascript/dashboard_parents.js' %}"></script>
 {% endblock %}

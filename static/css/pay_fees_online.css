@@ -1,0 +1,739 @@
+/* ============================================================
+   PAY FEES ONLINE — fees_pay.html
+   Theme: "Registry Ledger" — Light payment form layout
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.pay-page {
+  background: #ffffff !important;
+  padding: 36px 28px 80px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* ===== PAGE HEADING ===== */
+.pay-page-heading {
+  margin-bottom: 28px;
+  width: 100%;
+  text-align: center;
+}
+
+.pay-page-heading h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pay-page-heading h1 i {
+  width: 42px;
+  height: 42px;
+  background: #eef2ff;
+  color: #6366f1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.pay-page-heading p {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* ===== FLASH MESSAGES ===== */
+.pay-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.pay-alert.success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.pay-alert.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+/* ===== DISABLED SUBMIT BUTTON ===== */
+.pay-submit-btn:disabled,
+.pay-submit-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ===== INPUT NUMBER TYPE ===== */
+.pay-card input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 12px;
+  border: 0.5px solid #b4b2a9;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.pay-card input[type="number"]:focus {
+  outline: none;
+  border-color: #378ADD;
+  box-shadow: 0 0 0 1px #378ADD;
+}
+
+/* ===== SUCCESS OVERLAY (light-modal) ===== */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  z-index: 4000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.success-overlay.active {
+  display: flex;
+}
+
+.success-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: #22c55e;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.success-box h3 {
+  color: #0f172a;
+  font-size: 1.3rem;
+  margin: 0 0 8px;
+  font-weight: 800;
+}
+
+.success-box p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0 0 6px;
+}
+
+.txn-display {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 18px 0;
+  color: #166534;
+  font-size: 0.85rem;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.btn-confirm-pay {
+  width: 100%;
+  background: #6366f1;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-confirm-pay:hover {
+  background: #4f46e5;
+}
+
+/* ===== GATEWAY MODAL OVERLAY ===== */
+.gateway-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.gateway-modal-overlay.active {
+  display: flex;
+}
+
+/* ===== bKASH MODAL (keep brand colors) ===== */
+.bkash-modal {
+  width: 340px;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+}
+
+.bkash-header {
+  background: #e40c7b;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.bkash-header .bk-logo {
+  font-size: 1.8rem;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.bkash-header p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.82rem;
+  margin: 4px 0 0;
+}
+
+.bkash-body {
+  padding: 20px 24px;
+}
+
+.bkash-body .bk-field {
+  margin-bottom: 14px;
+}
+
+.bkash-body .bk-field label {
+  color: #555;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+.bkash-body .bk-field input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  color: #222;
+  box-sizing: border-box;
+  background: #f9f9f9;
+}
+
+.bkash-body .bk-field input:focus {
+  border-color: #e40c7b;
+  outline: none;
+  background: #fff;
+}
+
+.bk-amount-display {
+  background: #fdf0f6;
+  border: 1px solid #f7b3d8;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.bk-amount-display .bk-amt-label {
+  color: #888;
+  font-size: 0.75rem;
+}
+
+.bk-amount-display .bk-amt {
+  color: #e40c7b;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.btn-bkash-pay {
+  width: 100%;
+  background: #e40c7b;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.btn-bkash-pay:hover {
+  background: #c0065f;
+}
+
+.btn-bkash-pay:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel-bkash {
+  width: 100%;
+  background: none;
+  border: 1px solid #ddd;
+  color: #888;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.bk-pin-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.bk-pin-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #e40c7b;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.bk-pin-dot.filled {
+  opacity: 1;
+}
+
+.bk-pin-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.bk-key {
+  background: #f4f4f4;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #222;
+  transition: background 0.1s;
+}
+
+.bk-key:hover {
+  background: #e8e8e8;
+}
+
+.bk-key.bk-del {
+  background: #fdf0f6;
+  color: #e40c7b;
+}
+
+/* ===== BANK TRANSFER MODAL ===== */
+.bank-modal {
+  width: 380px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+}
+
+.bank-header {
+  background: linear-gradient(135deg, #1e40af, #0369a1);
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.bank-header .bk-logo {
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: 800;
+}
+
+.bank-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  margin: 4px 0 0;
+}
+
+.bank-body {
+  padding: 20px 24px;
+}
+
+.bank-info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.bank-info-box .bank-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 13px;
+}
+
+.bank-info-box .bank-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.bank-info-box .bk-lbl {
+  color: #64748b;
+}
+
+.bank-info-box .bk-val {
+  color: #1e3a5f;
+  font-weight: 600;
+}
+
+.bank-body .bk-field {
+  margin-bottom: 14px;
+}
+
+.bank-body .bk-field label {
+  color: #374151;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+.bank-body .bk-field input,
+.bank-body .bk-field select {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #0f172a;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.bank-body .bk-field input:focus,
+.bank-body .bk-field select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  background: #fff;
+}
+
+.bank-body .bk-field select option {
+  background: #fff;
+}
+
+.btn-bank-pay {
+  width: 100%;
+  background: linear-gradient(135deg, #1e40af, #0369a1);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-bank-pay:hover {
+  opacity: 0.88;
+}
+
+.btn-cancel-bank {
+  width: 100%;
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+/* ===== BANK AMOUNT DISPLAY ===== */
+.bank-amt-display {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.bank-amt-display .bk-amt-label {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.bank-amt-display .bk-amt {
+  color: #1d4ed8;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .dashboard-wrapper.pay-page {
+    padding: 20px 16px 60px 16px !important;
+  }
+
+  .bkash-modal,
+  .bank-modal {
+    width: 94vw;
+  }
+
+  .success-box {
+    padding: 28px 20px;
+  }
+}
+
+/* ===== EXISTING STYLES BELOW (মাঝখানে বসানো হয়েছে) ===== */
+.pay-wrapper {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+
+.pay-header {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.pay-header h2 {
+  font-weight: 500;
+  font-size: 16px;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.pay-header .subtitle {
+  font-size: 13px;
+  color: #6b6b68;
+  margin: 2px 0 0;
+}
+
+.pay-card {
+  background: #ffffff;
+  border: 0.5px solid #e5e5e0;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.pay-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.pay-card-title i {
+  font-size: 16px;
+  color: #0c447c;
+}
+
+.pay-card-title p {
+  font-weight: 500;
+  font-size: 15px;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.pay-card .pay-desc {
+  font-size: 13px;
+  color: #6b6b68;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.pay-card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+
+.pay-card label .required {
+  color: #A32D2D;
+}
+
+.pay-card select,
+.pay-card input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 12px;
+  border: 0.5px solid #b4b2a9;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.pay-card select:focus,
+.pay-card input[type="text"]:focus {
+  outline: none;
+  border-color: #378ADD;
+  box-shadow: 0 0 0 1px #378ADD;
+}
+
+/* payment method cards */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.payment-method {
+  border: 0.5px solid #b4b2a9;
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+  cursor: pointer;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.payment-method:hover {
+  border-color: #5F5E5A;
+}
+
+.payment-method i {
+  font-size: 22px;
+  color: #6b6b68;
+}
+
+.payment-method .method-name {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 8px 0 2px;
+  color: #1a1a1a;
+}
+
+.payment-method .method-sub {
+  font-size: 11px;
+  color: #6b6b68;
+  margin: 0;
+}
+
+/* selected state */
+.payment-method.selected {
+  border: 2px solid #378ADD;
+  background: #E6F1FB;
+}
+
+.payment-method.selected i,
+.payment-method.selected .method-name,
+.payment-method.selected .method-sub {
+  color: #0c447c;
+}
+
+.pay-submit-btn {
+  width: 100%;
+  background: #378ADD;
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pay-submit-btn:hover {
+  background: #185FA5;
+}
+
+.pay-history-link {
+  text-align: center;
+  font-size: 13px;
+  margin: 14px 0 0;
+}
+
+.pay-history-link a {
+  color: #378ADD;
+  text-decoration: none;
+}
+
+.pay-history-link a:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode override — ব্যাগরাউন্ড সবসময় সাদা থাকবে */
+@media (prefers-color-scheme: dark) {
+  .dashboard-wrapper.pay-page {
+    background: #ffffff !important;
+  }
+
+  .pay-header h2,
+  .pay-card-title p,
+  .pay-card label,
+  .payment-method .method-name {
+    color: #1a1a1a !important;
+  }
+
+  .pay-header .subtitle,
+  .pay-card .pay-desc,
+  .payment-method .method-sub {
+    color: #6b6b68 !important;
+  }
+
+  .pay-card {
+    background: #ebebeb !important;
+    border-color: #0e0e0e2e !important;
+  }
+
+  .pay-card select,
+  .pay-card input[type="text"],
+  .payment-method {
+    background: #ffffff !important;
+    border-color: #b4b2a9 !important;
+    color: #1a1a1a !important;
+  }
+
+  .payment-method.selected {
+    background: #E6F1FB !important;
+    border-color: #378ADD !important;
+  }
+
+  .payment-method.selected .method-name,
+  .payment-method.selected .method-sub,
+  .payment-method.selected i {
+    color: #0c447c !important;
+  }
+}

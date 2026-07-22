@@ -2,59 +2,119 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_finance.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: FEE_TYPE_EDIT_SECTION -->
+
 <div class="dashboard-wrapper">
+
     <div class="section-header">
         <h1>Edit Fee Type</h1>
         <p>Update fee type name, amount and reminder settings.</p>
     </div>
 
-    <div style="max-width:600px; margin:0 auto; background:rgba(15,23,42,0.6); padding:2.5rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="display:flex; align-items:center; gap:12px; background:rgba(99,102,241,0.08); padding:1rem 1.5rem; border-radius:14px; border:1px solid rgba(99,102,241,0.2); margin-bottom:25px;">
-            <span style="font-size:2rem;">💳</span>
+
+    <div>
+
+        <div>
+
+            <span>💳</span>
+
             <div>
-                <p style="color:#94a3b8; font-size:0.82rem; margin:0;">Editing Fee Type</p>
-                <p style="color:#fff; font-weight:700; margin:0; font-size:1.05rem;">{{ fee_type.name }}</p>
+                <p>Editing Fee Type</p>
+                <p>{{ fee_type.name }}</p>
             </div>
+
         </div>
 
+
+
         <form method="POST">
+
             {% csrf_token %}
-            <div style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
-                <label style="color:#94a3b8; font-size:0.9rem;">Fee Type Name</label>
-                <input type="text" name="name" id="fee_type_name" value="{{ fee_type.name }}" required
-                    style="background:rgba(255,255,255,0.05); color:#fff; padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); font-size:1rem; width:100%; box-sizing:border-box;">
+
+
+            <div>
+
+                <label>Fee Type Name</label>
+
+                <input type="text" name="name" id="fee_type_name" value="{{ fee_type.name }}" required>
+
             </div>
-            <div style="margin-bottom:20px; display:flex; flex-direction:column; gap:8px;">
-                <label style="color:#94a3b8; font-size:0.9rem;">Amount ($)</label>
-                <input type="number" step="0.01" name="amount" id="fee_type_amount" value="{{ fee_type.amount }}" required
-                    style="background:rgba(255,255,255,0.05); color:#fff; padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); font-size:1rem; width:100%; box-sizing:border-box;">
+
+
+
+            <div>
+
+                <label>Amount ($)</label>
+
+                <input type="number" step="0.01" name="amount" id="fee_type_amount" value="{{ fee_type.amount }}" required>
+
             </div>
+
+
 
             <!-- Reminder Section -->
-            <div style="background:rgba(245,158,11,0.07); padding:1.4rem; border-radius:16px; border:1px solid rgba(245,158,11,0.2); margin-bottom:25px;">
-                <label style="display:flex; align-items:center; gap:12px; cursor:pointer; margin-bottom:14px;">
-                    <input type="checkbox" name="is_remembered" id="fee_type_is_remembered" {% if fee_type.is_remembered %}checked{% endif %}
-                        style="width:18px; height:18px; cursor:pointer; accent-color:#f59e0b;">
-                    <span style="color:#f59e0b; font-size:0.95rem; font-weight:600;">📌 Mark as Important / Pinned</span>
+
+            <div>
+
+                <label>
+
+                    <input type="checkbox" name="is_remembered" id="fee_type_is_remembered" {% if fee_type.is_remembered %}checked{% endif %}>
+
+                    <span>
+                        📌 Mark as Important / Pinned
+                    </span>
+
                 </label>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="color:#94a3b8; font-size:0.85rem;">Reminder Note (optional)</label>
-                    <textarea name="reminder_note" id="fee_type_reminder_note" placeholder="e.g. Collect by end of month..." rows="3"
-                        style="background:rgba(255,255,255,0.05); color:#fff; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); resize:vertical; width:100%; box-sizing:border-box; font-family:inherit;">{{ fee_type.reminder_note|default:"" }}</textarea>
+
+
+
+                <div>
+
+                    <label>
+                        Reminder Note (optional)
+                    </label>
+
+
+                    <textarea name="reminder_note" id="fee_type_reminder_note" placeholder="e.g. Collect by end of month..." rows="3">{{ fee_type.reminder_note|default:"" }}</textarea>
+
+
                 </div>
+
+
             </div>
 
-            <div style="display:flex; gap:12px;">
-                <button type="submit" id="update_fee_type_btn" class="view-all-btn" style="flex:1;">✅ Update Fee Type</button>
-                <a href="{% url 'admin_panel:finance_fees' %}" id="cancel_fee_type_edit" style="flex:1; text-align:center; padding:12px; background:rgba(255,255,255,0.05); color:#94a3b8; border-radius:12px; text-decoration:none; display:flex; align-items:center; justify-content:center;">Cancel</a>
+
+
+            <div>
+
+
+                <button type="submit" id="update_fee_type_btn" class="view-all-btn">
+                    ✅ Update Fee Type
+                </button>
+
+
+                <a href="{% url 'admin_panel:finance_fees' %}" id="cancel_fee_type_edit">
+                    Cancel
+                </a>
+
+
             </div>
+
+
         </form>
+
+
     </div>
+
+
 </div>
+
+
 <!-- END: FEE_TYPE_EDIT_SECTION -->
+
 {% endblock %}

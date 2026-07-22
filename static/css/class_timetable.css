@@ -1,0 +1,305 @@
+/* ============================================================
+   CLASS TIMETABLE STYLES — timetable.html
+   Theme: "Registry Ledger" — Light card layout with weekday color indicators.
+   ============================================================ */
+
+/* ===== GLOBAL RESET ===== */
+.dashboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 36px 20px 80px 20px;
+    background: #f2f5fb;
+}
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.timetable-page {
+    background: #f2f5fb;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== PAGE HEADING ===== */
+/* START: PAGE_HEADING */
+.timetable-page-heading {
+    margin-bottom: 28px;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+}
+
+.timetable-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.timetable-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.timetable-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+/* END: PAGE_HEADING */
+
+/* ===== CONTAINER ===== */
+/* START: CONTAINER */
+.timetable-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+/* END: CONTAINER */
+
+/* ===== TIMETABLE LIST ===== */
+/* START: TIMETABLE_LIST */
+.timetable-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.timetable-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 180px 90px;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    background: #ffffff;
+}
+
+.timetable-row:not(:last-child) {
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.timetable-row:hover {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+}
+/* END: TIMETABLE_LIST */
+
+/* ===== DAY CELL ===== */
+/* START: DAY_CELL */
+.day-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    text-transform: capitalize;
+}
+
+.day-accent-bar {
+    width: 4px;
+    height: 24px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* Weekday Accents */
+.timetable-row[data-day="sunday"] .day-accent-bar { background: #ef4444; }
+.timetable-row[data-day="monday"] .day-accent-bar { background: #f97316; }
+.timetable-row[data-day="tuesday"] .day-accent-bar { background: #eab308; }
+.timetable-row[data-day="wednesday"] .day-accent-bar { background: #10b981; }
+.timetable-row[data-day="thursday"] .day-accent-bar { background: #06b6d4; }
+.timetable-row[data-day="friday"] .day-accent-bar { background: #6366f1; }
+.timetable-row[data-day="saturday"] .day-accent-bar { background: #ec4899; }
+/* END: DAY_CELL */
+
+/* ===== SUBJECT CELL ===== */
+/* START: SUBJECT_CELL */
+.subject-cell {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.subject-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subject-badge i {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 8px;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+/* END: SUBJECT_CELL */
+
+/* ===== TIME CELL ===== */
+/* START: TIME_CELL */
+.time-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.time-cell i {
+    color: #6366f1;
+    font-size: 11px;
+}
+/* END: TIME_CELL */
+
+/* ===== ROOM CELL ===== */
+/* START: ROOM_CELL */
+.room-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #7c3aed;
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    padding: 6px 14px;
+    border-radius: 8px;
+    justify-self: end;
+}
+
+.room-cell i {
+    font-size: 11px;
+}
+/* END: ROOM_CELL */
+
+/* ===== TABLE HEADER ===== */
+/* START: TABLE_HEADER */
+.timetable-header-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 180px 90px;
+    gap: 16px;
+    padding: 0 20px 14px 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 10px;
+}
+
+.timetable-header-row span:last-child {
+    text-align: right;
+}
+/* END: TABLE_HEADER */
+
+/* ===== EMPTY STATE ===== */
+/* START: EMPTY_STATE */
+.timetable-empty-state {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.timetable-empty-state i {
+    font-size: 48px;
+    color: #c7d2fe;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.timetable-empty-state p {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.timetable-empty-state span {
+    font-size: 14px;
+    color: #94a3b8;
+}
+/* END: EMPTY_STATE */
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .timetable-container {
+        max-width: 100%;
+    }
+    
+    .timetable-page-heading {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .timetable-header-row {
+        display: none;
+    }
+
+    .timetable-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 10px !important;
+        border-radius: 12px;
+    }
+
+    .timetable-row:not(:last-child) {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .room-cell {
+        justify-self: start;
+    }
+}
+
+@media (max-width: 480px) {
+    .timetable-page-heading h1 {
+        font-size: 22px;
+    }
+    
+    .timetable-container {
+        padding: 16px;
+    }
+}

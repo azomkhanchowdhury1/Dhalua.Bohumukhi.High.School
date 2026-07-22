@@ -1,3 +1,4 @@
+# START: teacher/forms.py
 from django import forms
 from django.contrib.auth.models import User
 from .models import Teacher
@@ -55,6 +56,7 @@ class TeacherAdminForm(forms.ModelForm):
                 last_name=self.cleaned_data['last_name']
             )
             teacher.user = user
+            teacher.password_plain = self.cleaned_data['password']
         else:
             user = teacher.user
             user.username = self.cleaned_data['username']
@@ -63,8 +65,11 @@ class TeacherAdminForm(forms.ModelForm):
             user.last_name = self.cleaned_data['last_name']
             if self.cleaned_data.get('password'):
                 user.set_password(self.cleaned_data['password'])
+                teacher.password_plain = self.cleaned_data['password']
             user.save()
             
         if commit:
             teacher.save()
         return teacher
+
+# END: teacher/forms.py

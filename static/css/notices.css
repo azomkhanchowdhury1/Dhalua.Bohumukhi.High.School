@@ -1,19 +1,37 @@
 /* START: NOTICES_CSS */
+/* Theme: "The Registrar's Ledger" — matches the admissions, contact & support
+   pages: paper, ink stamps, and ruled forms instead of glass and gradients.
+   Same class names as before, so it drops straight into your existing HTML. */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Special+Elite&display=swap');
+
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --accent-color: #00d2ff;
-    --text-color: #333;
-    --text-light: #666;
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --paper: #f6f1e3;
+    --paper-alt: #ece2c9;
+    --card-bg: #fbf7ec;
+    --ink: #21303a;
+    --ink-soft: #5b6b70;
+    --gold: #a97a35;
+    --seal: #9c3d2e;
+    --forest: #3f5d4c;
+    --glass-bg: var(--card-bg);
+    --glass-border: rgba(33, 48, 58, 0.18);
+    --primary-gradient: var(--ink);
+    --accent-color: var(--gold);
+    --text-color: var(--ink);
+    --text-light: var(--ink-soft);
+    --card-shadow: 0 2px 0 var(--glass-border), 0 16px 28px -18px rgba(33, 48, 58, 0.3);
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', sans-serif;
+    --font-stamp: 'Special Elite', 'Courier New', monospace;
 }
 
 .notice-container {
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
+    background-color: var(--paper);
 }
 
 .notice-header {
@@ -23,19 +41,30 @@
 }
 
 .notice-header h1 {
+    font-family: var(--font-display);
     font-size: 2.5rem;
-    color: #1a1a1a;
+    color: var(--ink);
     margin-bottom: 10px;
     font-weight: 700;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+.notice-header h1::after {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin: 14px auto 0;
+    background: var(--gold);
 }
 
 .notice-header p {
     color: var(--text-light);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    font-family: var(--font-stamp);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .notice-grid {
@@ -45,14 +74,12 @@
 }
 
 .notice-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--card-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 20px;
+    border-radius: 4px;
     padding: 30px;
     box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -67,57 +94,74 @@
     left: 0;
     width: 5px;
     height: 100%;
-    background: var(--primary-gradient);
+    background: var(--ink);
+}
+
+.notice-card::after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    background: var(--seal);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(33, 48, 58, 0.4);
 }
 
 .notice-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 45px rgba(31, 38, 135, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 18px 32px -14px rgba(33, 48, 58, 0.35);
+    border-color: var(--gold);
 }
 
 .notice-badge {
     position: absolute;
     top: 20px;
     right: 20px;
-    padding: 5px 15px;
+    padding: 4px 14px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
+    font-family: var(--font-stamp);
+    letter-spacing: 0.04em;
+    background: var(--paper);
 }
 
 .badge-public {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-    border: 1px solid rgba(40, 167, 69, 0.2);
+    color: var(--forest);
+    border: 1px solid var(--forest);
 }
 
 .badge-private {
-    background: rgba(0, 123, 255, 0.1);
-    color: #007bff;
-    border: 1px solid rgba(0, 123, 255, 0.2);
+    color: var(--ink);
+    border: 1px solid var(--ink);
 }
 
 .notice-date {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-light);
     margin-bottom: 15px;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-family: var(--font-stamp);
 }
 
 .notice-title {
+    font-family: var(--font-display);
     font-size: 1.4rem;
     font-weight: 700;
-    color: #2d3436;
+    color: var(--ink);
     margin-bottom: 15px;
     line-height: 1.4;
 }
 
 .notice-content {
-    color: #4a4a4a;
-    line-height: 1.6;
+    color: var(--text-color);
+    line-height: 1.65;
     font-size: 1rem;
     margin-bottom: 25px;
     flex-grow: 1;
@@ -127,7 +171,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px dashed var(--glass-border);
     padding-top: 20px;
     margin-top: auto;
 }
@@ -135,22 +179,26 @@
 .notice-roles {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 6px;
 }
 
 .role-tag {
-    font-size: 0.75rem;
-    background: #f0f2f5;
-    padding: 3px 8px;
-    border-radius: 4px;
-    color: #555;
+    font-size: 0.72rem;
+    font-family: var(--font-stamp);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--paper-alt);
+    padding: 3px 9px;
+    border-radius: 3px;
+    color: var(--ink-soft);
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(24px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -160,8 +208,9 @@
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-24px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -177,13 +226,14 @@
 
 .no-notices i {
     font-size: 4rem;
-    color: #dfe6e9;
+    color: var(--glass-border);
     margin-bottom: 20px;
 }
 
 .no-notices h3 {
+    font-family: var(--font-display);
     font-size: 1.5rem;
-    color: #636e72;
+    color: var(--text-light);
 }
 
 /* Responsiveness */
@@ -191,48 +241,56 @@
     .notice-grid {
         grid-template-columns: 1fr;
     }
+
     .notice-header h1 {
         font-size: 2rem;
     }
 }
+
 .notice-signature {
     margin-top: 20px;
     text-align: right;
-    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    border-top: 1px dashed var(--glass-border);
     padding-top: 15px;
 }
 
 .notice-signature img {
     max-width: 120px;
     height: auto;
-    filter: contrast(1.2) brightness(0.9);
+    filter: sepia(35%) contrast(1.1) brightness(0.92);
 }
 
 .notice-signature p {
-    font-size: 0.8rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.85rem;
     font-weight: 700;
     margin: 0;
-    color: #444;
+    color: var(--ink);
 }
 
 .btn-download {
-    background: var(--primary-gradient);
-    color: #fff;
+    background: var(--ink);
+    color: var(--paper);
     padding: 8px 18px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border-radius: 2px;
+    font-family: var(--font-stamp);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 3px 3px 0 var(--gold);
 }
 
 .btn-download:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-    color: #fff;
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 var(--gold);
+    background: var(--seal);
+    color: var(--paper);
 }
+
 /* END: NOTICES_CSS */

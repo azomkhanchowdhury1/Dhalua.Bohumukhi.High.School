@@ -1,3 +1,4 @@
+# START: accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
@@ -8,7 +9,8 @@ from django.conf import settings
 import random
 from django.http import JsonResponse
 from django.db.models import Q
-from .models import RegistrationRequest, UserProfile, ContactMessage, SupportTicket
+from django.views.decorators.csrf import csrf_exempt
+from .models import RegistrationRequest, UserProfile, ContactMessage, SupportTicket, Testimonial
 from student.models import Student
 from teacher.models import Teacher
 from staff.models import Staff
@@ -183,18 +185,87 @@ from events.models import Event
 from django.utils import timezone
 
 def home_view(request):
+    from django.core.management import call_command
+    try:
+        call_command('makemigrations', 'teacher')
+        call_command('migrate', 'teacher')
+    except Exception as e:
+        print("Auto-migration failed:", e)
+
+    from accounts.models import Testimonial
     public_notices = Notice.objects.filter(is_public=True).order_by('-created_at')[:5]
     today = timezone.now().date()
-    upcoming_events = Event.objects.filter(date__gte=today).order_by('date', 'time')[:2]
-    return render(request, 'home.html', {'public_notices': public_notices, 'upcoming_events': upcoming_events})
+    upcoming_events = Event.objects.filter(date__gte=today).order_by('date', 'time')[:4]
+    testimonials = Testimonial.objects.all()[:6]
+    return render(request, 'home.html', {
+        'public_notices': public_notices,
+        'upcoming_events': upcoming_events,
+        'testimonials': testimonials,
+    })
 
 def about_view(request):
     return render(request, 'about.html')
 
 def academics_view(request):
-    return render(request, 'academics.html')
+    from academics.models import Syllabus, ClassRoutine, SchoolClass
+    science_syllabuses = Syllabus.objects.filter(group='Science').select_related('subject')
+    commerce_syllabuses = Syllabus.objects.filter(group='Commerce').select_related('subject')
+    humanities_syllabuses = Syllabus.objects.filter(group='Humanities').select_related('subject')
+    # Get all school classes and their routines
+    school_classes = SchoolClass.objects.prefetch_related('routines').all()
+    routines = ClassRoutine.objects.select_related('school_class').all()
+    return render(request, 'academics.html', {
+        'science_syllabuses': science_syllabuses,
+        'commerce_syllabuses': commerce_syllabuses,
+        'humanities_syllabuses': humanities_syllabuses,
+        'school_classes': school_classes,
+        'routines': routines,
+    })
 
 def admission_view(request):
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        date_of_birth = request.POST.get('date_of_birth', '')
+        applying_class = request.POST.get('applying_class', '')
+        previous_school = request.POST.get('previous_school', '')
+        parent_name = request.POST.get('parent_name', '')
+        contact_number = request.POST.get('contact_number', '')
+        address = request.POST.get('address', '')
+
+        if not email or not full_name:
+            messages.error(request, "Full name and email are required.")
+            return redirect('admission')
+
+        if RegistrationRequest.objects.filter(email=email).exists():
+            messages.error(request, "An application with this email already exists.")
+            return redirect('admission')
+
+        # Split name
+        name_parts = full_name.split(' ', 1)
+        first_name = name_parts[0]
+        last_name = name_parts[1] if len(name_parts) > 1 else ''
+
+        # Prepare additional info
+        additional_info = (
+            f"Date of Birth: {date_of_birth}\n"
+            f"Applying for Class: {applying_class}\n"
+            f"Previous School: {previous_school}\n"
+            f"Parent's Name: {parent_name}\n"
+            f"Address: {address}"
+        )
+
+        RegistrationRequest.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone_number=contact_number,
+            role='Student',
+            additional_info=additional_info,
+        )
+        messages.success(request, "Your application has been submitted successfully! You will receive login credentials via email after admin approval.")
+        return redirect('admission')
+
     return render(request, 'admission.html')
 
 def contact_view(request):
@@ -240,6 +311,288 @@ def support_view(request):
         return redirect('support')
         
     return render(request, 'support.html')
+
+# START: CHATBOT_VIEW
+@csrf_exempt
+def chatbot_response(request):
+    """
+    Smart rule-based chatbot for Dhula High School.
+    Supports both English and Bengali queries.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    import json
+    try:
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip()
+    except Exception:
+        user_message = request.POST.get('message', '').strip()
+
+    if not user_message:
+        return JsonResponse({'reply': 'দয়া করে একটি প্রশ্ন লিখুন। / Please type a question.'})
+
+    msg = user_message.lower()
+
+    def has(keywords):
+        return any(k in msg for k in keywords)
+
+    # ========== GREETINGS ==========
+    if has(['hello', 'hi', 'hey', 'হ্যালো', 'হেলো', 'হাই', 'সালাম', 'আসসালামু', 'assalam', 'good morning', 'good afternoon', 'good evening', 'শুভ সকাল', 'শুভ বিকাল']):
+        return JsonResponse({'reply': (
+            "👋 আস-সালামু আলাইকুম! স্বাগতম ঢুলা উচ্চ বিদ্যালয়ে!\n\n"
+            "Hello! Welcome to Dhula High School AI Assistant!\n\n"
+            "আমি আপনাকে যা যা বিষয়ে সাহায্য করতে পারি:\n"
+            "• 🏫 ভর্তি তথ্য ও ফি (Admission & Fees)\n"
+            "• 📝 ফরম পূরণ (Online Application Form)\n"
+            "• 📚 সিলেবাস ও কারিকুলাম (Syllabus)\n"
+            "• 📅 ক্লাস রুটিন (Class Routine)\n"
+            "• 🔐 পাসওয়ার্ড ও একাউন্ট (Password/Account)\n"
+            "• 🏛️ স্কুলের ইতিহাস (School History)\n"
+            "• 📞 যোগাযোগ (Contact)\n\n"
+            "কী জানতে চান?"
+        )})
+
+    # ========== FORM / APPLICATION ==========
+    if has(['ফরম', 'form', 'আবেদন ফরম', 'apply form', 'application form', 'ফর্ম']):
+        return JsonResponse({'reply': (
+            "📝 অনলাইন আবেদন ফরম (Online Application Form):\n\n"
+            "ধাপ ১: আমাদের Admissions পেজে যান\n"
+            "ধাপ ২: 'Online Application Form' পূরণ করুন:\n"
+            "  • পূর্ণ নাম (Full Name)\n"
+            "  • ইমেইল ঠিকানা (Email — এখানে লগইন তথ্য পাঠানো হবে)\n"
+            "  • জন্ম তারিখ (Date of Birth)\n"
+            "  • কোন ক্লাসে ভর্তি হতে চান\n"
+            "  • আগের স্কুলের নাম\n"
+            "  • অভিভাবকের নাম ও মোবাইল নম্বর\n"
+            "ধাপ ৩: 'Submit Application' বাটনে ক্লিক করুন\n"
+            "ধাপ ৪: Admin অনুমোদন করলে আপনার Email-এ Username ও Password পাঠানো হবে\n\n"
+            "👉 Admissions পেজে গিয়ে ফরমটি পূরণ করুন!"
+        )})
+
+    # ========== ADMISSION + FEE COMBINED ==========
+    if has(['admission', 'ভর্তি', 'applying', 'apply', 'আবেদন', 'ভর্তি হতে']):
+        if has(['fee', 'cost', 'amount', 'ফি', 'মূল্য', 'টাকা', 'খরচ', 'fees', '&', 'and']):
+            return JsonResponse({'reply': (
+                "🏫 ভর্তি তথ্য ও ফি (Admissions & Fees):\n\n"
+                "📋 ফি কাঠামো:\n"
+                "• ভর্তি ফি: ৳৫,০০০\n"
+                "• মাসিক বেতন: ৳১,২০০\n"
+                "• লাইব্রেরি ও ল্যাব ফি: ৳১,৫০০/বছর\n"
+                "• সহশিক্ষা কার্যক্রম: ৳৮০০/বছর\n\n"
+                "📝 আবেদন পদ্ধতি (৪ ধাপ):\n"
+                "১. অনলাইন ফরম পূরণ করুন\n"
+                "২. ভর্তি পরীক্ষায় অংশ নিন\n"
+                "৩. সাক্ষাৎকার (শর্টলিস্টেড প্রার্থীদের জন্য)\n"
+                "৪. ফি পরিশোধ ও নথিভুক্তি সম্পন্ন করুন\n\n"
+                "📞 আরও জানতে: +880 1607-55120"
+            )})
+
+        if has(['requirement', 'eligible', 'eligibility', 'যোগ্যতা', 'প্রয়োজন', 'লাগবে']):
+            return JsonResponse({'reply': (
+                "📚 ভর্তির যোগ্যতা (Eligibility):\n\n"
+                "• ৬ষ্ঠ শ্রেণি: PEC-তে ন্যূনতম GPA ৪.০০\n"
+                "• ৯ম শ্রেণি বিজ্ঞান: JSC-তে ন্যূনতম GPA ৪.৫০\n"
+                "• ৯ম শ্রেণি বাণিজ্য/মানবিক: JSC-তে ন্যূনতম GPA ৪.০০\n\n"
+                "প্রয়োজনীয় কাগজপত্র:\n"
+                "• জন্ম নিবন্ধন সনদ\n"
+                "• ৪ কপি পাসপোর্ট সাইজ ছবি\n"
+                "• আগের স্কুলের ছাড়পত্র (TC)"
+            )})
+
+        return JsonResponse({'reply': (
+            "🏫 ভর্তি তথ্য (Admission Information):\n\n"
+            "✅ ২০২৬-২০২৭ শিক্ষাবর্ষে ভর্তি চলছে!\n\n"
+            "• ভর্তি ফি: ৳৫,০০০\n"
+            "• মাসিক বেতন: ৳১,২০০\n"
+            "• আবেদন: Admissions পেজে অনলাইন ফরম পূরণ করুন\n"
+            "• Admin অনুমোদনের পর Email-এ Username ও Password পাবেন\n\n"
+            "আরও জানতে চাইলে জিজ্ঞেস করুন:\n"
+            "• ভর্তি ফি কত?\n"
+            "• ফরম কীভাবে পূরণ করব?\n"
+            "• যোগ্যতা কী লাগবে?"
+        )})
+
+    # ========== FEE / PAYMENT (standalone) ==========
+    if has(['fee', 'ফি', 'payment', 'পেমেন্ট', 'টাকা', 'বেতন', 'মাসিক', 'cost', 'খরচ']):
+        return JsonResponse({'reply': (
+            "💰 ফি কাঠামো (Fee Structure):\n\n"
+            "• ভর্তি ফি: ৳৫,০০০\n"
+            "• মাসিক বেতন: ৳১,২০০\n"
+            "• লাইব্রেরি ও ল্যাব: ৳১,৫০০/বছর\n"
+            "• সহশিক্ষা কার্যক্রম: ৳৮০০/বছর\n\n"
+            "শিক্ষার্থীরা Student Portal থেকে পেমেন্ট ইতিহাস দেখতে পারবেন।"
+        )})
+
+    # ========== PASSWORD / LOGIN / ACCOUNT ==========
+    if has(['password', 'পাসওয়ার্ড', 'login', 'লগইন', 'forgot', 'ভুলে', 'reset', 'otp', 'account', 'একাউন্ট']):
+        if has(['forgot', 'reset', 'ভুলে গেছি', 'ভুলে', 'change', 'পরিবর্তন', 'জানি না']):
+            return JsonResponse({'reply': (
+                "🔐 পাসওয়ার্ড রিসেট (Password Reset):\n\n"
+                "ধাপ ১: Login পেজে যান\n"
+                "ধাপ ২: 'Forgot Password' লিংকে ক্লিক করুন\n"
+                "ধাপ ৩: আপনার নিবন্ধিত Email ঠিকানা লিখুন\n"
+                "ধাপ ৪: Email-এ ৬ সংখ্যার OTP কোড পাবেন\n"
+                "ধাপ ৫: OTP দিয়ে নতুন পাসওয়ার্ড সেট করুন\n\n"
+                "📌 Email না পেলে Spam/Junk ফোল্ডার চেক করুন।"
+            )})
+        return JsonResponse({'reply': (
+            "🔑 একাউন্ট ও লগইন সাহায্য:\n\n"
+            "• পাসওয়ার্ড ভুলে গেলে: Login পেজে 'Forgot Password' ক্লিক করুন\n"
+            "• নতুন ব্যবহারকারী: Admin অনুমোদনের পর Email-এ তথ্য পাবেন\n"
+            "• Username জানতে: Admin অনুমোদনের সময় পাঠানো Email চেক করুন\n"
+            "• অন্য সমস্যায়: Support Ticket খুলুন"
+        )})
+
+    # ========== CLASS ROUTINE ==========
+    if has(['routine', 'রুটিন', 'schedule', 'সময়সূচি', 'timetable', 'time table', 'ক্লাস রুটিন', 'class routine']):
+        return JsonResponse({'reply': (
+            "📅 ক্লাস রুটিন (Class Routine):\n\n"
+            "• Academics পেজে যান\n"
+            "• 'Class Routine' সেকশনে স্ক্রল করুন\n"
+            "• ড্রপডাউন থেকে আপনার ক্লাস সিলেক্ট করুন (৬ষ্ঠ থেকে ১০ম)\n"
+            "• রুটিন দেখুন এবং Download করুন\n\n"
+            "📌 রুটিন Admin-এর মাধ্যমে আপলোড ও আপডেট হয়।"
+        )})
+
+    # ========== SYLLABUS / CURRICULUM ==========
+    if has(['syllabus', 'সিলেবাস', 'curriculum', 'কারিকুলাম', 'subject', 'বিষয়', 'পাঠ্যক্রম']):
+        if has(['science', 'বিজ্ঞান']):
+            return JsonResponse({'reply': (
+                "🔬 বিজ্ঞান গ্রুপ সিলেবাস (Science):\n\n"
+                "বিষয়সমূহ: পদার্থ, রসায়ন, জীববিজ্ঞান, উচ্চতর গণিত\n\n"
+                "সিলেবাস দেখতে: Academics → Curriculum & Syllabus → Science → View Syllabus\n"
+                "সেখান থেকে Download করা যাবে।"
+            )})
+        if has(['commerce', 'বাণিজ্য', 'ব্যবসা', 'business']):
+            return JsonResponse({'reply': (
+                "💼 বাণিজ্য গ্রুপ সিলেবাস (Commerce):\n\n"
+                "বিষয়সমূহ: হিসাববিজ্ঞান, ফিন্যান্স, ব্যবসায় উদ্যোগ\n\n"
+                "সিলেবাস দেখতে: Academics → Curriculum & Syllabus → Commerce → View Syllabus"
+            )})
+        if has(['humanities', 'মানবিক', 'arts', 'কলা']):
+            return JsonResponse({'reply': (
+                "🎨 মানবিক গ্রুপ সিলেবাস (Humanities):\n\n"
+                "বিষয়সমূহ: ইতিহাস, ভূগোল, পৌরনীতি, অর্থনীতি\n\n"
+                "সিলেবাস দেখতে: Academics → Curriculum & Syllabus → Humanities → View Syllabus"
+            )})
+        return JsonResponse({'reply': (
+            "📚 সিলেবাস ও কারিকুলাম (Syllabus & Curriculum):\n\n"
+            "আমাদের ৩টি গ্রুপ আছে:\n"
+            "• 🔬 বিজ্ঞান — পদার্থ, রসায়ন, জীববিজ্ঞান, উচ্চতর গণিত\n"
+            "• 💼 বাণিজ্য — হিসাববিজ্ঞান, ফিন্যান্স, ব্যবসায় উদ্যোগ\n"
+            "• 🎨 মানবিক — ইতিহাস, ভূগোল, পৌরনীতি, অর্থনীতি\n\n"
+            "Academics পেজে গিয়ে 'View Syllabus' ক্লিক করুন।"
+        )})
+
+    # ========== SCHOOL HISTORY ==========
+    if has(['history', 'ইতিহাস', 'founded', 'established', 'প্রতিষ্ঠা', 'পুরনো', 'কত বছর', 'when was']):
+        return JsonResponse({'reply': (
+            "🏛️ ঢুলা উচ্চ বিদ্যালয়ের ইতিহাস:\n\n"
+            "• প্রতিষ্ঠা: ১৯৮৫ সাল — মানসম্পন্ন শিক্ষা প্রদানের লক্ষ্যে\n"
+            "• ১৯৯৮: বিজ্ঞান বিভাগ চালু হয়\n"
+            "• ২০১০: ডিজিটাল ক্যাম্পাস কার্যক্রম শুরু\n"
+            "• ২০২৩: জাতীয় শিক্ষা শ্রেষ্ঠত্ব পুরস্কার লাভ\n\n"
+            "বর্তমানে: ১৫০০+ শিক্ষার্থী, ১২০+ শিক্ষক, ৯৮% পাসের হার!"
+        )})
+
+    # ========== PRINCIPAL ==========
+    if has(['principal', 'headmaster', 'প্রধান শিক্ষক', 'প্রিন্সিপাল', 'head master']):
+        return JsonResponse({'reply': (
+            "👨‍💼 প্রধান শিক্ষক:\n\n"
+            "Dr. A. K. M. Rahman\n"
+            '"শিক্ষা শুধু একাডেমিক নয়; এটি চরিত্র গঠন, সহনশীলতা এবং সহমর্মিতার বিষয়।"\n\n'
+            "কার্যালয়ের সময়: রবি–বৃহস্পতি, সকাল ৯টা – বিকাল ৫টা"
+        )})
+
+    # ========== GRADING / EXAM / RESULT ==========
+    if has(['grade', 'গ্রেড', 'gpa', 'marks', 'নম্বর', 'exam', 'পরীক্ষা', 'result', 'ফলাফল', 'marking', 'pass']):
+        return JsonResponse({'reply': (
+            "📊 গ্রেডিং পদ্ধতি (Grading System):\n\n"
+            "• A+ (৮০–১০০) → GPA ৫.০০\n"
+            "• A  (৭০–৭৯)  → GPA ৪.০০\n"
+            "• A- (৬০–৬৯)  → GPA ৩.৫০\n"
+            "• B  (৫০–৫৯)  → GPA ৩.০০\n"
+            "• C  (৪০–৪৯)  → GPA ২.০০\n"
+            "• D  (৩৩–৩৯)  → GPA ১.০০\n"
+            "• F  (০–৩২)   → GPA ০.০০\n\n"
+            "মূল্যায়ন: সাপ্তাহিক পরীক্ষা (২০%) + অ্যাসাইনমেন্ট (১০%) + অর্ধবার্ষিক (৩০%) + বার্ষিক (৪০%)"
+        )})
+
+    # ========== CONTACT ==========
+    if has(['contact', 'যোগাযোগ', 'phone', 'ফোন', 'number', 'নম্বর', 'address', 'ঠিকানা', 'office', 'অফিস', 'কল']):
+        return JsonResponse({'reply': (
+            "📞 যোগাযোগের তথ্য (Contact Information):\n\n"
+            "• ফোন: +880 1607-55120\n"
+            "• অফিসের সময়: রবি–বৃহস্পতি, সকাল ৯টা – বিকাল ৫টা\n"
+            "• Contact পেজে ফর্ম পূরণ করে বার্তা পাঠাতে পারেন\n"
+            "• সমস্যার জন্য Support Ticket খুলুন"
+        )})
+
+    # ========== STATISTICS ==========
+    if has(['student', 'শিক্ষার্থী', 'ছাত্র', 'teacher', 'শিক্ষক', 'award', 'পুরস্কার', 'statistics', 'তথ্য', 'কতজন']):
+        return JsonResponse({'reply': (
+            "📈 স্কুলের সংক্ষিপ্ত তথ্য:\n\n"
+            "• মোট শিক্ষার্থী: ১,৫০০+\n"
+            "• মোট শিক্ষক: ১২০+\n"
+            "• পাসের হার: ৯৮%\n"
+            "• জাতীয় পুরস্কার: ২৫+\n"
+            "• প্রতিষ্ঠাকাল: ১৯৮৫\n"
+            "• সর্বশেষ পুরস্কার: জাতীয় শিক্ষা শ্রেষ্ঠত্ব পুরস্কার (২০২৩)"
+        )})
+
+    # ========== NOTICE / EVENT ==========
+    if has(['notice', 'নোটিশ', 'event', 'ইভেন্ট', 'news', 'খবর', 'announcement', 'ঘোষণা']):
+        return JsonResponse({'reply': (
+            "📢 নোটিশ ও ইভেন্ট:\n\n"
+            "• সর্বশেষ নোটিশ Home পেজে দেখানো হয়\n"
+            "• লগইন করা ব্যবহারকারীরা তাদের ভূমিকা অনুযায়ী নোটিশ পাবেন\n"
+            "• আসন্ন ইভেন্ট Home পেজে প্রদর্শিত হয়"
+        )})
+
+    # ========== TECHNICAL ==========
+    if has(['technical', 'bug', 'error', 'problem', 'সমস্যা', 'issue', 'not working', 'কাজ করছে না', 'হচ্ছে না']):
+        return JsonResponse({'reply': (
+            "🛠️ প্রযুক্তিগত সমস্যা:\n\n"
+            "• পেজ রিফ্রেশ করুন (Ctrl+F5)\n"
+            "• Browser Cache পরিষ্কার করুন\n"
+            "• আধুনিক ব্রাউজার ব্যবহার করুন (Chrome, Firefox, Edge)\n"
+            "• সমস্যা থাকলে Support Ticket খুলুন\n"
+            "• জরুরি: +880 1607-55120"
+        )})
+
+    # ========== THANKS ==========
+    if has(['thank', 'thanks', 'ধন্যবাদ', 'আপনাকে', 'আপনারে', 'shukriya']):
+        return JsonResponse({'reply': "😊 স্বাগতম! আর কিছু জানার থাকলে জিজ্ঞেস করুন। / You're welcome! Feel free to ask anything else!"})
+
+    # ========== WHAT CAN YOU DO ==========
+    if has(['what can', 'কী কী', 'কি করতে', 'কি বলতে', 'help', 'সাহায্য', 'সহায়তা']):
+        return JsonResponse({'reply': (
+            "🤖 আমি আপনাকে যা যা বিষয়ে সাহায্য করতে পারি:\n\n"
+            "• 📝 ফরম পূরণ ও আবেদন\n"
+            "• 🏫 ভর্তি তথ্য ও ফি\n"
+            "• 📚 সিলেবাস (বিজ্ঞান/বাণিজ্য/মানবিক)\n"
+            "• 📅 ক্লাস রুটিন (৬ষ্ঠ–১০ম শ্রেণি)\n"
+            "• 🔐 পাসওয়ার্ড রিসেট ও একাউন্ট সমস্যা\n"
+            "• 🏛️ স্কুলের ইতিহাস ও তথ্য\n"
+            "• 📊 গ্রেডিং পদ্ধতি\n"
+            "• 📞 যোগাযোগ তথ্য\n\n"
+            "যেকোনো একটি বিষয়ে জিজ্ঞেস করুন!"
+        )})
+
+    # ========== DEFAULT FALLBACK ==========
+    return JsonResponse({'reply': (
+        "🤖 আমি আপনার প্রশ্নটি বুঝতে পারিনি।\n\n"
+        "আপনি এভাবে জিজ্ঞেস করতে পারেন:\n"
+        "• 'ভর্তি ফি কত?' বা 'admission fee'\n"
+        "• 'ফরম কীভাবে পূরণ করব?' বা 'how to fill form'\n"
+        "• 'ক্লাস রুটিন' বা 'class routine'\n"
+        "• 'পাসওয়ার্ড ভুলে গেছি' বা 'forgot password'\n"
+        "• 'সিলেবাস' বা 'syllabus'\n\n"
+        "অথবা Support Ticket খুলুন বিস্তারিত সাহায্যের জন্য।"
+    )})
+# END: CHATBOT_VIEW
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -444,6 +797,20 @@ def settings_view(request):
                 if new_pw == confirm_pw:
                     user.set_password(new_pw)
                     user.save()
+                    
+                    if hasattr(user, 'student_profile'):
+                        user.student_profile.password_plain = new_pw
+                        user.student_profile.save()
+                    elif hasattr(user, 'teacher_profile'):
+                        user.teacher_profile.password_plain = new_pw
+                        user.teacher_profile.save()
+                    elif hasattr(user, 'staff_profile'):
+                        user.staff_profile.password_plain = new_pw
+                        user.staff_profile.save()
+                    elif hasattr(user, 'parent_profile'):
+                        user.parent_profile.password_plain = new_pw
+                        user.parent_profile.save()
+                        
                     auth_login(request, user) # Re-login to keep session active
                     messages.success(request, "Password updated successfully!")
                 else:
@@ -549,6 +916,19 @@ def reset_password_view(request):
                 user.set_password(new_password)
                 user.save()
                 
+                if hasattr(user, 'student_profile'):
+                    user.student_profile.password_plain = new_password
+                    user.student_profile.save()
+                elif hasattr(user, 'teacher_profile'):
+                    user.teacher_profile.password_plain = new_password
+                    user.teacher_profile.save()
+                elif hasattr(user, 'staff_profile'):
+                    user.staff_profile.password_plain = new_password
+                    user.staff_profile.save()
+                elif hasattr(user, 'parent_profile'):
+                    user.parent_profile.password_plain = new_password
+                    user.parent_profile.save()
+                
                 # Clear session
                 del request.session['reset_email']
                 del request.session['otp_verified']
@@ -561,3 +941,5 @@ def reset_password_view(request):
             messages.error(request, "Passwords do not match.")
             
     return render(request, 'accounts/reset_password.html')
+
+# END: accounts/views.py

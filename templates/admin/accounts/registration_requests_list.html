@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
 {% block content %}
 <!-- START: ACCOUNTS_REGISTRATION_REQUESTS_LIST_SECTION -->
 <div class="dashboard-wrapper">
@@ -14,75 +10,85 @@
     </div>
 
     {% if messages %}
-    <div style="margin-bottom:20px;">
+    <div>
         {% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.2);
-            {% if message.tags == 'error' %}background:rgba(239,68,68,0.15); color:#f87171; border-color:rgba(239,68,68,0.3);{% elif message.tags == 'warning' %}background:rgba(234,179,8,0.15); color:#facc15; border-color:rgba(234,179,8,0.3);{% else %}background:rgba(16,185,129,0.15); color:#34d399; border-color:rgba(16,185,129,0.3);{% endif %}">
-            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i> {{ message }}
+        <div>
+            <i
+                class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+            {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 style="color:#fff; margin:0;"><i class="fas fa-list" style="color:#6366f1;"></i> Requests List</h3>
+    <div>
+        <div>
+            <h3><i class="fas fa-list"></i> Requests List</h3>
         </div>
-        
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+        <div>
+            <table>
                 <thead>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; text-align:left;">
-                        <th style="padding:15px; font-weight:500;">ID</th>
-                        <th style="padding:15px; font-weight:500;">Name</th>
-                        <th style="padding:15px; font-weight:500;">Email / Phone</th>
-                        <th style="padding:15px; font-weight:500;">Role</th>
-                        <th style="padding:15px; font-weight:500;">Status</th>
-                        <th style="padding:15px; font-weight:500;">Remember</th>
-                        <th style="padding:15px; font-weight:500; text-align:right;">Actions</th>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email / Phone</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Remember</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for req in requests %}
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.3s; {% if req.is_remembered %}background:rgba(234,179,8,0.05);{% endif %}" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='{% if req.is_remembered %}rgba(234,179,8,0.05){% else %}transparent{% endif %}'">
-                        <td style="padding:15px;">#{{ req.id }}</td>
-                        <td style="padding:15px;">{{ req.first_name }} {{ req.last_name }}</td>
-                        <td style="padding:15px;">{{ req.email }}<br><small style="color:#94a3b8;">{{ req.phone_number }}</small></td>
-                        <td style="padding:15px;">{{ req.role }}</td>
-                        <td style="padding:15px;">
+                    <tr>
+                        <td>#{{ req.id }}</td>
+                        <td>{{ req.first_name }} {{ req.last_name }}</td>
+                        <td>
+                            {{ req.email }}<br>
+                            <small>{{ req.phone_number }}</small>
+                        </td>
+                        <td>{{ req.role }}</td>
+                        <td>
                             {% if req.is_approved %}
-                            <span style="background:rgba(16,185,129,0.2); color:#34d399; padding:4px 8px; border-radius:6px; font-size:0.8rem;">Approved</span>
+                            <span>Approved</span>
                             {% elif req.is_rejected %}
-                            <span style="background:rgba(239,68,68,0.2); color:#f87171; padding:4px 8px; border-radius:6px; font-size:0.8rem;">Rejected</span>
+                            <span>Rejected</span>
                             {% else %}
-                            <span style="background:rgba(234,179,8,0.2); color:#facc15; padding:4px 8px; border-radius:6px; font-size:0.8rem;">Pending</span>
+                            <span>Pending</span>
                             {% endif %}
                         </td>
-                        <td style="padding:15px;">
-                            <a href="{% url 'admin_panel:registration_requests_toggle_remember' req.id %}" style="color:{% if req.is_remembered %}#eab308{% else %}#64748b{% endif %}; text-decoration:none;">
+                        <td>
+                            <a href="{% url 'admin_panel:registration_requests_toggle_remember' req.id %}">
                                 <i class="fas fa-star"></i>
                             </a>
                         </td>
-                        <td style="padding:15px; text-align:right; display:flex; justify-content:flex-end; gap:10px;">
+                        <td>
                             {% if not req.is_approved %}
-                            <form method="POST" action="{% url 'admin_panel:registration_requests' %}" style="margin:0; display:flex; gap:5px;">
+                            <form method="POST" action="{% url 'admin_panel:registration_requests' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="req_id" value="{{ req.id }}">
-                                <button type="submit" name="action" value="approve" style="background:rgba(16,185,129,0.15); color:#34d399; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;" title="Approve">
+                                <button type="submit" name="action" value="approve" title="Approve">
                                     <i class="fas fa-check"></i>
                                 </button>
-                                <button type="submit" name="action" value="reject" style="background:rgba(239,68,68,0.15); color:#f87171; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;" title="Reject">
+                                <button type="submit" name="action" value="reject" title="Reject">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </form>
                             {% endif %}
-                            <a href="{% url 'admin_panel:registration_requests_edit' req.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'admin_panel:registration_requests_delete' req.id %}" style="background:rgba(239,68,68,0.15); color:#f87171; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-trash"></i></a>
+
+                            <a href="{% url 'admin_panel:registration_requests_edit' req.id %}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <a href="{% url 'admin_panel:registration_requests_delete' req.id %}">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" style="padding:20px; text-align:center; color:#94a3b8;">No requests found.</td>
+                        <td colspan="7">No requests found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

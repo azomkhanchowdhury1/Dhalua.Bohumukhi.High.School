@@ -1,165 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<style>
-/* Premium Event Edit Styles */
-@keyframes ev-fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.ev-wrapper {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 24px;
-    animation: ev-fadeUp 0.5s ease-out;
-}
-.ev-header {
-    text-align: center;
-    margin-bottom: 35px;
-    position: relative;
-}
-.ev-header h1 {
-    font-size: 32px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #ffffff, #a5b4fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.ev-header p { color: #94a3b8; font-size: 15px; }
-.ev-header::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, #6366f1, #ec4899);
-    margin: 16px auto 0;
-    border-radius: 3px;
-}
-
-.ev-form-container {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
-    padding: 40px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.ev-form-group { margin-bottom: 24px; }
-.ev-label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: #cbd5e1;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.ev-label .req { color: #ef4444; }
-
-.ev-input, .ev-textarea {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    color: #f8fafc;
-    font-size: 15px;
-    font-family: inherit;
-    padding: 16px;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
-.ev-textarea { resize: vertical; min-height: 120px; }
-.ev-input:focus, .ev-textarea:focus {
-    outline: none;
-    border-color: #6366f1;
-    background: rgba(99, 102, 241, 0.05);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-}
-
-.ev-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-/* File Upload */
-.ev-file-upload {
-    background: rgba(0, 0, 0, 0.15);
-    border: 2px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-.ev-file-upload:hover {
-    border-color: #6366f1;
-    background: rgba(99, 102, 241, 0.05);
-}
-.ev-file-upload i {
-    font-size: 30px;
-    color: #818cf8;
-    margin-bottom: 10px;
-    display: block;
-}
-.ev-file-upload .file-text { font-size: 14px; color: #94a3b8; font-weight: 500; }
-.ev-file-upload input[type="file"] {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0; cursor: pointer;
-}
-
-/* Actions */
-.ev-actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 35px;
-    padding-top: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-.ev-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    border: none;
-}
-.ev-btn-submit {
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-}
-.ev-btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
-}
-.ev-btn-cancel {
-    background: rgba(255, 255, 255, 0.05);
-    color: #cbd5e1;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.ev-btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-}
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- START: EVENT_EDIT_SECTION -->
 <div class="ev-wrapper">
@@ -171,7 +12,7 @@
     <div class="ev-form-container">
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            
+
             <div class="ev-form-group">
                 <label class="ev-label">Event Title <span class="req">*</span></label>
                 <input type="text" name="title" value="{{ event.title }}" class="ev-input" required placeholder="e.g. Annual Science Fair">
@@ -200,14 +41,26 @@
 
             <div class="ev-form-group">
                 <label class="ev-label">Event Cover Image</label>
-                <div class="ev-file-upload">
-                    <input type="file" name="image" accept="image/*" onchange="this.nextElementSibling.nextElementSibling.textContent = this.files[0]?.name || 'Click or drag image to upload'">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <div class="file-text">Click or drag image to upload</div>
-                </div>
+
                 {% if event.image %}
-                    <p style="color:#34d399; font-size:13px; margin-top:10px;"><i class="fas fa-check-circle"></i> Currently: {{ event.image.name }}</p>
+                <div>
+                    <img src="{{ event.image.url }}" alt="Current Event Image">
+                    <div>
+                        <span>
+                            <i class="fas fa-image"></i>বর্তমান ছবি — নতুন ছবি আপলোড করলে পরিবর্তন হবে
+                        </span>
+                    </div>
+                </div>
                 {% endif %}
+
+                <div class="ev-file-upload" id="dropZone">
+                    <input type="file" name="image" accept="image/*" id="imageInput" onchange="previewImage(this)">
+                    <i class="fas fa-cloud-upload-alt" id="uploadIcon"></i>
+                    <div class="file-text" id="uploadText">
+                        {% if event.image %}নতুন ছবি আপলোড করতে এখানে ক্লিক করুন{% else %}Click or drag image to upload{% endif %}
+                    </div>
+                    <img id="imgPreview" src="" alt="Preview">
+                </div>
             </div>
 
             <div class="ev-actions">
@@ -222,4 +75,25 @@
     </div>
 </div>
 <!-- END: EVENT_EDIT_SECTION -->
+{% endblock %}
+
+{% block js %}
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imgPreview');
+    const icon = document.getElementById('uploadIcon');
+    const text = document.getElementById('uploadText');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            icon.style.display = 'none';
+            text.style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 {% endblock %}

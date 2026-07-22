@@ -1,0 +1,233 @@
+/* ============================================================
+   ATTENDANCE DETAIL — attendance_detail.html
+   Theme: "Registry Ledger" — Light subject progress bars
+   ============================================================ */
+
+/* ===== PAGE WRAPPER ===== */
+.dashboard-wrapper.attendance-page {
+    background: #f2f5fb !important;
+    padding: 36px 28px 80px 28px !important;
+}
+
+/* ===== PAGE HEADING ===== */
+.attendance-page-heading {
+    margin-bottom: 28px;
+}
+
+.attendance-page-heading h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.attendance-page-heading h1 i {
+    width: 42px;
+    height: 42px;
+    background: #f0fdf4;
+    color: #16a34a;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.attendance-page-heading p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* ===== BACK BUTTON ===== */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.btn-back:hover {
+    background: #f8fafc;
+    border-color: #c7d2fe;
+    color: #6366f1;
+    text-decoration: none;
+}
+
+/* ===== SUBJECT LIST ===== */
+.subject-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+/* ===== SUBJECT ROW CARD ===== */
+.subject-row {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+}
+
+.subject-row:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.06);
+}
+
+/* ===== SUBJECT ICON ===== */
+.subject-icon {
+    width: 44px;
+    height: 44px;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* ===== SUBJECT INFO ===== */
+.subject-info {
+    min-width: 160px;
+}
+
+.subject-name {
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.subject-meta {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s ease;
+}
+
+/* ===== PERCENTAGE BADGE ===== */
+.pct-badge {
+    min-width: 52px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+/* Color variants — fill and text */
+.color-high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.color-high.pct-badge { color: #16a34a; }
+
+.color-mid { background: linear-gradient(90deg, #d97706, #fcd34d); }
+.color-mid.pct-badge { color: #d97706; }
+
+.color-low { background: linear-gradient(90deg, #dc2626, #f87171); }
+.color-low.pct-badge { color: #dc2626; }
+
+/* ===== LEGEND ===== */
+.attendance-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.legend-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ===== EMPTY STATE ===== */
+.attendance-empty {
+    text-align: center;
+    padding: 70px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+}
+
+.attendance-empty i {
+    font-size: 48px;
+    color: #c7d2fe;
+    display: block;
+    margin-bottom: 18px;
+}
+
+.attendance-empty h3 {
+    color: #334155;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.attendance-empty p {
+    color: #94a3b8;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .dashboard-wrapper.attendance-page {
+        padding: 20px 16px 60px 16px !important;
+    }
+
+    .subject-row {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .subject-info {
+        min-width: 120px;
+    }
+
+    .progress-bar-wrap {
+        order: 3;
+        flex-basis: 100%;
+    }
+}

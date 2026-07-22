@@ -2,29 +2,26 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock %}
 
 {% block content %}
 <!-- START: NOTICE_LIST_SECTION -->
 <div class="dashboard-wrapper">
-    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="section-header">
         <div>
             <h1>Notices & Announcements</h1>
             <p>Manage and publish notices for students, teachers, staff, and parents.</p>
         </div>
-        <a href="{% url 'admin_panel:notice_add' %}" class="view-all-btn" style="text-decoration:none; display:flex; align-items:center; gap:8px;">
+
+        <a href="{% url 'admin_panel:notice_add' %}" class="view-all-btn">
             <i class="fas fa-plus"></i> Create Notice
         </a>
     </div>
 
     {% if messages %}
-    <div style="margin-bottom:20px;">
+    <div>
         {% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px;
-            background:{% if message.tags == 'error' %}rgba(239,68,68,0.15){% else %}rgba(16,185,129,0.15){% endif %};
-            color:{% if message.tags == 'error' %}#f87171{% else %}#34d399{% endif %};
-            border:1px solid {% if message.tags == 'error' %}rgba(239,68,68,0.3){% else %}rgba(16,185,129,0.3){% endif %};">
+        <div>
             <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
             {{ message }}
         </div>
@@ -32,70 +29,85 @@
     </div>
     {% endif %}
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; color:#fff;">
+    <div>
+        <div>
+            <table>
                 <thead>
-                    <tr style="text-align:left; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
-                        <th style="padding:15px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">Date</th>
-                        <th style="padding:15px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">Title</th>
-                        <th style="padding:15px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">Target Audience</th>
-                        <th style="padding:15px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em;">Visibility</th>
-                        <th style="padding:15px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; text-align:right;">Actions</th>
+                    <tr>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Target Audience</th>
+                        <th>Visibility</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for notice in notices %}
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                        <td style="padding:15px; color:#94a3b8; font-size:0.9rem; white-space:nowrap;">
+                    <tr>
+                        <td>
                             {{ notice.created_at|date:"M d, Y" }}
                         </td>
-                        <td style="padding:15px; font-weight:600;">
+
+                        <td>
                             {{ notice.title }}
                         </td>
-                        <td style="padding:15px;">
-                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+
+                        <td>
+                            <div>
                                 {% if notice.target_student %}
-                                <span style="background:rgba(59,130,246,0.15); color:#60a5fa; padding:4px 8px; border-radius:6px; font-size:0.75rem; border:1px solid rgba(59,130,246,0.2);">Student</span>
+                                <span>Student</span>
                                 {% endif %}
+
                                 {% if notice.target_teacher %}
-                                <span style="background:rgba(16,185,129,0.15); color:#34d399; padding:4px 8px; border-radius:6px; font-size:0.75rem; border:1px solid rgba(16,185,129,0.2);">Teacher</span>
+                                <span>Teacher</span>
                                 {% endif %}
+
                                 {% if notice.target_staff %}
-                                <span style="background:rgba(245,158,11,0.15); color:#fbbf24; padding:4px 8px; border-radius:6px; font-size:0.75rem; border:1px solid rgba(245,158,11,0.2);">Staff</span>
+                                <span>Staff</span>
                                 {% endif %}
+
                                 {% if notice.target_parent %}
-                                <span style="background:rgba(139,92,246,0.15); color:#a78bfa; padding:4px 8px; border-radius:6px; font-size:0.75rem; border:1px solid rgba(139,92,246,0.2);">Parent</span>
+                                <span>Parent</span>
                                 {% endif %}
                             </div>
                         </td>
-                        <td style="padding:15px;">
+
+                        <td>
                             {% if notice.is_public %}
-                                <span style="color:#10b981; display:flex; align-items:center; gap:6px; font-size:0.85rem;"><i class="fas fa-globe"></i> Public</span>
+                                <span>
+                                    <i class="fas fa-globe"></i> Public
+                                </span>
                             {% else %}
-                                <span style="color:#f43f5e; display:flex; align-items:center; gap:6px; font-size:0.85rem;"><i class="fas fa-lock"></i> Private</span>
+                                <span>
+                                    <i class="fas fa-lock"></i> Private
+                                </span>
                             {% endif %}
                         </td>
-                        <td style="padding:15px; text-align:right;">
-                            <div style="display:flex; gap:8px; justify-content:flex-end;">
+
+                        <td>
+                            <div>
                                 {% if notice.attachment %}
-                                <a href="{{ notice.attachment.url }}" target="_blank" style="background:rgba(14,165,233,0.15); color:#38bdf8; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='rgba(14,165,233,0.25)'" onmouseout="this.style.background='rgba(14,165,233,0.15)'">
+                                <a href="{{ notice.attachment.url }}" target="_blank">
                                     <i class="fas fa-download"></i>
                                 </a>
                                 {% endif %}
-                                <a href="{% url 'admin_panel:notice_edit' notice.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'">
+
+                                <a href="{% url 'admin_panel:notice_edit' notice.id %}">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <a href="{% url 'admin_panel:notice_delete' notice.id %}" style="background:rgba(239,68,68,0.15); color:#f87171; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+
+                                <a href="{% url 'admin_panel:notice_delete' notice.id %}">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
                         </td>
                     </tr>
+
                     {% empty %}
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:50px; color:#64748b;">
-                            <i class="fas fa-bullhorn" style="font-size:2.5rem; margin-bottom:15px; opacity:0.5;"></i>
+                        <td colspan="5">
+                            <i class="fas fa-bullhorn"></i>
                             <p>No notices found. Create one to get started.</p>
                         </td>
                     </tr>

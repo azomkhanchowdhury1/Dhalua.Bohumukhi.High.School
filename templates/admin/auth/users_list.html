@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
 {% block content %}
 <!-- START: AUTH_USERS_LIST_SECTION -->
 <div class="dashboard-wrapper">
@@ -12,55 +8,60 @@
         <h1>Users</h1>
         <p>Manage system users.</p>
     </div>
-    
+
     {% if messages %}
-    <div style="margin-bottom:20px;">
+    <div>
         {% for message in messages %}
-        <div style="padding:12px 18px; border-radius:10px; margin-bottom:8px; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">
+        <div>
             <i class="fas fa-check-circle"></i> {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div style="background:rgba(15,23,42,0.6); padding:2rem; border-radius:24px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 style="color:#fff; margin:0;"><i class="fas fa-user-lock" style="color:#f43f5e;"></i> Users List</h3>
-            <a href="{% url 'admin_panel:auth_users_add' %}" class="view-all-btn" style="text-decoration:none;">
+    <div>
+        <div>
+            <h3><i class="fas fa-user-lock"></i> Users List</h3>
+            <a href="{% url 'admin_panel:auth_users_add' %}" class="view-all-btn">
                 <i class="fas fa-plus"></i> Add User
             </a>
         </div>
-        
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; color:#fff;">
+
+        <div>
+            <table>
                 <thead>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; text-align:left;">
-                        <th style="padding:15px; font-weight:500;">Username</th>
-                        <th style="padding:15px; font-weight:500;">Name</th>
-                        <th style="padding:15px; font-weight:500;">Email</th>
-                        <th style="padding:15px; font-weight:500;">Active</th>
-                        <th style="padding:15px; font-weight:500; text-align:right;">Actions</th>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Active</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                        <td style="padding:15px;">{{ user.username }}</td>
-                        <td style="padding:15px;">{{ user.first_name }} {{ user.last_name }}</td>
-                        <td style="padding:15px;">{{ user.email }}</td>
-                        <td style="padding:15px;">
-                            <a href="{% url 'admin_panel:auth_user_toggle_active' user.id %}" style="color:{% if user.is_active %}#10b981{% else %}#ef4444{% endif %}; text-decoration:none; display:flex; align-items:center; gap:5px;">
-                                <i class="fas {% if user.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}" style="font-size:1.2rem;"></i>
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <a href="{% url 'admin_panel:auth_user_toggle_active' user.id %}">
+                                <i
+                                    class="fas {% if user.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
                             </a>
                         </td>
-                        <td style="padding:15px; text-align:right; display:flex; justify-content:flex-end; gap:10px;">
-                            <a href="{% url 'admin_panel:auth_users_edit' user.id %}" style="background:rgba(99,102,241,0.15); color:#818cf8; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'admin_panel:auth_users_delete' user.id %}" style="background:rgba(239,68,68,0.15); color:#f87171; padding:8px 12px; border-radius:8px; text-decoration:none;"><i class="fas fa-trash"></i></a>
+                        <td>
+                            <a href="{% url 'admin_panel:auth_users_edit' user.id %}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:auth_users_delete' user.id %}">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" style="padding:20px; text-align:center; color:#94a3b8;">No users found.</td>
+                        <td colspan="5">No users found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

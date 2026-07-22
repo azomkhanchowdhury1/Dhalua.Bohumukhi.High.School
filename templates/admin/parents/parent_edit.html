@@ -1,0 +1,214 @@
+<!-- START: templates/admin/parents/parent_edit.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<!-- START: PARENT_EDIT_SECTION -->
+<div class="dashboard-wrapper">
+
+    <a href="{% url 'admin_panel:parent_list' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> তালিকা পাতায় ফিরুন
+    </a>
+
+    <div>
+        <h1>
+            {% if mode == 'add' %}নতুন অভিভাবক যোগ করুন{% else %}অভিভাবকের তথ্য সম্পাদনা{% endif %}
+        </h1>
+
+        {% if mode == 'edit' %}
+        <p>{{ parent.user.get_full_name }} (#{{ parent.parent_id|default:"N/A" }})</p>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div>
+            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Profile Image -->
+            <p class="form-section-title">
+                <i class="fas fa-camera"></i> প্রোফাইল ছবি
+            </p>
+
+            <div class="avatar-preview-container">
+                {% if mode == 'edit' and parent.profile_image %}
+                <img src="{{ parent.profile_image.url }}" class="avatar-preview" id="avatarPreview" alt="">
+                {% else %}
+                <div class="avatar-preview-placeholder" id="avatarPlaceholder">
+                    <i class="fas fa-user"></i>
+                </div>
+                <img src="" class="avatar-preview" id="avatarPreview" alt="">
+                {% endif %}
+
+                <div>
+                    <div class="form-group">
+                        <label>ছবি আপলোড করুন</label>
+                        <input type="file" name="profile_image" accept="image/*" id="profileImageInput">
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Credentials -->
+            <p class="form-section-title">
+                <i class="fas fa-key"></i> অ্যাকাউন্ট ক্রেডেনশিয়াল
+            </p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>ইউজারনেম (Username) *</label>
+                    <input type="text" name="username" value="{% if mode == 'edit' %}{{ parent.user.username }}{% endif %}" {% if mode == 'edit' %}readonly{% else %}required{% endif %} placeholder="যেমন: aminul_parent">
+                </div>
+
+                <div class="form-group">
+                    <label>পাসওয়ার্ড (Password) {% if mode == 'add' %}*{% else %}(খালি রাখলে অপরিবর্তিত থাকবে){% endif %}</label>
+                    <input type="password" name="password" {% if mode == 'add' %}required{% endif %} placeholder="পাসওয়ার্ড লিখুন">
+                </div>
+            </div>
+
+
+            <!-- Personal Info -->
+            <p class="form-section-title">
+                <i class="fas fa-user"></i> ব্যক্তিগত তথ্য
+            </p>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>প্রথম নাম (First Name) *</label>
+                    <input type="text" name="first_name" value="{% if mode == 'edit' %}{{ parent.user.first_name }}{% endif %}" required placeholder="প্রথম নাম">
+                </div>
+
+                <div class="form-group">
+                    <label>শেষ নাম (Last Name) *</label>
+                    <input type="text" name="last_name" value="{% if mode == 'edit' %}{{ parent.user.last_name }}{% endif %}" required placeholder="শেষ নাম">
+                </div>
+
+                <div class="form-group">
+                    <label>ইমেইল ঠিকানা *</label>
+                    <input type="email" name="email" value="{% if mode == 'edit' %}{{ parent.user.email }}{% endif %}" required placeholder="parent@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>মোবাইল নম্বর</label>
+                    <input type="text" name="phone_number" value="{% if mode == 'edit' %}{{ parent.phone_number|default:'' }}{% endif %}" placeholder="01XXXXXXXXX">
+                </div>
+
+                <div class="form-group">
+                    <label>লিঙ্গ</label>
+                    <select name="gender">
+                        <option value="">— নির্বাচন করুন —</option>
+                        <option value="Male" {% if mode == 'edit' and parent.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if mode == 'edit' and parent.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if mode == 'edit' and parent.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>ঠিকানা</label>
+                    <textarea name="address" placeholder="অভিভাবকের সম্পূর্ণ ঠিকানা">{% if mode == 'edit' %}{{ parent.address|default:'' }}{% endif %}</textarea>
+                </div>
+
+            </div>
+
+
+            <!-- Parent Details -->
+            <p class="form-section-title">
+                <i class="fas fa-users-cog"></i> অভিভাবকের বিবরণ
+            </p>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>সম্পর্ক (Relationship) *</label>
+                    <select name="relationship_type" required>
+                        <option value="">— নির্বাচন করুন —</option>
+                        <option value="Father" {% if mode == 'edit' and parent.relationship_type == 'Father' %}selected{% endif %}>Father</option>
+                        <option value="Mother" {% if mode == 'edit' and parent.relationship_type == 'Mother' %}selected{% endif %}>Mother</option>
+                        <option value="Guardian" {% if mode == 'edit' and parent.relationship_type == 'Guardian' %}selected{% endif %}>Guardian</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>পেশা (Occupation)</label>
+                    <input type="text" name="occupation" value="{% if mode == 'edit' %}{{ parent.occupation|default:'' }}{% endif %}" placeholder="পেশা">
+                </div>
+
+                <div class="form-group">
+                    <label>সংযুক্ত ছাত্র/ছাত্রী (Linked Student)</label>
+                    <select name="linked_student">
+                        <option value="">— কোনোটিই নয় —</option>
+
+                        {% for student in students %}
+                        <option value="{{ student.id }}" {% if mode == 'edit' and parent.linked_student.id == student.id %}selected{% endif %}>
+                            {{ student.user.get_full_name }} ({{ student.student_id }})
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>জরুরী যোগাযোগ নম্বর (Emergency Contact)</label>
+                    <input type="text" name="emergency_contact_number" value="{% if mode == 'edit' %}{{ parent.emergency_contact_number|default:'' }}{% endif %}" placeholder="01XXXXXXXXX">
+                </div>
+
+            </div>
+
+
+            <!-- Buttons -->
+            <div class="btn-row">
+
+                <a href="{% url 'admin_panel:parent_list' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> বাতিল
+                </a>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> সংরক্ষণ করুন
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+<!-- END: PARENT_EDIT_SECTION -->
+
+
+<script>
+document.getElementById('profileImageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(ev) {
+        const preview = document.getElementById('avatarPreview');
+        const placeholder = document.getElementById('avatarPlaceholder');
+
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+
+        if (placeholder) placeholder.style.display = 'none';
+    };
+
+    reader.readAsDataURL(file);
+});
+</script>
+
+{% endblock %}
+<!-- END: templates/admin/parents/parent_edit.html -->

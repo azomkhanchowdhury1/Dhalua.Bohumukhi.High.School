@@ -30,6 +30,7 @@ def dashboard(request):
 @staff_member_required
 def student_list(request):
     query = request.GET.get('search', '')
+    selected_class_id = request.GET.get('class_id', '')
     students = Student.objects.all()
     if query:
         students = students.filter(
@@ -37,7 +38,22 @@ def student_list(request):
             Q(user__last_name__icontains=query) |
             Q(student_id__icontains=query)
         )
-    return render(request, 'admin/students/student_list.html', {'students': students, 'query': query})
+    if selected_class_id:
+        selected_class = get_object_or_404(SchoolClass, id=selected_class_id)
+        stripped_name = selected_class.name.replace('Class ', '').replace('class ', '').strip()
+        students = students.filter(
+            Q(current_class=selected_class.name) |
+            Q(current_class=stripped_name) |
+            Q(current_class__icontains=selected_class.name) |
+            Q(current_class__icontains=stripped_name)
+        )
+    classes = SchoolClass.objects.all()
+    return render(request, 'admin/students/student_list.html', {
+        'students': students,
+        'query': query,
+        'classes': classes,
+        'selected_class_id': selected_class_id
+    })
 
 @staff_member_required
 def student_admission(request):
@@ -59,7 +75,8 @@ def student_admission(request):
             Student.objects.create(
                 user=user,
                 student_id=student_id,
-                current_class=current_class
+                current_class=current_class,
+                password_plain='password123'
             )
             messages.success(request, f"Student {first_name} admitted successfully!")
             return redirect('admin_panel:student_list')
@@ -68,6 +85,7 @@ def student_admission(request):
 @staff_member_required
 def student_attendance(request):
     query = request.GET.get('search', '')
+    selected_class_id = request.GET.get('class_id', '')
     students = Student.objects.all()
     
     if query:
@@ -76,7 +94,18 @@ def student_attendance(request):
             Q(user__last_name__icontains=query) |
             Q(student_id__icontains=query)
         )
+        
+    if selected_class_id:
+        selected_class = get_object_or_404(SchoolClass, id=selected_class_id)
+        stripped_name = selected_class.name.replace('Class ', '').replace('class ', '').strip()
+        students = students.filter(
+            Q(current_class=selected_class.name) |
+            Q(current_class=stripped_name) |
+            Q(current_class__icontains=selected_class.name) |
+            Q(current_class__icontains=stripped_name)
+        )
     
+    classes = SchoolClass.objects.all()
     student_data = []
     for student in students:
         total_records = Attendance.objects.filter(student=student, class_attendance__is_held=True).count()
@@ -91,11 +120,14 @@ def student_attendance(request):
         
     return render(request, 'admin/students/attendance.html', {
         'student_data': student_data,
-        'query': query
+        'query': query,
+        'classes': classes,
+        'selected_class_id': selected_class_id
     })
 
 @staff_member_required
 def student_promotion(request):
+    selected_class_id = request.GET.get('class_id', '')
     if request.method == 'POST':
         student_ids = request.POST.getlist('student_ids')
         to_class = request.POST.get('to_class')
@@ -115,7 +147,21 @@ def student_promotion(request):
         messages.success(request, f"Selected students promoted to {to_class}!")
         return redirect('admin_panel:student_list')
     students = Student.objects.all()
-    return render(request, 'admin/students/promotion.html', {'students': students})
+    if selected_class_id:
+        selected_class = get_object_or_404(SchoolClass, id=selected_class_id)
+        stripped_name = selected_class.name.replace('Class ', '').replace('class ', '').strip()
+        students = students.filter(
+            Q(current_class=selected_class.name) |
+            Q(current_class=stripped_name) |
+            Q(current_class__icontains=selected_class.name) |
+            Q(current_class__icontains=stripped_name)
+        )
+    classes = SchoolClass.objects.all()
+    return render(request, 'admin/students/promotion.html', {
+        'students': students,
+        'classes': classes,
+        'selected_class_id': selected_class_id
+    })
 
 # --- Teacher Management Views ---
 @staff_member_required
@@ -172,6 +218,7 @@ def teacher_add(request):
                 blood_group=blood_group,
                 address=address,
                 experience=experience,
+                password_plain='teacherpassword',
             )
             messages.success(request, f"শিক্ষক {first_name} {last_name} সফলভাবে যোগ করা হয়েছে!")
             return redirect('admin_panel:teacher_list')
@@ -300,6 +347,8 @@ def teacher_reset_password(request, teacher_id):
         else:
             teacher.user.set_password(new_password)
             teacher.user.save()
+            teacher.password_plain = new_password
+            teacher.save()
             messages.success(request, f"{teacher.user.get_full_name()} এর পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!")
             return redirect('admin_panel:teacher_detail', teacher_id=teacher.id)
     return render(request, 'admin/teachers/teacher_reset_password.html', {'teacher': teacher})
@@ -453,6 +502,10 @@ def subject_toggle_remember(request, subject_id):
 
 @staff_member_required
 def academics_timetable(request):
+    sections = Section.objects.all().select_related('school_class')
+    subjects = Subject.objects.all().select_related('school_class')
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+
     if request.method == 'POST':
         section_id = request.POST.get('section_id')
         subject_id = request.POST.get('subject_id')
@@ -469,30 +522,39 @@ def academics_timetable(request):
         else:
             Timetable.objects.create(section=section, subject=subject, day=day, start_time=start, end_time=end)
             messages.success(request, f"Timetable slot সফলভাবে যোগ করা হয়েছে!")
-        return redirect('admin_panel:academics_timetable')
-
-    sections = Section.objects.all().select_related('school_class')
-    subjects = Subject.objects.all().select_related('school_class')
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        return redirect(f"{request.path}?filter_section={section_id}")
 
     # Filter support
     filter_section = request.GET.get('filter_section', '')
-    filter_day = request.GET.get('filter_day', '')
+    if not filter_section and sections.exists():
+        filter_section = str(sections.first().id)
 
-    timetables = Timetable.objects.all().select_related('section__school_class', 'subject')
+    routine_data = []
+    selected_section_obj = None
+    if filter_section:
+        selected_section_obj = get_object_or_404(Section, id=filter_section)
+        for day in days:
+            slots = list(Timetable.objects.filter(section_id=filter_section, day=day).order_by('start_time').select_related('subject'))
+            padded_slots = slots[:6] + [None] * (6 - len(slots))
+            routine_data.append({
+                'day': day,
+                'slots': padded_slots
+            })
+
+    # We also keep all timetables for the reminders block
+    timetables = Timetable.objects.filter(day__in=days)
     if filter_section:
         timetables = timetables.filter(section_id=filter_section)
-    if filter_day:
-        timetables = timetables.filter(day=filter_day)
-    timetables = timetables.order_by('day', 'start_time')
+    timetables = timetables.select_related('section__school_class', 'subject')
 
     return render(request, 'admin/academics/timetable.html', {
         'sections': sections,
         'subjects': subjects,
-        'timetables': timetables,
+        'routine_data': routine_data,
+        'selected_section_obj': selected_section_obj,
         'days': days,
         'filter_section': filter_section,
-        'filter_day': filter_day,
+        'timetables': timetables,
     })
 
 @staff_member_required
@@ -1184,7 +1246,7 @@ def staff_add(request):
         user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, is_staff=True)
         staff_id = f"STF{user.id:04d}"
         profile_image = request.FILES.get('profile_image')
-        Staff.objects.create(user=user, staff_id=staff_id, designation=designation, department=department, phone_number=phone_number, address=address, salary=salary, joining_date=joining_date, work_shift=work_shift, gender=gender, profile_image=profile_image)
+        Staff.objects.create(user=user, staff_id=staff_id, designation=designation, department=department, phone_number=phone_number, address=address, salary=salary, joining_date=joining_date, work_shift=work_shift, gender=gender, profile_image=profile_image, password_plain=password)
         messages.success(request, f"Staff '{first_name} {last_name}' added successfully!")
         return redirect('admin_panel:staff_list')
     return render(request, 'admin/staff/staff_edit.html', {'mode': 'add'})
@@ -1258,7 +1320,7 @@ def parent_add(request):
         parent_id = f"PAR{user.id:04d}"
         linked_student = Student.objects.filter(id=linked_student_id).first()
         profile_image = request.FILES.get('profile_image')
-        Parent.objects.create(user=user, parent_id=parent_id, phone_number=phone_number, address=address, gender=gender, occupation=occupation, relationship_type=relationship_type, linked_student=linked_student, emergency_contact_number=emergency_contact_number, profile_image=profile_image)
+        Parent.objects.create(user=user, parent_id=parent_id, phone_number=phone_number, address=address, gender=gender, occupation=occupation, relationship_type=relationship_type, linked_student=linked_student, emergency_contact_number=emergency_contact_number, profile_image=profile_image, password_plain=password)
         messages.success(request, f"Parent '{first_name} {last_name}' added successfully!")
         return redirect('admin_panel:parent_list')
     return render(request, 'admin/parents/parent_edit.html', {'mode': 'add', 'students': students})
